@@ -14,8 +14,6 @@ public class MoveError extends Error {
         errorInfo = "errortype=\"MoveError\"";
     }
 
-    ;
-
     //for testing purposes
     public static void main(String[] args) {
         try {
@@ -63,7 +61,6 @@ public class MoveError extends Error {
      * word randomly from a sentence and move it to a random position within the
      * sentence.
      *
-     * @param inputSentence
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
@@ -74,7 +71,7 @@ public class MoveError extends Error {
         Random random = new Random(newSentence.toString().hashCode());
         //randomly choose the  word to be moved
         int moveWordPosition = random.nextInt(newSentence.size());
-        Word moveWord = (Word) newSentence.getWord(moveWordPosition);
+        Word moveWord = newSentence.getWord(moveWordPosition);
         //randomly choose where the word is to be moved to
         int moveWordNewPosition = random.nextInt(newSentence.size());
         while (moveWordNewPosition == moveWordPosition) {

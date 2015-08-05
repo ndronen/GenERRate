@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -83,12 +84,12 @@ public class SubstSpecificWordConfusionError extends SubstError {
         //see if the word to be replaced is in the input sentence, if not throw an exception
         boolean isWordThere = false;
         Word word;
-        ArrayList whereList = new ArrayList();
+        List<Integer> whereList = new ArrayList<Integer>();
         for (int i = 0; i < newSentence.size() && !isWordThere; i++) {
-            word = (Word) newSentence.getWord(i);
+            word = newSentence.getWord(i);
             if (word.getToken().equals(wordToBeReplaced.getToken())) {
                 isWordThere = true;
-                whereList.add(new Integer(i));
+                whereList.add(i);
             }
         }
         if (!isWordThere) {
@@ -98,7 +99,7 @@ public class SubstSpecificWordConfusionError extends SubstError {
         Random random = new Random(newSentence.toString().hashCode());
 
         //if there is more than one instance of the word to be replaced in the sentence, randomly choose one of them
-        int where = ((Integer) whereList.get(random.nextInt(whereList.size()))).intValue();
+        int where = whereList.get(random.nextInt(whereList.size()));
 
         //delete the word which was at this position in the sentence
         newSentence.removeWord(where);

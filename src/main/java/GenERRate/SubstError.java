@@ -46,11 +46,11 @@ public class SubstError extends Error {
         int where = random.nextInt(newSentence.size());
 
         //delete the word which was at this position in the sentence
-        Word oldWord = (Word) newSentence.getWord(where);
+        Word oldWord = newSentence.getWord(where);
         newSentence.removeWord(where);
 
         //choose the new word from the extra word list and add it to the sentence
-        String newWord = (String) extraWordList.get(random.nextInt(extraWordList.size()));
+        String newWord = extraWordList.get(random.nextInt(extraWordList.size()));
         StringTokenizer tokens = new StringTokenizer(newWord, " ");
         String newToken = tokens.nextToken();
         String newTag = tokens.nextToken();

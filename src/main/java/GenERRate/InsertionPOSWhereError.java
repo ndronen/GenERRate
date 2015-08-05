@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -94,16 +95,17 @@ public class InsertionPOSWhereError extends InsertionPOSError {
         if (!inputSentence.areTagsIncluded()) {
             throw new CannotCreateErrorException("The input sentence is not tagged. Cannot create an " + errorInfo);
         }
-        ArrayList listPOSBefore = null, listPOSAfter = null, listPOSBeforeAfter = null;
+        List<Integer> listPOSBefore = null;ArrayList<Integer> listPOSAfter = null;
+        List<Integer> listPOSBeforeAfter = null;
         if (POSAfter == null) {
             //find all words in the input sentence tagged as POSBefore - if there are none, throw an exception
-            listPOSBefore = new ArrayList();
+            listPOSBefore = new ArrayList<Integer>();
             Word word;
             for (int i = 0; i < inputSentence.size(); i++) {
-                word = (Word) inputSentence.getWord(i);
+                word = inputSentence.getWord(i);
                 if (word.getTag().equals(POSBefore)) {
                     //add the position of the word to the sentence
-                    listPOSBefore.add(new Integer(i));
+                    listPOSBefore.add(i);
                 }
             }
             if (listPOSBefore.size() < 1) {
@@ -111,42 +113,42 @@ public class InsertionPOSWhereError extends InsertionPOSError {
             }
         } else if (POSBefore == null) {
             //find all words in the input sentence tagged as POSAfter - if there are none, throw an exception
-            listPOSAfter = new ArrayList();
+            listPOSAfter = new ArrayList<Integer>();
             Word word;
             for (int i = 0; i < inputSentence.size(); i++) {
-                word = (Word) inputSentence.getWord(i);
+                word = inputSentence.getWord(i);
                 if (word.getTag().equals(POSAfter)) {
                     //add the position of the word to the sentence
-                    listPOSAfter.add(new Integer(i));
+                    listPOSAfter.add(i);
                 }
             }
             if (listPOSAfter.size() < 1) {
                 throw new CannotCreateErrorException("There is no word with POS " + POSAfter + " in the sentence. Cannot create an " + errorInfo);
             }
         } else {
-            listPOSBeforeAfter = new ArrayList();
+            listPOSBeforeAfter = new ArrayList<Integer>();
             if (POSBefore.equalsIgnoreCase("start")) {
                 Word secondWord = inputSentence.getWord(0);
 
                 if (secondWord.getTag().equals(POSAfter)) {
-                    listPOSBeforeAfter.add(new Integer(0));
+                    listPOSBeforeAfter.add(0);
                 }
             } else if (POSAfter.equalsIgnoreCase("end")) {
                 Word secondLastWord = inputSentence.getWord(inputSentence.size() - 1);
 
                 if (secondLastWord.getTag().equals(POSBefore)) {
-                    listPOSBeforeAfter.add(new Integer(inputSentence.size() - 1));
+                    listPOSBeforeAfter.add(inputSentence.size() - 1);
                 }
             } else {
                 //find all word pairs in the input sentence tagged as POSBefore, POSAfter - if there are none, throw an exception
 
                 Word word, nextWord;
                 for (int i = 0; i < inputSentence.size() - 1; i++) {
-                    word = (Word) inputSentence.getWord(i);
-                    nextWord = (Word) inputSentence.getWord(i + 1);
+                    word = inputSentence.getWord(i);
+                    nextWord = inputSentence.getWord(i + 1);
                     if (word.getTag().equals(POSBefore) && nextWord.getTag().equals(POSAfter)) {
                         //add the position of the word to the sentence
-                        listPOSBeforeAfter.add(new Integer(i));
+                        listPOSBeforeAfter.add(i);
                     }
                 }
             }
@@ -156,14 +158,15 @@ public class InsertionPOSWhereError extends InsertionPOSError {
         }
         Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
         Random random = new Random(newSentence.toString().hashCode());
-        ArrayList extraPosWordList = new ArrayList();
+
         if (!isSameSentence) {
+            List<String> extraPosWordList = new ArrayList<String>();
             //find all the words tagged as POS in the extra word list
             String extraWord;
             String extraPos;
             StringTokenizer tokens;
             for (int i = 0; i < extraWordList.size(); i++) {
-                extraWord = (String) extraWordList.get(i);
+                extraWord = extraWordList.get(i);
                 tokens = new StringTokenizer(extraWord, " ");
                 if (tokens.hasMoreTokens()) {
                     tokens.nextToken();
@@ -179,19 +182,19 @@ public class InsertionPOSWhereError extends InsertionPOSError {
                 throw new CannotCreateErrorException("No word with this POS in the extra word list. Cannot create an." + errorInfo);
             }
             //choose the extra word from the selected extra word list
-            extraWord = (String) extraPosWordList.get(random.nextInt(extraPosWordList.size()));
+            extraWord = extraPosWordList.get(random.nextInt(extraPosWordList.size()));
             tokens = new StringTokenizer(extraWord, " ");
             //decide where to insert the extra word
             int where = -1;
             if (POSAfter == null) {
-                where = ((Integer) listPOSBefore.get(random.nextInt(listPOSBefore.size()))).intValue() + 1;
+                where = listPOSBefore.get(random.nextInt(listPOSBefore.size())) + 1;
             } else if (POSBefore == null) {
-                where = ((Integer) listPOSAfter.get(random.nextInt(listPOSAfter.size()))).intValue();
+                where = listPOSAfter.get(random.nextInt(listPOSAfter.size()));
             } else {
                 if (POSBefore.equalsIgnoreCase("start")) {
-                    where = ((Integer) listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()))).intValue();
+                    where = listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()));
                 } else {
-                    where = ((Integer) listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()))).intValue() + 1;
+                    where = listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()));
                 }
             }
             String newToken = tokens.nextToken();
@@ -199,10 +202,11 @@ public class InsertionPOSWhereError extends InsertionPOSError {
             newSentence.insertWord(new Word(newToken, newTag), where);
             newSentence.setErrorDescription(errorInfo + " details=\"" + newToken + " from file at " + (where + 1) + "\"");
         } else {
+            List<Word> extraPosWordList = new ArrayList<Word>();
             //find all words tagged as POS in the sentence
             Word extraPosWord;
             for (int i = 0; i < newSentence.size(); i++) {
-                extraPosWord = (Word) newSentence.getWord(i);
+                extraPosWord = newSentence.getWord(i);
                 if (extraPosWord.getTag().equals(POS)) {
                     extraPosWordList.add(extraPosWord);
                 }
@@ -214,14 +218,14 @@ public class InsertionPOSWhereError extends InsertionPOSError {
             Word extraWord = (Word) extraPosWordList.get(random.nextInt(extraPosWordList.size()));
             int where = -1;
             if (POSAfter == null) {
-                where = ((Integer) listPOSBefore.get(random.nextInt(listPOSBefore.size()))).intValue() + 1;
+                where = listPOSBefore.get(random.nextInt(listPOSBefore.size())) + 1;
             } else if (POSBefore == null) {
-                where = ((Integer) listPOSAfter.get(random.nextInt(listPOSAfter.size()))).intValue();
+                where = listPOSAfter.get(random.nextInt(listPOSAfter.size()));
             } else {
                 if (POSBefore.equalsIgnoreCase("start")) {
-                    where = ((Integer) listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()))).intValue();
+                    where = listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()));
                 } else {
-                    where = ((Integer) listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()))).intValue() + 1;
+                    where = listPOSBeforeAfter.get(random.nextInt(listPOSBeforeAfter.size()));
                 }
             }
             newSentence.insertWord(extraWord, where);

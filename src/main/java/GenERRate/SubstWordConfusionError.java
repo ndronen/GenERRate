@@ -17,7 +17,7 @@ public class SubstWordConfusionError extends SubstError {
      */
     private String posTag;
 
-    public SubstWordConfusionError(Sentence sentence, List extraWords, String posTag) {
+    public SubstWordConfusionError(Sentence sentence, List<String> extraWords, String posTag) {
         super(sentence, extraWords);
         this.posTag = posTag;
         errorInfo = "errortype=\"Subst" + this.posTag + "Error\"";
@@ -67,12 +67,12 @@ public class SubstWordConfusionError extends SubstError {
         }
         Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
         //find all words in the sentence tagged as posTag
-        ArrayList listPOS = new ArrayList();
+        List<Integer> listPOS = new ArrayList<Integer>();
         Word word;
         for (int i = 0; i < newSentence.size(); i++) {
-            word = (Word) newSentence.getWord(i);
+            word = newSentence.getWord(i);
             if (word.getTag().equals(posTag)) {
-                listPOS.add(new Integer(i));
+                listPOS.add(i);
             }
         }
         //throw an exception if there is no word of this posTag in the sentence
@@ -82,24 +82,24 @@ public class SubstWordConfusionError extends SubstError {
         Random random = new Random(newSentence.toString().hashCode());
 
         //randomly choose the position in the sentence where the word should be replaced
-        int where = ((Integer) listPOS.get(random.nextInt(listPOS.size()))).intValue();
+        int where = listPOS.get(random.nextInt(listPOS.size()));
         Word substitutedWord = newSentence.getWord(where);
 
         //delete the word which was at this position in the sentence
         newSentence.removeWord(where);
 
         //build up a list of words tagged as posTag from the extra word list
-        listPOS = new ArrayList();
+        listPOS = new ArrayList<Integer>();
         String tokenTagPair;
         StringTokenizer tokens;
         String token;
         for (int i = 0; i < extraWordList.size(); i++) {
-            tokenTagPair = (String) extraWordList.get(i);
+            tokenTagPair = extraWordList.get(i);
             tokens = new StringTokenizer(tokenTagPair);
             token = tokens.nextToken();
             //make sure not to include the same word as the word just removed, i.e. subst a word for itself
             if (tokens.nextToken().equals(posTag) && !token.equalsIgnoreCase(substitutedWord.getToken())) {
-                listPOS.add(new Integer(i));
+                listPOS.add(i);
             }
         }
         //throw an exception if there are no words of this posTag in the extra word list
@@ -108,7 +108,7 @@ public class SubstWordConfusionError extends SubstError {
         }
 
         //choose the new word from the extra word list and add it to the sentence
-        String newWord = (String) extraWordList.get(((Integer) listPOS.get(random.nextInt(listPOS.size()))).intValue());
+        String newWord = extraWordList.get(listPOS.get(random.nextInt(listPOS.size())));
         tokens = new StringTokenizer(newWord, " ");
         String newToken = tokens.nextToken();
         String newTag = tokens.nextToken();

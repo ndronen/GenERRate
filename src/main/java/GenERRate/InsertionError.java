@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -12,13 +13,13 @@ import java.util.StringTokenizer;
 public class InsertionError extends Error {
 
 
-    protected ArrayList extraWordList;
+    protected List<String> extraWordList;
 
 
-    public InsertionError(Sentence inputS, ArrayList anExtraWordList) {
+    public InsertionError(Sentence inputS, List<String> extraWords) {
         super(inputS);
         errorInfo = "errortype=\"InsertionError\"";
-        extraWordList = anExtraWordList;
+        extraWordList = extraWords;
     }
 
     public InsertionError(Sentence inputS) {
@@ -32,7 +33,6 @@ public class InsertionError extends Error {
      * Randomly chooses whether the word to be inserted will be a word in the sentence
      * or a word in the extraWordList
      *
-     * @param inputSentence
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
@@ -60,7 +60,7 @@ public class InsertionError extends Error {
                 newSentence.setErrorDescription(errorInfo + " details=\"" + newToken + " from file at " + (where + 1) + "\"");
             } else {
                 //randomly choose the extra word from the sentence itself
-                Word extraWord = (Word) newSentence.getWord(random.nextInt(newSentence.size()));
+                Word extraWord = newSentence.getWord(random.nextInt(newSentence.size()));
                 newSentence.insertWord(extraWord, where);
                 newSentence.setErrorDescription(errorInfo + " details=\"" + extraWord.getToken() + " from sentence at " + (where + 1) + "\"");
             }

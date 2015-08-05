@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -87,12 +88,12 @@ public class DeletionPOSError extends DeletionError {
         Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
 
         //find the words in the sentence tagged as POS
-        ArrayList wordsForDeletion = new ArrayList();
+        List<Integer> wordsForDeletion = new ArrayList<Integer>();
         Word word;
         for (int i = 0; i < newSentence.size(); i++) {
-            word = (Word) newSentence.getWord(i);
+            word = newSentence.getWord(i);
             if (word.getTag().equals(POS)) {
-                wordsForDeletion.add(new Integer(i));
+                wordsForDeletion.add(i);
             }
         }
         //if there aren't any words tagged as POS in sentence, then we can't do anything
@@ -103,8 +104,8 @@ public class DeletionPOSError extends DeletionError {
         //randomly pick one of these and delete it from the sentence
         Random rand = new Random(newSentence.hashCode());
         int randNo = rand.nextInt(wordsForDeletion.size());
-        int randomPosition = ((Integer) wordsForDeletion.get(randNo)).intValue();
-        Word wordToGo = (Word) newSentence.getWord(randomPosition);
+        int randomPosition = wordsForDeletion.get(randNo);
+        Word wordToGo = newSentence.getWord(randomPosition);
         newSentence.removeWord(randomPosition);
         newSentence.setErrorDescription(errorInfo + " details=\"" + wordToGo.getToken() + " at " + (randomPosition + 1) + "\"");
 

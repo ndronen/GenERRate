@@ -71,7 +71,7 @@ public class DeletionError extends Error {
             Random random = new Random(newSentence.toString().hashCode());
             int randomNo = random.nextInt(newSentence.size());
 
-            Word wordToGo = (Word) newSentence.getWord(randomNo);
+            Word wordToGo = newSentence.getWord(randomNo);
 
             newSentence.removeWord(randomNo);
 

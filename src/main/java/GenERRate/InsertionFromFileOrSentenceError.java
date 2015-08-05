@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -25,7 +26,7 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
     }
 
 
-    public InsertionFromFileOrSentenceError(Sentence inputS, ArrayList anExtraWordList) {
+    public InsertionFromFileOrSentenceError(Sentence inputS, List anExtraWordList) {
         super(inputS, anExtraWordList);
         errorInfo = "errortype=\"InsertionFromFileOrSentenceError\"";
         isSameSentence = false;
@@ -47,7 +48,7 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
      * Whether or not the word to be inserted comes from the same sentence or from the
      * extra word list file (see ErrorCreation class).
      *
-     * @param newVar the new value of isSameSentence
+     * @param newIsSameSentence the new value of isSameSentence
      */
     private void setIsSameSentence(boolean newIsSameSentence) {
         isSameSentence = newIsSameSentence;
@@ -60,7 +61,6 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
      * Otherwise, a word from the extraWordList is
      * randomly chosen and inserted at a random position.
      *
-     * @param inputSentence
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
@@ -87,7 +87,7 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
             newSentence.setErrorDescription(errorInfo + " details=\"" + extraWord + " from file at " + (where + 1) + "\"");
         } else {
             //randomly choose the extra word from the sentence itself
-            Word extraWord = (Word) newSentence.getWord(random.nextInt(newSentence.size()));
+            Word extraWord = newSentence.getWord(random.nextInt(newSentence.size()));
             newSentence.insertWord(extraWord, where);
             newSentence.setErrorDescription(errorInfo + "details=\"" + extraWord + " from sentence at " + (where + 1) + "\"");
         }

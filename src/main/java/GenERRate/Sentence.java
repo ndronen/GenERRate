@@ -8,13 +8,13 @@ import java.util.StringTokenizer;
  *
  * @author Jennifer Foster
  */
-public class Sentence extends Object {
+public class Sentence {
 
 
     /**
      * The list of words in the sentence
      */
-    private ArrayList words;
+    private ArrayList<Word> words;
 
     /**
      * Is the sentence POS-tagged?
@@ -38,9 +38,9 @@ public class Sentence extends Object {
         if (includeTags) {
             //tokenise the sentence and place each token/tag into the vector of words
             StringTokenizer tokens = new StringTokenizer(theSentence, " ");
-            words = new ArrayList();
-            String tag = null;
-            String word = null;
+            words = new ArrayList<Word>();
+            String tag;
+            String word;
             if (tokens.countTokens() % 2 == 1) {
                 System.out.println("Problem creating sentence: \t" + theSentence + " uneven number of tags and tokens");
             }
@@ -56,15 +56,13 @@ public class Sentence extends Object {
         } else {
             //tokenise the sentence and place each token into the vector of words
             StringTokenizer tokens = new StringTokenizer(theSentence, " ");
-            words = new ArrayList();
+            words = new ArrayList<Word>();
             while (tokens.hasMoreTokens()) {
                 words.add(new Word(tokens.nextToken()));
             }
         }
         areTagsIncluded = includeTags;
     }
-
-    ;
 
     /**
      * Get the value of words
@@ -112,10 +110,10 @@ public class Sentence extends Object {
      */
     public String toString() {
         String theSentence = "";
-        String theWord = "";
+        String theWord;
         for (int i = 0; i < words.size(); i++) {
             if (areTagsIncluded) {
-                theWord = ((Word) words.get(i)).toString();
+                theWord = words.get(i).toString();
             } else {
                 theWord = ((Word) words.get(i)).getToken();
             }
@@ -136,7 +134,7 @@ public class Sentence extends Object {
      */
     public String toStringNoTags() {
         String theSentence = "";
-        String theWord = "";
+        String theWord;
         for (int i = 0; i < words.size(); i++) {
             theWord = ((Word) words.get(i)).getToken();
 
@@ -152,13 +150,13 @@ public class Sentence extends Object {
     /**
      * Return a particular word in the sentence
      *
-     * @param int the position of the word to be returned
+     * @param index the position of the word to be returned
      * @return String
      */
     public Word getWord(int index) {
         Word theWord = null;
         try {
-            theWord = (Word) words.get(index);
+            theWord = words.get(index);
         } catch (ArrayIndexOutOfBoundsException e) {
             System.err.println(e.getMessage());
         } finally {

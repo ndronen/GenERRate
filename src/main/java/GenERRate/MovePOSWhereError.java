@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -119,7 +120,7 @@ public class MovePOSWhereError extends MovePOSError {
      * Set the value of movePosition
      * The number of words to the left or right the word should be moved.
      *
-     * @param newVar the new value of movePosition
+     * @param newMovePosition the new value of movePosition
      */
     private void setMovePosition(int newMovePosition) {
         movePosition = newMovePosition;
@@ -139,7 +140,7 @@ public class MovePOSWhereError extends MovePOSError {
      * Set the value of isLeft
      * Whether to move the word left or right
      *
-     * @param newVar the new value of isLeft
+     * @param newIsLeft the new value of isLeft
      */
     private void setIsLeft(boolean newIsLeft) {
         isLeft = newIsLeft;
@@ -151,7 +152,6 @@ public class MovePOSWhereError extends MovePOSError {
      * If there isn't a word with this POS tag, then a CannotCreateErrorException is
      * thrown.
      *
-     * @param inputSentence
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
@@ -166,11 +166,11 @@ public class MovePOSWhereError extends MovePOSError {
         }
         Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
         //find all words with the preferred part of speech
-        ArrayList movePOSList = new ArrayList();
+        List<Integer> movePOSList = new ArrayList<Integer>();
         for (int i = 0; i < newSentence.size(); i++) {
-            if ((((Word) newSentence.getWord(i)).getTag().equals(POS)) &&
+            if ((newSentence.getWord(i).getTag().equals(POS)) &&
                     ((isLeft && i - movePosition >= 0) || (!isLeft && i + movePosition < newSentence.size()))) {
-                movePOSList.add(new Integer(i));
+                movePOSList.add(i);
             }
         }
         if (movePOSList.size() < 1) {
@@ -178,8 +178,8 @@ public class MovePOSWhereError extends MovePOSError {
         }
         Random random = new Random(newSentence.toString().hashCode());
         //randomly choose the word to be move
-        int moveWordPosition = ((Integer) movePOSList.get(random.nextInt(movePOSList.size()))).intValue();
-        Word moveWord = (Word) newSentence.getWord(moveWordPosition);
+        int moveWordPosition = movePOSList.get(random.nextInt(movePOSList.size()));
+        Word moveWord = newSentence.getWord(moveWordPosition);
         //remove the word first
         newSentence.removeWord(moveWordPosition);
         //see whether the word is to be moved to the right or left

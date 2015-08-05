@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -155,16 +156,16 @@ public class DeletionPOSWhereError extends DeletionPOSError {
         } else {
             //create the new sentence
             Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
-            Word wordToGo = null, wordBefore = null, wordAfter = null, word = null;
+            Word wordToGo, wordBefore, wordAfter, word;
 
             if (POSAfter == null) {
                 //find pair sequences tagged as POSBefore, POS - store position of POS
-                ArrayList wordsForDeletion = new ArrayList();
+                List<Integer> wordsForDeletion = new ArrayList<Integer>();
                 for (int i = 1; i < newSentence.size(); i++) {
-                    wordBefore = (Word) newSentence.getWord(i - 1);
-                    word = (Word) newSentence.getWord(i);
+                    wordBefore = newSentence.getWord(i - 1);
+                    word = newSentence.getWord(i);
                     if (word.getTag().equals(POS) && wordBefore.getTag().equals(POSBefore)) {
-                        wordsForDeletion.add(new Integer(i));
+                        wordsForDeletion.add(i);
                     }
                 }
                 //if there aren't any word pairs tagged as POSBefore, POS in sentence, then we can't do anything
@@ -174,21 +175,21 @@ public class DeletionPOSWhereError extends DeletionPOSError {
                     //randomly pick one of these and delete it from the sentence
                     Random rand = new Random(newSentence.hashCode());
                     int randNo = rand.nextInt(wordsForDeletion.size());
-                    int randPos = ((Integer) wordsForDeletion.get(randNo)).intValue();
-                    wordToGo = (Word) newSentence.getWord(randPos);
-                    wordBefore = (Word) newSentence.getWord(randPos - 1);
+                    int randPos = (wordsForDeletion.get(randNo)).intValue();
+                    wordToGo = newSentence.getWord(randPos);
+                    wordBefore = newSentence.getWord(randPos - 1);
                     newSentence.removeWord(randPos);
 
                     newSentence.setErrorDescription(errorInfo + " details=\"" + wordToGo.getToken() + " at " + (randPos + 1) + " after " + wordBefore.getToken() + "\"");
                 }
             } else if (POSBefore == null) {
                 //find pair sequences tagged as POS, POSAfter - store position of POS
-                ArrayList wordsForDeletion = new ArrayList();
+                List<Integer> wordsForDeletion = new ArrayList<Integer>();
                 for (int i = 0; i < newSentence.size() - 1; i++) {
-                    wordAfter = (Word) newSentence.getWord(i + 1);
-                    word = (Word) newSentence.getWord(i);
+                    wordAfter = newSentence.getWord(i + 1);
+                    word = newSentence.getWord(i);
                     if (word.getTag().equals(POS) && wordAfter.getTag().equals(POSAfter)) {
-                        wordsForDeletion.add(new Integer(i));
+                        wordsForDeletion.add(i);
                     }
                 }
                 //if there aren't any word pairs tagged as POSBefore, POS in sentence, then we can't do anything
@@ -198,9 +199,9 @@ public class DeletionPOSWhereError extends DeletionPOSError {
                     //randomly pick one of these and delete it from the sentence
                     Random rand = new Random(newSentence.hashCode());
                     int randNo = rand.nextInt(wordsForDeletion.size());
-                    int randPos = ((Integer) wordsForDeletion.get(randNo)).intValue();
-                    wordToGo = (Word) newSentence.getWord(randPos);
-                    wordAfter = (Word) newSentence.getWord(randPos + 1);
+                    int randPos = wordsForDeletion.get(randNo);
+                    wordToGo = newSentence.getWord(randPos);
+                    wordAfter = newSentence.getWord(randPos + 1);
                     newSentence.removeWord(randPos);
 
                     newSentence.setErrorDescription(errorInfo + " details=\"" + wordToGo.getToken() + " at " + (randPos + 1) + " before " + wordAfter.getToken() + "\"");
@@ -213,31 +214,31 @@ public class DeletionPOSWhereError extends DeletionPOSError {
                 } else if (newSentence.size() < 3) {
                     throw new CannotCreateErrorException("Cannot introduce a " + errorInfo + ". There are less than three words in the input sentence.");
                 }
-                ArrayList wordsForDeletion = new ArrayList();
+                List<Integer> wordsForDeletion = new ArrayList<Integer>();
                 //	If POSBEfore is "start", see if the first word is tagged as POS and the second as POSAfter
                 if (POSBefore.equalsIgnoreCase("start")) {
-                    Word firstWord = (Word) newSentence.getWord(0);
-                    Word secondWord = (Word) newSentence.getWord(1);
+                    Word firstWord = newSentence.getWord(0);
+                    Word secondWord = newSentence.getWord(1);
                     if (firstWord.getTag().equals(POS) && secondWord.getTag().equals(POSAfter)) {
-                        wordsForDeletion.add(new Integer(0));
+                        wordsForDeletion.add(0);
                     }
                 }
                 //	If POSBEfore is "end", see if the second last word is tagged as POSBefore and the last as POS
                 else if (POSAfter.equalsIgnoreCase("end")) {
-                    Word lastWord = (Word) newSentence.getWord(newSentence.size() - 1);
-                    Word secondLastWord = (Word) newSentence.getWord(newSentence.size() - 2);
+                    Word lastWord = newSentence.getWord(newSentence.size() - 1);
+                    Word secondLastWord = newSentence.getWord(newSentence.size() - 2);
                     if (lastWord.getTag().equals(POS) && secondLastWord.getTag().equals(POSBefore)) {
-                        wordsForDeletion.add(new Integer(newSentence.size() - 1));
+                        wordsForDeletion.add(newSentence.size() - 1);
                     }
                 }
                 //find pair sequences tagged as POSBefore, POS, POSAfter - store position of POS
                 else {
                     for (int i = 1; i < newSentence.size() - 1; i++) {
-                        wordAfter = (Word) newSentence.getWord(i + 1);
-                        wordBefore = (Word) newSentence.getWord(i - 1);
-                        word = (Word) newSentence.getWord(i);
+                        wordAfter = newSentence.getWord(i + 1);
+                        wordBefore = newSentence.getWord(i - 1);
+                        word = newSentence.getWord(i);
                         if (word.getTag().equals(POS) && wordAfter.getTag().equals(POSAfter) && wordBefore.getTag().equals(POSBefore)) {
-                            wordsForDeletion.add(new Integer(i));
+                            wordsForDeletion.add(i);
                         }
                     }
                 }
@@ -248,15 +249,15 @@ public class DeletionPOSWhereError extends DeletionPOSError {
                     //randomly pick one of these and delete it from the sentence
                     Random rand = new Random(newSentence.hashCode());
                     int randNo = rand.nextInt(wordsForDeletion.size());
-                    int randPos = ((Integer) wordsForDeletion.get(randNo)).intValue();
-                    wordToGo = (Word) newSentence.getWord(randPos);
+                    int randPos = wordsForDeletion.get(randNo);
+                    wordToGo = newSentence.getWord(randPos);
                     if (randPos + 1 < newSentence.size()) {
-                        wordAfter = (Word) newSentence.getWord(randPos + 1);
+                        wordAfter = newSentence.getWord(randPos + 1);
                     } else {
                         wordAfter = new Word("end");
                     }
                     if (randPos - 1 >= 0) {
-                        wordBefore = (Word) newSentence.getWord(randPos - 1);
+                        wordBefore = newSentence.getWord(randPos - 1);
                     } else {
                         wordBefore = new Word("start");
                     }

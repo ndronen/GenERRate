@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -14,8 +15,8 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
     protected String POS;
 
 
-    public InsertionPOSError(Sentence inputS, ArrayList anExtraWordList, String aPOS) {
-        super(inputS, anExtraWordList);
+    public InsertionPOSError(Sentence inputS, List<String> extraWords, String aPOS) {
+        super(inputS, extraWords);
         POS = aPOS;
         errorInfo = "errortype=\"Insertion" + POS + "Error\"";
     }
@@ -38,7 +39,7 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
     /**
      * Set the value of POS
      *
-     * @param newVar the new value of POS
+     * @param newPOS the new value of POS
      */
     private void setPOS(String newPOS) {
         POS = newPOS;
@@ -50,7 +51,6 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
      * If isSameSentence is true and no word of this particular part-of-speech tag can
      * be found, a CannotCreateErrorException is thrown.
      *
-     * @param inputSentence
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
@@ -69,14 +69,14 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
         if (newSentence.size() > 0) {
             where = random.nextInt(newSentence.size());
         }
-        ArrayList extraPosWordList = new ArrayList();
         if (!isSameSentence) {
+            List<String> extraPosWordList = new ArrayList<String>();
             //find all the words tagged as POS in the extra word list
             String extraWord;
             String extraPos;
             StringTokenizer tokens;
             for (int i = 0; i < extraWordList.size(); i++) {
-                extraWord = (String) extraWordList.get(i);
+                extraWord = extraWordList.get(i);
                 tokens = new StringTokenizer(extraWord, " ");
                 tokens.nextToken();
                 extraPos = tokens.nextToken();
@@ -95,6 +95,8 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
             newSentence.insertWord(new Word(newToken, newTag), where);
             newSentence.setErrorDescription(errorInfo + " details=\"" + newToken + " from file at " + (where + 1) + "\"");
         } else {
+            List<Word> extraPosWordList = new ArrayList<Word>();
+
             //if the sentence isn't tagged, then we can't determine the POS
             if (!newSentence.areTagsIncluded()) {
                 throw new CannotCreateErrorException("The input sentence is not tagged. Cannot create an extra word error of this type.");
@@ -102,7 +104,7 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
             //find all words tagged as POS in the sentence
             Word extraPosWord;
             for (int i = 0; i < newSentence.size(); i++) {
-                extraPosWord = (Word) newSentence.getWord(i);
+                extraPosWord = newSentence.getWord(i);
                 if (extraPosWord.getTag().equals(POS)) {
                     extraPosWordList.add(extraPosWord);
                 }

@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -96,7 +97,7 @@ public class MovePOSError extends MoveError {
      * Set the value of POS
      * The preferred part-of-speech to be moved.
      *
-     * @param newVar the new value of POS
+     * @param newPOS the new value of POS
      */
     private void setPOS(String newPOS) {
         POS = newPOS;
@@ -108,7 +109,6 @@ public class MovePOSError extends MoveError {
      * If there isn't a word with this POS tag, then a CannotCreateErrorException is
      * thrown.
      *
-     * @param inputSentence
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
@@ -120,10 +120,10 @@ public class MovePOSError extends MoveError {
         }
         Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
         //find all words with the preferred part of speech
-        ArrayList movePOSList = new ArrayList();
+        List<Integer> movePOSList = new ArrayList<Integer>();
         for (int i = 0; i < newSentence.size(); i++) {
-            if (((Word) newSentence.getWord(i)).getTag().equals(POS)) {
-                movePOSList.add(new Integer(i));
+            if (newSentence.getWord(i).getTag().equals(POS)) {
+                movePOSList.add(i);
             }
         }
         if (movePOSList.size() < 1) {
@@ -131,8 +131,8 @@ public class MovePOSError extends MoveError {
         }
         Random random = new Random(newSentence.toString().hashCode());
         //randomly choose the word to be moved
-        int moveWordPosition = ((Integer) movePOSList.get(random.nextInt(movePOSList.size()))).intValue();
-        Word moveWord = (Word) newSentence.getWord(moveWordPosition);
+        int moveWordPosition = movePOSList.get(random.nextInt(movePOSList.size()));
+        Word moveWord = newSentence.getWord(moveWordPosition);
 
         //randomly choose where the word is to be moved to
         int moveWordNewPosition = random.nextInt(newSentence.size());
