@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -18,6 +20,8 @@ public class SubstWrongFormError extends SubstError {
     private static final Pattern CONSONANT_CONSONANT_ING = Pattern.compile(".*([" + CONSONANT + "])\\1ing");
     private static final Pattern VOWEL_VOWEL_M = Pattern.compile(".*[aeiou][aeuio]m$");
     private static final Pattern CONSONANT_CONSONANT_ED = Pattern.compile(".*([" + CONSONANT + "])\\1ed");
+    private static final Pattern VOWEL_CONSONANT = Pattern.compile("(.*[" + VOWEL + "])([" + CONSONANT + "])");
+    private static final Pattern CONSONANT_E = Pattern.compile(".*[" + CONSONANT + "]e$");
 
     /**
      * The part-of-speech tag set in effect (WSJ, CLAWS).
@@ -287,22 +291,108 @@ public class SubstWrongFormError extends SubstError {
         }
     }
 
+    protected boolean baseConvertCToCk(String token) {
+        token = token.toLowerCase();
+        return token.endsWith("anic") || token.endsWith("imic");
+    }
+
+    public Word thirdSingToBase(Word word) {
+        final String tag = tagSet.VERB_BASE;
+        final String token = word.getToken();
+
+        if (token.equalsIgnoreCase("is")) {
+            return new Word("be", tag);
+        } else if (token.equalsIgnoreCase("has")) {
+            return new Word("have", tag);
+        } else if (token.endsWith("ies")) {
+            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+        } else if (token.equalsIgnoreCase("begat")) {
+            return new Word(token.substring(0, token.length() - 2) + "et", tag, token);
+        } else if (token.endsWith("yes") || token.endsWith("ys")) {
+            // e.g. eyes -> eye, relays -> relay
+            return new Word(token.substring(0, token.length() - 1), tag);
+        } else if (token.endsWith("es")) {
+            return new Word(token.substring(0, token.length() - 1), tag);
+            //} else if (thirdSingToPresPAddTING(token)) {
+            //    return new Word(token.substring(0, token.length() - 1) + "ting", tag);
+            //} else if (thirdSingToPresPDuplicateFinalConsonant(token, matcher)) {
+//            MatchResult result = matcher.toMatchResult();
+//            String newToken = result.group(1) + result.group(2) + result.group(2) + "ing";
+//            return new Word(newToken, tag, token);
+        } else if (token.length() > 0) {
+            return new Word(token.substring(0, token.length() - 1), tag);
+        } else {
+            return null;
+        }
+
+    }
+
+    protected boolean thirdSingToPresPDuplicateFinalConsonant(String token, Matcher matcher) {
+        return matcher.matches() &&
+                !token.endsWith("in") && // e.g. obtain -> obtaining
+
+                !token.endsWith("eep") && // e.g. keep -> keeping
+                !token.endsWith("oop") && // e.g. stoop -> stooping
+                !token.endsWith("lop") && // e.g. develop -> developing
+
+                !token.endsWith("ear") && // e.g. appear -> appearing
+                !token.endsWith("air") && // e.g. chair -> chairing
+                !token.endsWith("er") && // e.g. offer -> offering
+                !token.endsWith("bor") && // e.g. harbor -> harboring
+                !token.endsWith("our") && // e.g. harbour -> harbouring
+
+                !token.endsWith("at") && // e.g. eat -> eating
+                !token.endsWith("ret") && // e.g. interpret -> interpreting
+                !token.endsWith("et") && // e.g. target -> targeting, market -> marketing
+                !token.endsWith("ait") && // e.g. await -> awaiting
+                !token.endsWith("bit") && // e.g. orbit -> orbiting
+                !token.endsWith("cit") && // e.g. elicit -> eliciting
+                !token.endsWith("dit") && // e.g. edit -> editing
+                !token.endsWith("eit") && // e.g. forfeit -> forfeiting
+                !token.endsWith("fit") && // e.g. benefit -> benefiting
+                !token.endsWith("imit") && // e.g. limit -> limiting
+                !token.endsWith("oit") && // e.g. exploit -> exploiting
+                !token.endsWith("rit") && // e.g. inherit -> inheriting
+                !token.endsWith("isit") && // e.g. revisit -> revisiting
+                !token.endsWith("osit") && // e.g. posit -> positing
+                !token.endsWith("uit") && // e.g. recruit -> recruiting
+                !token.endsWith("ot") && // e.g. pivot -> pivoting
+                !token.endsWith("ut"); // e.g. shout -> shouting
+    }
+
     public Word thirdSingToPresP(Word word) {
-        String tag = tagSet.VERB_PRES_PART;
-        if (word.getToken().equalsIgnoreCase("is")) {
+        final String tag = tagSet.VERB_PRES_PART;
+        final Word base = thirdSingToBase(word);
+        final String token = base.getToken();
+        final Matcher vcMatcher = VOWEL_CONSONANT.matcher(token);
+        final Matcher ceMatcher = CONSONANT_E.matcher(token);
+
+        System.out.println(word.getToken() + " => " + token);
+
+        if (token.equalsIgnoreCase("be")) {
             return new Word("being", tag);
-        } else if (word.getToken().equalsIgnoreCase("has")) {
+        } else if (token.equalsIgnoreCase("have")) {
             return new Word("having", tag);
-        } else if (word.getToken().endsWith("ies")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "ying", tag);
-        } else if (word.getToken().endsWith("es")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2) + "ing", tag);
-        } else if (word.getToken().endsWith("ts") && word.getToken().length() > 1
-                && (ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 3)))
-                && !(word.getToken().substring(word.getToken().length() - 4, word.getToken().length() - 2).equals("ea"))) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ting", tag);
-        } else if (word.getToken().length() > 0) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ing", tag);
+        } else if (token.equalsIgnoreCase("beget")) {
+            return new Word("begetting", tag, token);
+        } else if (token.endsWith("ye") || token.endsWith("y")) {
+            System.out.println("append ing");
+            return new Word(token.substring(0, token.length()) + "ing", tag);
+        } else if (baseConvertCToCk(token)) {
+            return new Word(token + "king", tag, token);
+        } else if (ceMatcher.matches()) {
+            return new Word(token.substring(0, token.length() - 1) + "ing", tag);
+//        } else if (thirdSingToPresPAddTING(token)) {
+//            System.out.println("append ting");
+//            return new Word(token.substring(0, token.length()) + "ting", tag);
+        } else if (thirdSingToPresPDuplicateFinalConsonant(token, vcMatcher)) {
+            System.out.println("append TRAILING CONSONANT ing");
+            MatchResult result = vcMatcher.toMatchResult();
+            String newToken = result.group(1) + result.group(2) + result.group(2) + "ing";
+            return new Word(newToken, tag, token);
+        } else if (token.length() > 0) {
+            System.out.println("DEFAULT: append ing");
+            return new Word(token.substring(0, token.length()) + "ing", tag);
         } else {
             return null;
         }
@@ -702,7 +792,7 @@ public class SubstWrongFormError extends SubstError {
         // token.endsWith("Xing"); //|| // e.g. Xing -> X
     }
 
-    protected boolean convertCkToC(String token) {
+    protected boolean presPToInfConvertCkToC(String token) {
         token = token.toLowerCase();
         return token.endsWith("icking");  // e.g. panicking -> panic
     }
@@ -713,7 +803,7 @@ public class SubstWrongFormError extends SubstError {
 
         if (token.equalsIgnoreCase("being")) {
             return new Word("be", tag);
-        } else if (convertCkToC(token)) {
+        } else if (presPToInfConvertCkToC(token)) {
             return new Word(token.substring(0, token.length() - 4), tag);
         } else if (token.equalsIgnoreCase("lying")) {
             return new Word(token.substring(0, token.length() - 4) + "ie", tag);
