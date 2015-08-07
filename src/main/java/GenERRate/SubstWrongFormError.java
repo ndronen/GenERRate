@@ -619,6 +619,7 @@ public class SubstWrongFormError extends SubstError {
 
                 token.endsWith("caching") || // e.g. caching -> cache
 
+                token.endsWith("biling") || // e.g. snowmobiling -> snowmobile
                 token.equalsIgnoreCase("taling") || // e.g. taling -> tale
                 token.endsWith("mbling")    || // e.g. rumbling -> rumble
                 token.endsWith("abling")    || // e.g. disabling -> disable
@@ -808,10 +809,10 @@ public class SubstWrongFormError extends SubstError {
         } else if (token.equalsIgnoreCase("lying")) {
             return new Word(token.substring(0, token.length() - 4) + "ie", tag);
         } else if (infEndsWithE(token)) {
-            //System.out.println(token + " matches[1] infEndsWithE");
+            System.out.println(token + " matches[1] infEndsWithE");
             return new Word(token.substring(0, token.length() - 3) + "e", tag);
         } else if (CONSONANT_CONSONANT_ING.matcher(token).matches()) {
-            //System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
+            System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
             if (token.endsWith("ssing") || token.endsWith("zzing") || token.endsWith("spelling") ||
                     token.endsWith("stalling") || token.endsWith("selling") || token.endsWith("welling") ||
                     token.endsWith("cotting") || token.endsWith("affing")) {

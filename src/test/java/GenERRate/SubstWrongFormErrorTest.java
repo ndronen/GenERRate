@@ -26,14 +26,66 @@ public class SubstWrongFormErrorTest extends TestCase {
         fail("not implemented");
     }
 
+    // VBP -> VBG
+    public void testNonThirdSingToPresP() throws Exception {
+        fail("not implemented");
+        // Don't have data on this type yet.
+    }
+
+    // VBG -> VBP
+    public void testPresPToNonThirdSing() throws Exception {
+        fail("not implemented");
+    }
+
     // NN -> NNS
     public void testMakeNounPlural() throws Exception {
         fail("not implemented");
     }
 
+    // JJ -> JJR
+    public void testRegularAdjToComparative() throws Exception {
+        fail("not implemented");
+    }
 
+    // JJ -> JJS
+    public void testRegularAdjToSuperlative() throws Exception {
+        fail("not implemented");
+    }
+
+    // JJR -> JJS
+    public void testComparativeAdjToSuperlative() throws Exception {
+        fail("not implemented");
+    }
+
+    // JJS -> JJR
+    public void testSuperlativeAdjToComparative() throws Exception {
+        fail("not implemented");
+    }
+
+    // JJR -> JJ
+    public void testComparativeAdjToRegular() throws Exception {
+        fail("not implemented");
+    }
+
+    // JJS -> JJ
+    public void testSuperlativeAdjToRegular() throws Exception {
+        fail("not implemented");
+    }
+
+    // VBN -> VBG
+    public void testPastPToPresP() throws Exception {
+        fail("not implemented");
+    }
+
+    // VB -> VBZ
+    public void testBaseToThirdSing() throws Exception {
+        fail("not implemented");
+    }
+
+    ///////// END NOT IMPLEMENTED /////////////
+
+    // VBP -> VBZ (verb, non-third person -> verb, third person)
     public void testNonThirdSingularToThirdSingular() throws Exception {
-        // VBP (verb, non-third person) -> VBZ (verb, third person)
         final Map<String, String> expectations = new HashMap<String, String>();
         expectations.put("are", "is");
         expectations.put("am", "is");
@@ -350,11 +402,6 @@ public class SubstWrongFormErrorTest extends TestCase {
         }
     }
 
-    // VBP -> VBG
-    public void testNonThirdSingToPresP() throws Exception {
-        fail("not implemented");
-    }
-
     // VB -> VBG
     public void testBaseToPresP() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
@@ -581,11 +628,6 @@ public class SubstWrongFormErrorTest extends TestCase {
             Word replacement = obj.baseToPresP(word);
             assertEquals(entry.getValue(), replacement.getToken());
         }
-    }
-
-    // VBG -> VBN
-    public void testPresPToPastP() throws Exception {
-        fail("not implemented");
     }
 
     // VBG -> VBZ
@@ -1632,11 +1674,6 @@ public class SubstWrongFormErrorTest extends TestCase {
         }
     }
 
-    // VBG -> VBP
-    public void testPresPToNonThirdSing() throws Exception {
-        fail("not implemented");
-    }
-
     // VBG -> TO
     public void testPresPToInf() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
@@ -1768,7 +1805,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("Ruling", "Rule");
         expectations.put("Scarring", "Scar");
         expectations.put("Scrambling", "Scramble");
-        expectations.put("Seafaring", "Seafar");
+        expectations.put("Seafaring", "Seafare");
         expectations.put("Seating", "Seat");
         expectations.put("Sentencing", "Sentence");
         expectations.put("Settling", "Settle");
@@ -1834,7 +1871,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("analysis/republishing", "analysis/republish");
         expectations.put("anchoring", "anchor");
         expectations.put("announcing", "announce");
-        expectations.put("aping", "ap");
+        expectations.put("aping", "ape");
         expectations.put("appearing", "appear");
         expectations.put("appraising", "appraise");
         expectations.put("approaching", "approach");
@@ -1926,11 +1963,11 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("chronicling", "chronicle");
         expectations.put("circling", "circle");
         expectations.put("circumscribing", "circumscribe");
-        expectations.put("clad", "clad");
+        expectations.put("clad", null);
         expectations.put("clapping", "clap");
         expectations.put("clearing", "clear");
         expectations.put("cloaking", "cloak");
-        expectations.put("cloning", "clon");
+        expectations.put("cloning", "clone");
         expectations.put("closing", "close");
         expectations.put("clubbing", "club");
         expectations.put("clutching", "clutch");
@@ -2065,7 +2102,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("divorcing", "divorce");
         expectations.put("doubling", "double");
         expectations.put("dragging", "drag");
-        expectations.put("draping", "drap");
+        expectations.put("draping", "drape");
         expectations.put("dressing", "dress");
         expectations.put("dribbling", "dribble");
         expectations.put("drinking/gambling", "drinking/gamble");
@@ -2098,7 +2135,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("encouraging", "encourage");
         expectations.put("encroaching", "encroach");
         expectations.put("endeavouring", "endeavour");
-        expectations.put("endorsing", "endors");
+        expectations.put("endorsing", "endorse");
         expectations.put("enforcing", "enforce");
         expectations.put("engaging", "engage");
         expectations.put("engrossing", "engross");
@@ -2147,7 +2184,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("foraging", "forage");
         expectations.put("forbidding", "forbid");
         expectations.put("forcing", "force");
-        expectations.put("forging", "forg");
+        expectations.put("forging", "forge");
         expectations.put("forgoing", "forgo");
         expectations.put("fracking", "frack");
         expectations.put("framing", "frame");
@@ -2269,7 +2306,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("messaging", "message");
         expectations.put("messing", "mess");
         expectations.put("mimicking", "mimic");
-        expectations.put("miming", "mim");
+        expectations.put("miming", "mime");
         expectations.put("minelaying", "minelay");
         expectations.put("minesweeping", "minesweep");
         expectations.put("misattributing", "misattribute");
@@ -2338,9 +2375,9 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("peddling", "peddle");
         expectations.put("pelletizing", "pelletize");
         expectations.put("persecuting", "persecute");
-        expectations.put("persevering", "persever");
+        expectations.put("persevering", "persevere");
         expectations.put("persuading", "persuade");
-        expectations.put("pertayning", "pertayn");
+        expectations.put("pertaining", "pertain");
         expectations.put("pervading", "pervade");
         expectations.put("phoning", "phone");
         expectations.put("photoshopping", "photoshop");
@@ -2397,7 +2434,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("provoking", "provoke");
         expectations.put("publicising", "publicise");
         expectations.put("puddling", "puddle");
-        expectations.put("pulsing", "puls");
+        expectations.put("pulsing", "pulse");
         expectations.put("punching", "punch");
         expectations.put("purging", "purge");
         expectations.put("pursuing", "pursue");
@@ -2476,7 +2513,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("researching", "research");
         expectations.put("resembling", "resemble");
         expectations.put("resettling", "resettle");
-        expectations.put("reshaping", "reshap");
+        expectations.put("reshaping", "reshape");
         expectations.put("residing", "reside");
         expectations.put("resizing", "resize");
         expectations.put("resuming", "resume");
@@ -2528,7 +2565,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("servicing", "service");
         expectations.put("settling", "settle");
         expectations.put("shampooing", "shampoo");
-        expectations.put("shaping", "shap");
+        expectations.put("shaping", "shape");
         expectations.put("sharemilking", "sharemilk");
         expectations.put("shedding", "shed");
         expectations.put("shipping", "ship");
@@ -2589,7 +2626,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("stinging", "sting");
         expectations.put("stirring", "stir");
         expectations.put("stocktaking", "stocktake");
-        expectations.put("stoning", "ston");
+        expectations.put("stoning", "stone");
         expectations.put("stopping", "stop");
         expectations.put("straddling", "straddle");
         expectations.put("strafing", "strafe");
@@ -2644,7 +2681,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("tickling", "tickle");
         expectations.put("tiebreaking", "tiebreak");
         expectations.put("timestamping", "timestamp");
-        expectations.put("timing", "tim");
+        expectations.put("timing", "time");
         expectations.put("tipping", "tip");
         expectations.put("tonguing", "tongue");
         expectations.put("topping", "top");
@@ -2719,9 +2756,13 @@ public class SubstWrongFormErrorTest extends TestCase {
         for (Map.Entry<String, String> entry: expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.ADV);
             Word replacement = obj.presPToInf(word);
+            String token = null;
+            if (replacement != null) {
+                token = replacement.getToken();
+            }
             i += 1;
             System.out.println(i + "/" + expectations.size());
-            assertEquals(entry.getValue(), replacement.getToken());
+            assertEquals(entry.getValue(), token);
         }
 
     }
@@ -4425,46 +4466,6 @@ public class SubstWrongFormErrorTest extends TestCase {
             assertEquals(entry.getValue(), token);
         }
 
-    }
-
-    // VBN -> VBG
-    public void testPastPToPresP() throws Exception {
-        fail("not implemented");
-    }
-
-    // VB -> VBZ
-    public void testBaseToThirdSing() throws Exception {
-        fail("not implemented");
-    }
-
-    // JJ -> JJR
-    public void testRegularAdjToComparative() throws Exception {
-        fail("not implemented");
-    }
-
-    // JJ -> JJS
-    public void testRegularAdjToSuperlative() throws Exception {
-        fail("not implemented");
-    }
-
-    // JJR -> JJS
-    public void testComparativeAdjToSuperlative() throws Exception {
-        fail("not implemented");
-    }
-
-    // JJS -> JJR
-    public void testSuperlativeAdjToComparative() throws Exception {
-        fail("not implemented");
-    }
-
-    // JJR -> JJ
-    public void testComparativeAdjToRegular() throws Exception {
-        fail("not implemented");
-    }
-
-    // JJS -> JJ
-    public void testSuperlativeAdjToRegular() throws Exception {
-        fail("not implemented");
     }
 
     // RB -> JK
