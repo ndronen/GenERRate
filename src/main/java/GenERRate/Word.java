@@ -6,16 +6,25 @@ package GenERRate;
  * @author Jennifer Foster
  */
 public class Word {
-    private String token;
+    private final String token;
     private String tag;
 
-    public Word(String tokenVal, String tagVal) {
-        token = tokenVal;
-        tag = tagVal;
+    public Word(String token, String tag, String original) {
+        this.token = preserveCase(token, original);
+        this.tag = tag;
+    }
+
+    public Word(String token, String tag) {
+        this.token = token;
+        this.tag = tag;
     }
 
     public Word(String tokenVal) {
         token = tokenVal;
+    }
+
+    private String preserveCase(String token, String original) {
+        return original.substring(0, 1) + token.substring(1);
     }
 
     /**
@@ -27,14 +36,6 @@ public class Word {
         return token;
     }
 
-    /**
-     * Set the value of token
-     *
-     * @param newVar the new value of token
-     */
-    public void setToken(String newVar) {
-        token = newVar;
-    }
 
     /**
      * Get the value of tag
@@ -43,15 +44,6 @@ public class Word {
      */
     public String getTag() {
         return tag;
-    }
-
-    /**
-     * Set the value of tag
-     *
-     * @param newVar the new value of tag
-     */
-    public void setTag(String newVar) {
-        tag = newVar;
     }
 
     /**

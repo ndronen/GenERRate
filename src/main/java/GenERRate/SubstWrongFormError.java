@@ -14,17 +14,10 @@ import java.util.regex.Pattern;
 public class SubstWrongFormError extends SubstError {
     private static final String VOWEL = "aeiou";
     private static final String CONSONANT = "bcdfghjklmnpqrstvwxyz";
-
-
-    private static final Pattern PRES_P_TO_INF_CONSONANT_CONSONANT_ING = Pattern.compile(".*([" + CONSONANT + "])\\1ing");
-        /*
-    private static final Pattern PRES_P_TO_INF_VOWEL_VOWEL_CONSONANT_ING = Pattern.compile(
-            ".*[" + VOWEL + "][" + VOWEL + "][" + CONSONANT + "]ing");
-    private static final Pattern PRES_P_TO_INF_MIGHT_END_WITH_E = Pattern.compile(
-            ".*(a[cfgklz]|aseat|uat|bl|but|dur|fer|i[knsz]|kl|nc|gl|om|r[sv]|tat|tl||uis|u[st])ing");
-    */
-
-    private static final Pattern BASE_TO_PRES_P_VOWEL_VOWEL_M = Pattern.compile("[aeiou][aeuio]m$");
+    private static final String PUNCTUATION = "!\"#$%&'()*+,./:;<=>?@[]^_`{|}~";
+    private static final Pattern CONSONANT_CONSONANT_ING = Pattern.compile(".*([" + CONSONANT + "])\\1ing");
+    private static final Pattern VOWEL_VOWEL_M = Pattern.compile(".*[aeiou][aeuio]m$");
+    private static final Pattern CONSONANT_CONSONANT_ED = Pattern.compile(".*([" + CONSONANT + "])\\1ed");
 
     /**
      * The part-of-speech tag set in effect (WSJ, CLAWS).
@@ -39,7 +32,7 @@ public class SubstWrongFormError extends SubstError {
      * The nature of the change to the word. What form the change can take will depend on the part-of-speech for the word.
      * For a verb, for example, this might be the tense or number. For an adjective or an adverb, the change will be between comparative,  superlative or normal forms.
      */
-    private String form;
+    private final String form;
 
     private final List<String> extraWords;
 
@@ -318,6 +311,7 @@ public class SubstWrongFormError extends SubstError {
         }
     }
 
+    /*
     public Word pastpToPresp(Word word) {
         String tag = tagSet.VERB_PRES_PART;
         if (word.getToken().equalsIgnoreCase("been")) {
@@ -343,6 +337,7 @@ public class SubstWrongFormError extends SubstError {
             return null;
         }
     }
+    */
 
     public Word baseToPresP(Word word) {
         String tag = tagSet.VERB_PRES_PART;
@@ -362,7 +357,7 @@ public class SubstWrongFormError extends SubstError {
                 return new Word(token.substring(0, token.length() - 1) + "ing", tag);
             }
         } else if (token.endsWith("am") || token.endsWith("um")) {
-            if (BASE_TO_PRES_P_VOWEL_VOWEL_M.matcher(token).matches()) {
+            if (VOWEL_VOWEL_M.matcher(token).matches()) {
                 // e.g. foam -> foaming
                 return new Word(token + "ing", tag);
             } else {
@@ -488,23 +483,14 @@ public class SubstWrongFormError extends SubstError {
     }
 
     public Word presPToThirdSing(Word word) {
-        String tag = tagSet.VERB_THIRD_SING;
-        if (word.getToken().equalsIgnoreCase("being")) {
-            return new Word("is", tag);
-        } else if (word.getToken().equalsIgnoreCase("having")) {
-            return new Word("has", tag);
-        } else if (word.getToken().endsWith("ching")
-                || word.getToken().endsWith("ssing") || word.getToken().endsWith("oing") || word.getToken().endsWith("dging")
-                || word.getToken().endsWith("oting")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "es", tag);
-        } else if (word.getToken().endsWith("ying")) {
+        final String tag = tagSet.VERB_THIRD_SING;
+        final Word infinitive = presPToInf(word);
 
-            return new Word(word.getToken().substring(0, word.getToken().length() - 4) + "ies", tag);
-        } else if (word.getToken().endsWith("ing")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "s", tag);
-        } else {
-            return null;
+        if (infinitive == null) {
+            return infinitive;
         }
+
+        return baseToThirdSing(infinitive);
     }
 
     public Word presPToNonThirdSing(Word word) {
@@ -526,7 +512,12 @@ public class SubstWrongFormError extends SubstError {
 
     protected boolean infEndsWithE(String token) {
         token = token.toLowerCase();
-        return token.endsWith("ancing")    || // e.g. freelancing -> freelance
+        return token.endsWith("ribing") || // e.g. proscribing -> proscribe
+                token.endsWith("robing") || // e.g. probing -> probe
+                token.endsWith("ubing") || // e.g. tubing -> tube
+
+                token.endsWith("ancing") || // e.g. freelancing -> freelance
+                token.endsWith("eecing") || // e.g. fleecing -> fleece
                 token.endsWith("encing")    || // e.g. referencing -> reference
                 token.endsWith("incing")    || // e.g. convincing -> convince
                 token.endsWith("ouncing")   || // e.g. announcing -> announce
@@ -544,18 +535,24 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("rading")    || // e.g. degrading -> degrade
                 token.endsWith("uading")    || // e.g. persuading -> persuade
                 token.endsWith("vading")    || // e.g. pervading -> pervade
-                token.endsWith("eding")     || // e.g. conceding -> concede
+                token.endsWith("ceding") || // e.g. conceding -> concede
+                token.endsWith("peding") || // e.g. impeding -> impede
+                token.endsWith("seding") || // e.g. superseding -> supersede
                 token.endsWith("iding")     || // e.g. deciding -> decide
                 token.endsWith("oding")     || // e.g. eroding -> erode
+                token.endsWith("luding") || // e.g. including -> include
 
-                token.endsWith("caching")   || // e.g. caching -> cache
+                token.endsWith("caching") || // e.g. caching -> cache
 
+                token.equalsIgnoreCase("taling") || // e.g. taling -> tale
                 token.endsWith("mbling")    || // e.g. rumbling -> rumble
                 token.endsWith("abling")    || // e.g. disabling -> disable
-                token.endsWith("ipling")    || // e.g. triple -> tripling
+                token.endsWith("ipling") || // e.g. tripling -> triple
+                token.endsWith("mpling") || // e.g. trampling -> trample
                 token.endsWith("upling")    || // e.g. coupling -> couple
                 token.endsWith("ppling")    || // e.g. rippling -> ripple
                 token.endsWith("haling")    || // e.g. whaling -> whale
+                token.endsWith("piling") || // e.g. compiling -> compile
                 token.endsWith("cling")     || // e.g. circling -> circle
                 token.endsWith("ggling")    || // e.g. wiggling -> wiggle
                 token.endsWith("ngling")    || // e.g. singling -> single
@@ -564,14 +561,17 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("ckling")    || // e.g. tickling -> tickle
                 token.endsWith("inkling")   || // e.g. wrinkling -> wrinkle
                 token.endsWith("ntling")    || // e.g. dismantling -> dismantle
-                token.endsWith("stling")    || // e.g. wrestling -> wrestle
+                token.endsWith("rtling") || // e.g. wrestling -> wrestle
+                token.endsWith("stling") || // e.g. hurtling -> hurtle
                 token.endsWith("ttling")    || // e.g. settling -> settle
                 token.endsWith("zzling")    || // e.g. embezzling -> embezzle
                 token.endsWith("bling")     || // e.g. troubling -> trouble (overrides next rule)
                 token.endsWith("bbling")    || // e.g. babbling -> babble
                 token.endsWith("dling")     || // e.g. waddling -> waddle
-                token.endsWith("aling")     || // e.g. impaling -> impale
-                token.endsWith("iling")     || // e.g. filing -> file
+                token.endsWith("paling") || // e.g. impaling -> impale
+                token.endsWith("ciling") || // e.g. reconciling -> reconcile
+                token.endsWith("filing") || // e.g. filing -> file
+                token.endsWith("miling") || // e.g. smiling -> smile
                 token.endsWith("soling")    || // e.g. consoling -> console
                 token.endsWith("itling")    || // e.g. titling -> title
                 token.endsWith("istling")   || // e.g. whistling -> whistle
@@ -587,17 +587,24 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("leging")     || // e.g. alleging -> allege
                 token.endsWith("arging")    || // e.g. charging -> charge
                 token.endsWith("erging")    || // e.g. emerging -> emerge
+                token.endsWith("orging") || // e.g. forging -> forge
                 token.endsWith("ulging")    || // e.g. indulging -> indulge
                 token.endsWith("urging")    || // e.g. puring -> purge
                 token.endsWith("uging")     || // e.g. gouging -> gouge
 
+                token.endsWith("rsing") || // e.g. parsing -> parse
                 token.endsWith("casing")    || // e.g. truecasing -> truecase
                 token.endsWith("chasing")   || // e.g. purchasing -> purchase
                 token.endsWith("ising")     || // e.g. reorganising -> reorganise
+                token.endsWith("eansing") || // e.g. cleansing -> cleanse
                 token.endsWith("ensing")    || // e.g. condensing -> condense
+                token.endsWith("earsing") || // e.g. rehearsing -> rehearse
+                token.endsWith("easing") || // e.g. releasing -> release
                 token.endsWith("ersing")    || // e.g. traversing -> traverse
                 token.endsWith("ursing")    || // e.g. coursing -> course
+                token.endsWith("ulsing") || // e.g. pulsing -> pulse
                 token.endsWith("oosing")    || // e.g. choosing -> choose
+                token.endsWith("orsing") || // e.g. endoring -> endorse
                 token.endsWith("using")     || // e.g. reusing -> reuse
                 token.endsWith("posing")    || // e.g. supposing -> suppose
                 token.endsWith("osing")     || // e.g. closing -> close
@@ -605,12 +612,17 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("ysing")     || // e.g. catalysing -> catalyse
 
                 token.endsWith("cating")    || // e.g. reciprocating -> reciprocate
-                token.endsWith("nciting")    || // e.g. inciting -> incite
-                token.endsWith("xciting")    || // e.g. exciting -> excite
+                token.endsWith("dating") || // e.g. predating -> predate
+                token.endsWith("rating") || // e.g. rating -> rate
+                token.endsWith("creating") || // e.g. creating -> create
+                token.endsWith("kating") || // e.g. skating -> skate
+                token.endsWith("nciting") || // e.g. inciting -> incite
+                token.endsWith("xciting") || // e.g. exciting -> excite
                 token.endsWith("ctating")   || // e.g. nictating -> nictate
                 token.endsWith("aseating")  || // e.g. caseating -> caseate
                 token.endsWith("leting")    || // e.g. completing -> complete
                 token.endsWith("peting")    || // e.g. competing -> compete
+                token.endsWith("niting") || // e.g. uniting -> unite
                 token.endsWith("writing")   || // e.g. writing -> write
                 token.endsWith("buting")    || // e.g. attributing -> attribute
                 token.endsWith("iluting")   || // e.g. diluting -> dilute
@@ -618,10 +630,12 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("iating")    || // e.g. obviating -> obviate
                 token.endsWith("nating")    || // e.g. designating -> designate
                 token.endsWith("erating")   || // e.g. operating -> operate
+                token.endsWith("gating") || // e.g. segregating -> segregate
+                token.endsWith("wasting") || // e.g. wasting -> waste
                 token.endsWith("uating")    || // e.g. evaluating -> evaluate
+                token.endsWith("ulating") || // e.g. articulating -> articulate
                 token.endsWith("uting")     || // e.g. diluting -> dilute
 
-                token.endsWith("coming")    || // e.g. unbecoming -> unbecome
                 token.endsWith("afing")     || // e.g. strafing -> strafe
                 token.endsWith("iking")     || // e.g. hiking -> hike
                 token.endsWith("oking")     || // e.g. invoking -> invoke
@@ -629,11 +643,18 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("making")    || // e.g. making -> make
                 token.endsWith("taking")    || // e.g. taking -> take
 
+                token.endsWith("uming") || // e.g. assuming -> assume
+                token.endsWith("coming") || // e.g. unbecoming -> unbecome
                 token.endsWith("aming")     || // e.g. flaming -> flame
+                token.endsWith("iming") || // e.g. chiming -> chime
 
                 token.endsWith("azing")     || // e.g. gazing -> gaze
+                token.endsWith("uiring") || // e.g. enquiring -> enquire
+                token.endsWith("faring") || // e.g. seafaring -> seafare
                 token.endsWith("fering")    || // e.g. interfering -> interfere
+                token.endsWith("rsevering") || // e.g. persevering -> persevere
                 token.endsWith("juring")    || // e.g. injuring -> injure
+                token.endsWith("suring") || // e.g. reinsuring -> reinsure
                 token.endsWith("turing")    || // e.g. manufacturing -> manufacture
                 token.endsWith("ntring")    || // e.g. centring -> centre
                 token.endsWith("arving")    || // e.g. carving -> carve
@@ -641,42 +662,52 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("bining")    || // e.g. combining -> combine
                 token.endsWith("lining")    || // e.g. lining -> line
                 token.endsWith("gining")    || // e.g. imagining -> imagine
+                token.endsWith("hining") || // e.g. shining -> shine
                 token.endsWith("pining")    || // e.g. opining -> opine
                 token.endsWith("fining")    || // e.g. defining -> define
                 token.endsWith("mining")    || // e.g. examining -> examine
                 token.endsWith("twining")   || // e.g. intertwining -> intertwine
+                token.endsWith("vining") || // e.g. divining -> diving
                 token.endsWith("aning")     || // e.g. laning -> lane
                 token.endsWith("vening")    || // e.g. intervening -> intervene
+                token.endsWith("boning") || // e.g. boning -> bones
                 token.endsWith("doning")    || // e.g. condoning -> condone
                 token.endsWith("honing")    || // e.g. phoning -> phone
+                token.endsWith("loning") || // e.g. cloning -> clone
+                token.endsWith("poning") || // e.g. postponing -> postpone
                 token.endsWith("roning")    || // e.g. dethroning -> dethrone
+                token.endsWith("toning") || // e.g. intoning -> intone
                 token.endsWith("zoning")    || // e.g. zoning -> zone
 
                 token.endsWith("aving")     || // e.g. saving -> save
                 token.endsWith("hiding")    || // e.g. chiding -> chide
-                token.endsWith("uming")     || // e.g. assuming -> assume
+
                 token.endsWith("lving")     || // e.g. halving -> halve
 
                 token.endsWith("iving")     || // e.g. receiving -> receive
                 token.endsWith("izing")     || // e.g. dualizing -> dualize
                 token.endsWith("siding")    || // e.g. subsiding -> subside
                 token.endsWith("uiding")    || // e.g. guiding -> guide
-                token.endsWith("ribing")    || // e.g. proscribing -> proscribe
 
                 token.endsWith("iping")     || // e.g. wiping -> wipe
+                token.endsWith("aping") || // e.g. taping -> tape
                 token.endsWith("oping")     || // e.g. eloping -> elope
                 token.endsWith("yping")     || // e.g. genotyping -> genotype
                 token.endsWith("caping")    || // e.g. escaping -> escape
+                token.endsWith("haping") || // e.g. reshaping -> reshapes
 
+                token.endsWith("buing") || // e.g. imbuing -> imbue
                 token.endsWith("cuing")     || // e.g. rescuing -> rescue
                 token.endsWith("duing")     || // e.g. subduing -> subdue
+                token.endsWith("euing") || // e.g. queueing -> queue
                 token.endsWith("guing")     || // e.g. arguing -> argue
                 token.endsWith("aluing")    || // e.g. valuing -> value
                 token.endsWith("inuing")    || // e.g. continuing -> continue
                 token.endsWith("quing")     || // e.g. critiquing -> critique
-                token.endsWith("suing"); //    || // e.g. ensuing -> ensue
+                token.endsWith("suing") || // e.g. ensuing -> ensue
 
-        // token.endsWith("Xing"); //|| // e.g. Xing -> X
+                token.endsWith("owsing") || // e.g. browsing -> browse
+                token.equalsIgnoreCase("owing"); //|| // e.g. owing -> owe
         // token.endsWith("Xing"); //|| // e.g. Xing -> X
         // token.endsWith("Xing"); //|| // e.g. Xing -> X
         // token.endsWith("Xing"); //|| // e.g. Xing -> X
@@ -704,8 +735,8 @@ public class SubstWrongFormError extends SubstError {
         } else if (infEndsWithE(token)) {
             //System.out.println(token + " matches[1] infEndsWithE");
             return new Word(token.substring(0, token.length() - 3) + "e", tag);
-        } else if (PRES_P_TO_INF_CONSONANT_CONSONANT_ING.matcher(token).matches()) {
-            //System.out.println(token + " matches[2] + " + PRES_P_TO_INF_CONSONANT_CONSONANT_ING);
+        } else if (CONSONANT_CONSONANT_ING.matcher(token).matches()) {
+            //System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
             if (token.endsWith("ssing") || token.endsWith("zzing") || token.endsWith("spelling") ||
                     token.endsWith("stalling") || token.endsWith("selling") || token.endsWith("welling") ||
                     token.endsWith("cotting") || token.endsWith("affing")) {
@@ -713,6 +744,8 @@ public class SubstWrongFormError extends SubstError {
             } else {
                 return new Word(token.substring(0, token.length() - 4), tag);
             }
+        } else if (token.endsWith("xying")) {
+            return new Word(token.substring(0, token.length() - 4) + "i", tag);
         } else if (token.endsWith("ing")) {
             return new Word(token.substring(0, token.length() - 3), tag);
         } else {
@@ -720,104 +753,538 @@ public class SubstWrongFormError extends SubstError {
         }
     }
 
-    public Word pastPToThirdSing(Word word) {
-        String tag = tagSet.VERB_THIRD_SING;
-        if (word.getToken().equalsIgnoreCase("been")) {
-            return new Word("is", tag);
-        } else if (word.getToken().equalsIgnoreCase("had")) {
-            return new Word("has", tag);
-        } else if (word.getToken().equalsIgnoreCase("done")) {
-            return new Word("does", tag);
-        } else if (word.getToken().equalsIgnoreCase("gone")) {
-            return new Word("goes", tag);
-        } else if (word.getToken().equalsIgnoreCase("taken")) {
-            return new Word("takes", tag);
-        } else if (word.getToken().equalsIgnoreCase("left")) {
-            return new Word("leaves", tag);
-        } else if (word.getToken().length() > 5 && ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 4))) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "s", tag);
-        } else if
-                (word.getToken().endsWith("ied")
-                        || word.getToken().endsWith("ched")
-                        || word.getToken().endsWith("sed")
-                        || word.getToken().endsWith("ated")
-                        || word.getToken().endsWith("lved")
-                        || word.getToken().endsWith("nced")
-                ) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "s", tag);
-        } else if (word.getToken().length() > 1) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2) + "s", tag);
+    protected boolean removeD(String token) {
+        token = token.toLowerCase();
+
+        return token.endsWith("aced") || // e.g. faced -> face
+                token.endsWith("cenced") || // e.g. licenced -> licence
+                token.endsWith("rced") || // e.g. sourced -> source
+                token.endsWith("uced") || // e.g. introduced -> introduce
+                token.endsWith("llided") || // e.g. collided -> collide
+                token.endsWith("brided") || // e.g. debrided -> debride
+                token.endsWith("graded") || // e.g. down-graded -> down-grade
+                token.equals("ceded") ||
+                token.endsWith("jaded") || // e.g. jaded -> jade
+                token.endsWith("coded") || // e.g. coded -> code
+                token.endsWith("emceed") || // e.g. emceed -> emcee
+                token.endsWith("reed") || // e.g. freed -> free
+                token.endsWith("teed") || // e.g. guaranteed -> guarantee
+                token.equals("aged") ||
+                token.endsWith("riaged") || // e.g. triaged -> triage
+                token.endsWith("naged") || // e.g. managed -> manage
+                token.endsWith("paged") || // e.g. paged -> page
+                token.endsWith("dged") || // e.g. bridged -> bridge
+                token.endsWith("lged") || // e.g. indulged -> indulge
+                token.endsWith("nged") || // e.g. changed -> change
+                token.endsWith("rged") || // e.g. emerged -> emerge
+                token.endsWith("athed") || // e.g. breathed -> breathe
+                token.endsWith("ythed") || // e.g. scythed -> scythe
+                token.endsWith("faked") || // e.g. faked -> fake
+                token.endsWith("raked") || // e.g. raked -> rake
+                token.endsWith("iked") || // e.g. liked -> like
+                token.endsWith("caled") || // e.g. down-scales -> down-scale
+                token.endsWith("bled") || // e.g. assembled -> assemble, enabled -> enable
+                token.endsWith("ogled") || // e.g. ogled -> ogle, googled -> google
+                token.endsWith("aroled") || // e.g. paroled -> parole
+                token.endsWith("tled") || // e.g. titled -> title
+                token.endsWith("duled") || // e.g. scheduled -> schedule
+                token.endsWith("timed") || // e.g. timed -> time
+                token.endsWith("named") || // e.g. codenamed -> codename
+                token.endsWith("fined") || // e.g. defined -> define
+                token.endsWith("lined") || // e.g. lined -> line
+                token.endsWith("mined") || // e.g. examined -> examine
+                token.endsWith("boned") || // e.g. boned -> bone
+                token.endsWith("poned") || // e.g. postponed -> postpone
+                token.equals("zoned") || // e.g. zoned -> zone
+                token.equals("re-zoned") || // e.g. zoned -> zone
+                token.endsWith("gined") || // e.g. imagined -> imagine
+                token.endsWith("tuned") || // e.g. tuned -> tune
+                token.endsWith("iped") || // e.g. wiped -> wipe
+                token.endsWith("yped") || // e.g. typed -> type
+                token.endsWith("roped") || // e.g. roped -> rope
+                token.endsWith("dared") || // e.g. dared -> dare
+                token.endsWith("cred") || // e.g. massacred -> massacre
+                token.endsWith("bored") || // e.g. bored -> bore
+                token.endsWith("hired") || // e.g. hired -> hire
+                token.endsWith("uired") || // e.g. enquired -> enquire
+                token.endsWith("tred") || // e.g. centred -> centre
+                token.endsWith("cured") || // e.g. cured -> cure
+                token.endsWith("gured") || // e.g. reconfigured -> reconfigure
+                token.endsWith("jured") || // e.g. injured -> injure
+                token.equals("lured") || // e.g. lured -> lure
+                token.endsWith("leased") || // e.g. released -> release
+                token.endsWith("ised") || // e.g. criminalised -> criminalise
+                token.endsWith("nsed") || // e.g. licensed -> license
+                token.endsWith("osed") || // e.g. opposed -> oppose
+                token.equals("owed") || // e.g. owed -> owe
+                token.endsWith("ursed") || // e.g. accursed -> accurse
+                token.endsWith("ysed") || // e.g. catalysed -> catalyse
+                token.endsWith("rrotted") || // e.g. garrotted -> garrottes
+                token.endsWith("cated") || // e.g. located -> locate
+                token.endsWith("dated") || // e.g. consolidated -> consolidate
+                token.endsWith("created") || // e.g. created -> create
+                token.endsWith("gated") || // e.g. relegated -> relegate
+                token.endsWith("iated") || // e.g. affiliated -> affiliate
+                token.endsWith("ulated") || // e.g. regulated -> regulate
+                token.endsWith("ylated") || // e.g. methylated -> methylate
+                token.endsWith("nated") || // e.g. hyphenated -> hyphenate
+                token.endsWith("mated") || // e.g. decimated -> decimate, desquamated -> desquamate
+                token.endsWith("rated") || // e.g. frustrated -> frustrate
+                token.endsWith("tated") || // e.g. reinstated -> reinstate
+                token.endsWith("vated") || // e.g. activated -> activate
+                token.equals("meted") || // e.g. meted -> mete
+                token.equals("cited") || // e.g. cited -> cite
+                token.endsWith("uetted") || // e.g. silhouetted -> silhouette
+                token.endsWith("zetted") || // e.g. gazetted -> gazette
+                token.endsWith("ibuted") || // e.g. misattributed -> misattribute
+                token.endsWith("ocuted") || // e.g. electrocuted -> electrocute
+                token.endsWith("muted") || // e.g. commuted -> commute
+                token.endsWith("moted") || // e.g. promoted -> promote
+                token.endsWith("noted") || // e.g. denoted -> denote
+                token.endsWith("voted") || // e.g. voted -> vote
+                token.equals("routed") || // e.g. routed -> route
+                token.equals("re-routed") || // e.g. routed -> route
+                token.endsWith("sputed") || // e.g. disputed -> dispute
+                token.endsWith("bued") || // e.g. imbued -> imbue
+                token.endsWith("cued") || // e.g. rescued -> rescue
+                token.endsWith("dued") || // e.g. subdued -> subdue
+                token.endsWith("ueued") || // e.g. queued -> queue
+                token.endsWith("gued") || // e.g. prologued -> prologue
+                token.endsWith("lued") || // e.g. glued -> glue
+                token.endsWith("nued") || // e.g. discontinued -> discontinue
+                token.endsWith("qued") || // e.g. piqued -> pique
+                token.endsWith("crued") || // e.g. accrued -> accrue
+                token.endsWith("strued") || // e.g. construed -> construe
+                token.endsWith("sued") || // e.g. sued -> sue, issued -> issue
+                token.endsWith("aved") || // e.g. saved -> save
+                token.endsWith("ived") || // e.g. outlived -> outlive
+                token.endsWith("oved") || // e.g. loved -> love
+                token.endsWith("rved") || // e.g. reserved -> reserve
+                token.endsWith("xed") || // e.g. axed -> axe
+                token.endsWith("dyed") || // e.g. dyed -> dye
+                token.endsWith("dazed") || // e.g. dazed -> daze
+                token.endsWith("razed") || // e.g. crazed -> craze
+                token.endsWith("ized") || // e.g. criminalized -> criminalize
+                token.endsWith("tzed") || // e.g. waltzed -> waltz
+                token.endsWith("yzed"); // || // e.g. criminalized -> criminalize
+    }
+
+    protected boolean removeEDAndConsonant(String token) {
+        return CONSONANT_CONSONANT_ED.matcher(token).matches() &&
+                !token.toLowerCase().endsWith("balled") && // e.g. blackballed
+                !token.toLowerCase().endsWith("called") && // e.g. called
+                !token.toLowerCase().endsWith("dalled") && // e.g. medalled
+                !token.toLowerCase().endsWith("talled") && // e.g. installed
+                !token.toLowerCase().endsWith("walled") && // e.g. walled
+                !token.toLowerCase().endsWith("felled") && // e.g. felled
+                !token.toLowerCase().endsWith("helled") && // e.g. shelled
+                !token.toLowerCase().endsWith("melled") && // e.g. smelled
+                !token.toLowerCase().endsWith("spelled") && // e.g. spelled
+                !token.toLowerCase().endsWith("swelled") && // e.g. spelled
+                !token.toLowerCase().endsWith("quelled") && // e.g. quelled
+                !token.toLowerCase().endsWith("yelled") && // e.g. yelled
+                !token.toLowerCase().endsWith("billed") && // e.g. billed
+                !token.toLowerCase().endsWith("filled") && // e.g. filled
+                !token.toLowerCase().endsWith("chilled") && // e.g. chilled
+                !token.toLowerCase().endsWith("drilled") && // e.g. drilled
+                !token.toLowerCase().endsWith("killed") && // e.g. killed
+                !token.toLowerCase().endsWith("milled") && // e.g. milled
+                !token.toLowerCase().endsWith("stilled") && // e.g. stilled
+                !token.toLowerCase().endsWith("spilled") && // e.g. stilled
+                !token.toLowerCase().endsWith("tilled") && // e.g. tilled
+                !token.toLowerCase().endsWith("thrilled") && // e.g. thrilled
+                !token.toLowerCase().endsWith("willed") && // e.g. willed
+                !token.toLowerCase().endsWith("polled") && // e.g. polled
+                !token.toLowerCase().equals("rolled") && // e.g. rolled
+                !token.toLowerCase().equals("tolled") && // e.g. rolled
+                !token.toLowerCase().equals("trolled") && // e.g. trolled
+                !token.toLowerCase().endsWith("ulled") && // e.g. culled
+                !token.toLowerCase().endsWith("ossed") && // e.g. crossed
+                !token.toLowerCase().endsWith("uzzed"); // e.g. buzzed
+    }
+
+    protected boolean replaceIEDWithY(String token) {
+        return token.endsWith("ied");
+    }
+
+    protected boolean pastPToBaseNoChange(String token) {
+        token = token.toLowerCase();
+        return token.endsWith("cast") ||
+                token.endsWith("spread") ||
+                token.endsWith("become") ||
+                token.endsWith("overcome") ||
+                token.equals("set") ||
+                token.equals("upset") ||
+                token.equals("wed") ||
+                token.equals("shed") ||
+                token.equals("split") ||
+                token.equals("rerun") ||
+                token.equals("fit") ||
+                token.equals("clad") ||
+                token.equals("ironclad") ||
+                token.equals("read") ||
+                token.equals("misread") ||
+                token.equals("offset") ||
+                token.equals("hit") ||
+                token.equals("quit") ||
+                token.equals("bet") ||
+                token.equals("bid") ||
+                token.equals("rebid") ||
+                token.equals("beset") ||
+                token.equals("thrust") ||
+                token.equals("inset") ||
+                token.equals("beat") ||
+                token.equals("overrun") ||
+                token.equals("hurt") ||
+                token.equals("knit") ||
+                token.equals("shut");
+    }
+
+    protected boolean containsPunctuation(String token) {
+        for (int i = 0; i < PUNCTUATION.length(); i++) {
+            if (token.contains(PUNCTUATION.substring(i, i + 1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isBlackListedPastPToBase(String token) {
+        token = token.toLowerCase();
+        return token.equals("opinionated") ||
+                token.endsWith("wrought") ||
+                token.equals("sled") ||
+                token.equals("bore") || // bore is past tense, not past participle
+                token.equals("bed") ||
+                token.equals("coalbed") ||
+                token.equals("deathbed") ||
+                token.equals("trackbed") ||
+                token.equals("need") ||
+                token.equals("seabed") ||
+                token.equals("testbed") ||
+                token.equals("riverbed") ||
+                token.equals("linseed") ||
+                token.equals("sinced") ||
+                containsPunctuation(token);
+    }
+
+    public Word pastPToBase(Word word) {
+        final String tag = tagSet.VERB_BASE;
+        final String token = word.getToken();
+
+        if (isBlackListedPastPToBase(token)) {
+            return null;
+        } else if (pastPToBaseNoChange(token)) {
+            return new Word(token, tag);
+        } else if (token.equalsIgnoreCase("been")) {
+            return new Word("be", tag, token);
+        } else if (token.equalsIgnoreCase("had")) {
+            return new Word("have", tag, token);
+        } else if (token.endsWith("done")) {
+            return new Word(token.substring(0, token.length() - 2), tag, token);
+        } else if (token.endsWith("gone")) {
+            return new Word(token.substring(0, token.length() - 2), tag, token);
+        } else if (token.equalsIgnoreCase("taken")) {
+            return new Word("take", tag, token);
+        } else if (token.equalsIgnoreCase("left")) {
+            return new Word("leave", tag, token);
+        } else if (token.toLowerCase().equals("got") || token.toLowerCase().endsWith("forgot")) {
+            return new Word(token.substring(0, token.length() - 3) + "get", tag, token);
+        } else if (token.toLowerCase().endsWith("gotten")) {
+            // e.g. gotten -> get, forgotten -> forget
+            return new Word(token.substring(0, token.length() - 5) + "et", tag, token);
+        } else if (token.toLowerCase().endsWith("told") || token.toLowerCase().endsWith("sold")) {
+            return new Word(token.substring(0, token.length() - 3) + "ell", tag, token);
+        } else if (token.equalsIgnoreCase("took")) {
+            return new Word("take", tag, token);
+        } else if (token.endsWith("sat")) {
+            return new Word(token.substring(0, token.length() - 2) + "it", tag, token);
+        } else if (token.endsWith("saw")) {
+            return new Word(token.substring(0, token.length() - 2) + "ee", tag, token);
+        } else if (token.toLowerCase().endsWith("sewn") || token.toLowerCase().endsWith("hewn") ||
+                token.toLowerCase().endsWith("strewn")) {
+            return new Word(token.substring(0, token.length() - 1), tag);
+        } else if (token.equalsIgnoreCase("fed") || token.equalsIgnoreCase("overfed") ||
+                token.equalsIgnoreCase("bred") || token.equalsIgnoreCase("overbred")) {
+            return new Word(token.substring(0, token.length() - 1) + "ed", tag, token);
+        } else if (token.endsWith("torn")) {
+            return new Word("tear", tag, token);
+        } else if (token.equalsIgnoreCase("led") || token.equalsIgnoreCase("misled") || token.equalsIgnoreCase("co-led")) {
+            return new Word(token.substring(0, token.length() - 1) + "ad", tag, token);
+        } else if (token.endsWith("lit")) {
+            return new Word(token.substring(0, token.length() - 2) + "ight", tag, token);
+        } else if (token.endsWith("paid")) {
+            return new Word(token.substring(0, token.length() - 2) + "y", tag, token);
+        } else if (token.toLowerCase().endsWith("felt")) {
+            return new Word(token.substring(0, token.length() - 3) + "eel", tag);
+        } else if (token.toLowerCase().endsWith("dealt")) {
+            return new Word(token.substring(0, token.length() - 4) + "eal", tag);
+        } else if (token.toLowerCase().endsWith("built")) {
+            return new Word(token.substring(0, token.length() - 1) + "d", tag);
+        } else if (token.toLowerCase().endsWith("spelt") || token.toLowerCase().endsWith("spilt")) {
+            return new Word(token.substring(0, token.length() - 1) + "l", tag);
+        } else if (token.toLowerCase().endsWith("held")) {
+            return new Word(token.substring(0, token.length() - 3) + "old", tag);
+        } else if (token.toLowerCase().endsWith("rose")) {
+            return new Word(token.substring(0, token.length() - 3) + "ise", tag);
+        } else if (token.toLowerCase().endsWith("shrunk")) {
+            return new Word(token.substring(0, token.length() - 3) + "ink", tag, token);
+        } else if (token.toLowerCase().endsWith("stood")) {
+            return new Word(token.substring(0, token.length() - 3) + "and", tag, token);
+        } else if (token.toLowerCase().endsWith("slid")) {
+            return new Word(token + "e", tag, token);
+        } else if (token.toLowerCase().endsWith("broken")) {
+            return new Word(token.substring(0, token.length() - 4) + "eak", tag, token);
+        } else if (token.toLowerCase().endsWith("frozen")) {
+            return new Word(token.substring(0, token.length() - 4) + "eeze", tag, token);
+        } else if (token.toLowerCase().endsWith("chosen")) {
+            return new Word(token.substring(0, token.length() - 4) + "oose", tag, token);
+        } else if (token.toLowerCase().endsWith("woven")) {
+            return new Word(token.substring(0, token.length() - 4) + "eave", tag, token);
+        } else if (token.toLowerCase().endsWith("hidden")) {
+            return new Word(token.substring(0, token.length() - 3) + "e", tag, token);
+        } else if (token.toLowerCase().endsWith("bidden")) {
+            // e.g. forbidden, bidden
+            return new Word(token.substring(0, token.length() - 3), tag, token);
+        } else if (token.toLowerCase().endsWith("ridden")) {
+            return new Word(token.substring(0, token.length() - 3) + "e", tag, token);
+        } else if (token.equalsIgnoreCase("risen") || token.equalsIgnoreCase("arisen")) {
+            return new Word(token.substring(0, token.length() - 1), tag, token);
+        } else if (token.toLowerCase().endsWith("given") || token.toLowerCase().endsWith("riven")) {
+            return new Word(token.substring(0, token.length() - 1), tag, token);
+        } else if (token.toLowerCase().endsWith("written") || token.toLowerCase().endsWith("bitten") ||
+                token.toLowerCase().endsWith("smitten")) {
+            return new Word(token.substring(0, token.length() - 3) + "e", tag, token);
+        } else if (token.toLowerCase().endsWith("beaten")) {
+            return new Word(token.substring(0, token.length() - 2), tag, token);
+        } else if (token.toLowerCase().endsWith("shot")) {
+            return new Word(token.substring(0, token.length() - 2) + "oot", tag, token);
+        } else if (token.toLowerCase().endsWith("thought")) {
+            return new Word(token.substring(0, token.length() - 5) + "ink", tag, token);
+        } else if (token.toLowerCase().endsWith("fought")) {
+            return new Word(token.substring(0, token.length() - 5) + "ight", tag, token);
+        } else if (token.toLowerCase().endsWith("taught")) {
+            return new Word(token.substring(0, token.length() - 5) + "each", tag, token);
+        } else if (token.toLowerCase().endsWith("caught")) {
+            return new Word(token.substring(0, token.length() - 5) + "atch", tag, token);
+        } else if (token.toLowerCase().endsWith("flung") || token.toLowerCase().endsWith("stung")) {
+            return new Word(token.substring(0, token.length() - 3) + "ing", tag, token);
+        } else if (token.toLowerCase().endsWith("sent") || token.toLowerCase().endsWith("lent") ||
+                token.toLowerCase().endsWith("spent")) {
+            return new Word(token.substring(0, token.length() - 3) + "end", tag, token);
+        } else if (token.toLowerCase().endsWith("panicked") || token.toLowerCase().endsWith("mimicked") ||
+                token.toLowerCase().endsWith("afficked")) {
+            return new Word(token.substring(0, token.length() - 3), tag, token);
+        } else if (token.toLowerCase().endsWith("lain") || token.toLowerCase().endsWith("laid") || token.toLowerCase().endsWith("said")) {
+            return new Word(token.substring(0, token.length() - 3) + "ay", tag, token);
+        } else if (token.toLowerCase().endsWith("rung")) {
+            return new Word(token.substring(0, token.length() - 3) + "ing", tag, token);
+        } else if (token.toLowerCase().endsWith("sang") || token.toLowerCase().endsWith("sung")) {
+            return new Word(token.substring(0, token.length() - 3) + "ing", tag, token);
+        } else if (token.toLowerCase().endsWith("hung")) {
+            return new Word(token.substring(0, token.length() - 3) + "ang", tag, token);
+        } else if (token.toLowerCase().endsWith("sunk")) {
+            return new Word(token.substring(0, token.length() - 3) + "ink", tag, token);
+        } else if (token.toLowerCase().endsWith("borne")) {
+            return new Word(token.substring(0, token.length() - 4) + "ear", tag, token);
+        } else if (token.toLowerCase().endsWith("drawn") || token.endsWith("grown") ||
+                token.toLowerCase().endsWith("seen") ||
+                token.toLowerCase().endsWith("thrown") || token.toLowerCase().endsWith("blown")) {
+            return new Word(token.substring(0, token.length() - 1), tag, token);
+        } else if (token.toLowerCase().endsWith("flown")) {
+            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+        } else if (token.toLowerCase().endsWith("sworn")) {
+            return new Word(token.substring(0, token.length() - 3) + "ear", tag, token);
+        } else if (token.toLowerCase().endsWith("heard")) {
+            return new Word(token.substring(0, token.length() - 4) + "ear", tag, token);
+        } else if (token.toLowerCase().endsWith("lost")) {
+            return new Word(token.substring(0, token.length() - 1) + "e", tag, token);
+        } else if (token.toLowerCase().endsWith("slept") || token.toLowerCase().endsWith("swept") ||
+                token.toLowerCase().endsWith("kept")) {
+            return new Word(token.substring(0, token.length() - 2) + "ep", tag, token);
+        } else if (token.toLowerCase().endsWith("bound") || token.equalsIgnoreCase("wound")) {
+            return new Word(token.substring(0, token.length() - 4) + "ind", tag, token);
+        } else if (token.toLowerCase().endsWith("stuck")) {
+            return new Word(token.substring(0, token.length() - 4) + "tick", tag, token);
+        } else if (token.toLowerCase().endsWith("struck")) {
+            return new Word(token.substring(0, token.length() - 3) + "ike", tag, token);
+        } else if (token.toLowerCase().endsWith("stricken")) {
+            return new Word(token.substring(0, token.length() - 5) + "ike", tag, token);
+        } else if (token.toLowerCase().endsWith("spun")) {
+            return new Word(token.substring(0, token.length() - 4) + "spin", tag, token);
+        } else if (token.equalsIgnoreCase("dug")) {
+            return new Word(token.substring(0, token.length() - 2) + "ig", tag, token);
+        } else if (token.toLowerCase().endsWith("woken")) {
+            return new Word(token.substring(0, token.length() - 4) + "ake", tag, token);
+        } else if (token.equalsIgnoreCase("fled")) {
+            return new Word(token.substring(0, token.length() - 1) + "e", tag, token);
+        } else if (removeD(token)) {
+            return new Word(token.substring(0, token.length() - 1), tag);
+        } else if (removeEDAndConsonant(token)) {
+            return new Word(token.substring(0, token.length() - 3), tag);
+        } else if (replaceIEDWithY(token)) {
+            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+        } else if (token.endsWith("ed")) {
+            return new Word(token.substring(0, token.length() - 2), tag);
         } else {
+            System.out.println("Probably not a past particple " + token);
             return null;
         }
     }
 
+    protected boolean replaceYWithIES(String token) {
+        return token.endsWith("y") &&
+                !token.endsWith("oy") &&
+                !token.endsWith("ay") &&
+                !token.endsWith("ey");
+    }
+
+    protected boolean appendSES(String token) {
+        token = token.toLowerCase();
+        return token.equals("bus");
+    }
+
+    protected boolean appendZES(String token) {
+        token = token.toLowerCase();
+        return token.equals("quiz");
+    }
+
+    public Word pastPToThirdSing(Word word) {
+        final String tag = tagSet.VERB_THIRD_SING;
+        final Word replacement = pastPToBase(word);
+
+        if (replacement == null) {
+            return null;
+        }
+
+        final String token = replacement.getToken();
+
+        System.out.println(word.getToken() + " => " + token);
+
+        if (token.equalsIgnoreCase("be")) {
+            return new Word("is", tag, token);
+        } else if (token.equalsIgnoreCase("have")) {
+            return new Word("has", tag, token);
+        } else if (token.endsWith("do")) {
+            return new Word(token + "es", tag);
+        } else if (token.endsWith("go")) {
+            return new Word(token + "es", tag);
+        } else if (token.equalsIgnoreCase("take")) {
+            return new Word("takes", tag, token);
+        } else if (token.equalsIgnoreCase("leave")) {
+            return new Word("leaves", tag, token);
+        } else if (replaceYWithIES(token)) {
+            return new Word(token.substring(0, token.length() - 1) + "ies", tag, token);
+        } else if (token.endsWith("ch") || token.endsWith("sh") || token.endsWith("ss") ||
+                token.endsWith("es") || token.endsWith("cus") ||
+                token.endsWith("zz") ||
+                token.endsWith("ucco") /* e.g. stucco */) {
+            return new Word(token + "es", tag, token);
+        } else if (appendSES(token)) {
+            return new Word(token + "ses", tag, token);
+        } else if (appendZES(token)) {
+            return new Word(token + "zes", tag, token);
+        } else {
+            return new Word(token + "s", tag);
+        }
+        /*
+        }
+        else if (token.length() > 5 && ErrorUtilities.isVowel(token.charAt(word.getToken().length() - 4))) {
+            return new Word(token.substring(0, token.length() - 1) + "s", tag);
+        } else if
+                (token.endsWith("ied")
+                        || token.endsWith("ched")
+                        || token.endsWith("sed")
+                        || token.endsWith("ated")
+                        || token.endsWith("lved")
+                        || token.endsWith("nced")
+                ) {
+            return new Word(token.substring(0, token.length() - 1) + "s", tag);
+
+        } else if (token.length() > 1) {
+            return new Word(token.substring(0, token.length() - 2) + "s", tag);
+
+        } else {
+            return null;
+        }
+                */
+    }
+
     public Word pastPToPresP(Word word) {
-        String tag = tagSet.VERB_PRES_PART;
-        if (word.getToken().equalsIgnoreCase("been")) {
+        final String tag = tagSet.VERB_PRES_PART;
+        final String token = word.getToken();
+
+        if (token.equalsIgnoreCase("been")) {
             return new Word("being", tag);
-        } else if (word.getToken().equalsIgnoreCase("had")) {
+        } else if (token.equalsIgnoreCase("had")) {
             return new Word("having", tag);
-        } else if (word.getToken().equalsIgnoreCase("done")) {
+        } else if (token.equalsIgnoreCase("done")) {
             return new Word("doing", tag);
-        } else if (word.getToken().equalsIgnoreCase("gone")) {
+        } else if (token.equalsIgnoreCase("gone")) {
             return new Word("going", tag);
-        } else if (word.getToken().equalsIgnoreCase("taken")) {
+        } else if (token.equalsIgnoreCase("taken")) {
             return new Word("taking", tag);
-        } else if (word.getToken().equalsIgnoreCase("left")) {
+        } else if (token.equalsIgnoreCase("left")) {
             return new Word("leaving", tag);
-        } else if (word.getToken().endsWith("ied")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "ying", tag);
-        } else if (word.getToken().length() > 2) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2) + "ing", tag);
+        } else if (token.endsWith("ied")) {
+            return new Word(token.substring(0, token.length() - 3) + "ying", tag);
+        } else if (token.length() > 2) {
+            return new Word(token.substring(0, token.length() - 2) + "ing", tag);
         } else {
             return null;
         }
     }
 
     public Word baseToThirdSing(Word word) {
-        String tag = tagSet.VERB_THIRD_SING;
-        if (word.getToken().equalsIgnoreCase("be")) {
+        final String tag = tagSet.VERB_THIRD_SING;
+        final String token = word.getToken();
+
+        if (token.equalsIgnoreCase("be")) {
             return new Word("is", tag);
-        } else if (word.getToken().equalsIgnoreCase("have")) {
+        } else if (token.equalsIgnoreCase("have")) {
             return new Word("has", tag);
-        } else if (word.getToken().endsWith("y")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ies", tag);
-        } else if (word.getToken().endsWith("ch") || word.getToken().endsWith("ss") || word.getToken().endsWith("o")) {
-            return new Word(word.getToken() + "es", tag);
+        } else if (token.endsWith("sh") || token.endsWith("ch") || token.endsWith("ss") ||
+                token.endsWith("sso") ||
+                token.endsWith("xi") || token.endsWith("x")) {
+            return new Word(token + "es", tag);
         } else {
-            return new Word(word.getToken() + "s", tag);
+            return new Word(token + "s", tag);
         }
     }
 
     public Word regularAdjToComparative(Word word) {
-        String tag = tagSet.ADJ_COMP;
-        if (word.getToken().endsWith("y")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ier", tag);
-        } else if (word.getToken().endsWith("t") && ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 2))) {
-            return new Word(word.getToken() + "ter", tag);
-        } else if (word.getToken().endsWith("e")) {
-            return new Word(word.getToken() + "r", tag);
+        final String tag = tagSet.ADJ_COMP;
+        final String token = word.getToken();
+
+        if (token.endsWith("y")) {
+            return new Word(token.substring(0, token.length() - 1) + "ier", tag);
+        } else if (token.endsWith("t") && ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
+            return new Word(token + "ter", tag);
+        } else if (token.endsWith("e")) {
+            return new Word(token + "r", tag);
         } else {
-            return new Word(word.getToken() + "er", tag);
+            return new Word(token + "er", tag);
         }
     }
 
     public Word regularAdjToSuperlative(Word word) {
-        String tag = tagSet.ADJ_SUP;
-        if (word.getToken().endsWith("y")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "iest", tag);
-        } else if (word.getToken().endsWith("t") && ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 2))) {
-            return new Word(word.getToken() + "test", tag);
-        } else if (word.getToken().endsWith("e")) {
-            return new Word(word.getToken() + "st", tag);
+        final String tag = tagSet.ADJ_SUP;
+        final String token = word.getToken();
+
+        if (token.endsWith("y")) {
+            return new Word(token.substring(0, token.length() - 1) + "iest", tag);
+        } else if (token.endsWith("t") && ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
+            return new Word(token + "test", tag);
+        } else if (token.endsWith("e")) {
+            return new Word(token + "st", tag);
         } else {
-            return new Word(word.getToken() + "est", tag);
+            return new Word(token + "est", tag);
         }
     }
 
     public Word comparativeAdjToSuperlative(Word word) {
         String tag = tagSet.ADJ_SUP;
+
         if (word.getToken().length() > 0) {
             return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "st", tag);
         } else {
