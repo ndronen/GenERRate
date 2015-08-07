@@ -367,7 +367,7 @@ public class SubstWrongFormError extends SubstError {
         final Matcher vcMatcher = VOWEL_CONSONANT.matcher(token);
         final Matcher ceMatcher = CONSONANT_E.matcher(token);
 
-        System.out.println(word.getToken() + " => " + token);
+        // System.out.println(word.getToken() + " => " + token);
 
         if (token.equalsIgnoreCase("be")) {
             return new Word("being", tag);
@@ -376,7 +376,7 @@ public class SubstWrongFormError extends SubstError {
         } else if (token.equalsIgnoreCase("beget")) {
             return new Word("begetting", tag, token);
         } else if (token.endsWith("ye") || token.endsWith("y")) {
-            System.out.println("append ing");
+            //System.out.println("append ing");
             return new Word(token.substring(0, token.length()) + "ing", tag);
         } else if (baseConvertCToCk(token)) {
             return new Word(token + "king", tag, token);
@@ -386,12 +386,12 @@ public class SubstWrongFormError extends SubstError {
 //            System.out.println("append ting");
 //            return new Word(token.substring(0, token.length()) + "ting", tag);
         } else if (thirdSingToPresPDuplicateFinalConsonant(token, vcMatcher)) {
-            System.out.println("append TRAILING CONSONANT ing");
+            // System.out.println("append TRAILING CONSONANT ing");
             MatchResult result = vcMatcher.toMatchResult();
             String newToken = result.group(1) + result.group(2) + result.group(2) + "ing";
             return new Word(newToken, tag, token);
         } else if (token.length() > 0) {
-            System.out.println("DEFAULT: append ing");
+            // System.out.println("DEFAULT: append ing");
             return new Word(token.substring(0, token.length()) + "ing", tag);
         } else {
             return null;
@@ -809,10 +809,10 @@ public class SubstWrongFormError extends SubstError {
         } else if (token.equalsIgnoreCase("lying")) {
             return new Word(token.substring(0, token.length() - 4) + "ie", tag);
         } else if (infEndsWithE(token)) {
-            System.out.println(token + " matches[1] infEndsWithE");
+            // System.out.println(token + " matches[1] infEndsWithE");
             return new Word(token.substring(0, token.length() - 3) + "e", tag);
         } else if (CONSONANT_CONSONANT_ING.matcher(token).matches()) {
-            System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
+            // System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
             if (token.endsWith("ssing") || token.endsWith("zzing") || token.endsWith("spelling") ||
                     token.endsWith("stalling") || token.endsWith("selling") || token.endsWith("welling") ||
                     token.endsWith("cotting") || token.endsWith("affing")) {
@@ -1203,7 +1203,7 @@ public class SubstWrongFormError extends SubstError {
         } else if (token.endsWith("ed")) {
             return new Word(token.substring(0, token.length() - 2), tag);
         } else {
-            System.out.println("Probably not a past particple " + token);
+            // System.out.println("Probably not a past particple " + token);
             return null;
         }
     }
@@ -1235,7 +1235,7 @@ public class SubstWrongFormError extends SubstError {
 
         final String token = replacement.getToken();
 
-        System.out.println(word.getToken() + " => " + token);
+        // System.out.println(word.getToken() + " => " + token);
 
         if (token.equalsIgnoreCase("be")) {
             return new Word("is", tag, token);
@@ -1450,22 +1450,4 @@ public class SubstWrongFormError extends SubstError {
             return null;
         }
     }
-
- /*public static void main(String [] args)
-  {
-	  try
-	  {
-	  	System.out.println("Testing the version with tags");
-	  	Sentence testSentence = new Sentence("This DT is VBZ a DT test NN", true);
-	  	SubstWrongFormError substError = new SubstWrongFormError(testSentence,"NN","NNS");
-      		System.out.println(substError.insertError());
-      		System.out.println();
-	  }
-	  catch (CannotCreateErrorException c)
-	  {
-		System.err.println(c.getMessage());
-	  }
-  }*/
-
-
 }
