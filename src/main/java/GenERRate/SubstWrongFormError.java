@@ -99,9 +99,9 @@ public class SubstWrongFormError extends SubstError {
         } else if ((posTag.equals(tagSet.PLURAL_NOUN)) && (form.equals(tagSet.SINGULAR_NOUN))) {
             newWord = makeNounSingular(oldWord);
         } else if ((posTag.equals(tagSet.VERB_THIRD_SING)) && (form.equals(tagSet.VERB_NON_THIRD_SING))) {
-            newWord = makeVerbPlural(oldWord);
+            newWord = thirdSingularToNonThirdSingular(oldWord);
         } else if ((posTag.equals(tagSet.VERB_NON_THIRD_SING)) && (form.equals(tagSet.VERB_THIRD_SING))) {
-            newWord = makeVerbSingular(oldWord);
+            newWord = nonThirdSingularToThirdSingular(oldWord);
         } else if ((posTag.equals(tagSet.VERB_THIRD_SING)) && (form.equals(tagSet.VERB_PRES_PART))) {
             newWord = thirdSingToPresP(oldWord);
         }
@@ -204,70 +204,84 @@ public class SubstWrongFormError extends SubstError {
     }
 
     public Word makeNounSingular(Word word) {
-        if (word.getToken().endsWith("ies")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "y", tagSet.SINGULAR_NOUN);
-        } else if (word.getToken().endsWith("men")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "man", tagSet.SINGULAR_NOUN);
-        } else if (word.getToken().endsWith("a")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "um", tagSet.SINGULAR_NOUN);
-        } else if (word.getToken().endsWith("ches") || word.getToken().endsWith("sses") || word.getToken().endsWith("zes") || word.getToken().endsWith("shes") || word.getToken().endsWith("xes")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2), tagSet.SINGULAR_NOUN);
-        } else if (word.getToken().length() > 0) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1), tagSet.SINGULAR_NOUN);
+        final String singular_noun = tagSet.SINGULAR_NOUN;
+        final String token = word.getToken();
+
+        if (token.endsWith("ies")) {
+            return new Word(token.substring(0, token.length() - 3) + "y", singular_noun);
+        } else if (token.endsWith("men")) {
+            return new Word(token.substring(0, token.length() - 3) + "man", singular_noun);
+        } else if (token.endsWith("a")) {
+            return new Word(token.substring(0, token.length() - 1) + "um", singular_noun);
+        } else if (token.endsWith("ches") || token.endsWith("sses") || token.endsWith("zes") || token.endsWith("shes") || token.endsWith("xes")) {
+            return new Word(token.substring(0, token.length() - 2), singular_noun);
+        } else if (token.length() > 0) {
+            return new Word(token.substring(0, token.length() - 1), singular_noun);
         } else {
             return null;
         }
     }
 
     public Word makeNounPlural(Word word) {
+        final String plural_noun = tagSet.PLURAL_NOUN;
+        final String token = word.getToken();
 
-        if (word.getToken().endsWith("man")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "men", tagSet.PLURAL_NOUN);
-        } else if (word.getToken().endsWith("ch") || word.getToken().endsWith("s") || word.getToken().endsWith("z") || word.getToken().endsWith("sh") || word.getToken().endsWith("x")) {
-            return new Word(word.getToken() + "es", tagSet.PLURAL_NOUN);
-        } else if (word.getToken().endsWith("y") && word.getToken().length() > 1 && !ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 2))) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ies", tagSet.PLURAL_NOUN);
-        } else if (word.getToken().endsWith("um")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2) + "a", tagSet.PLURAL_NOUN);
+        if (token.endsWith("man")) {
+            return new Word(token.substring(0, token.length() - 3) + "men", plural_noun);
+        } else if (token.endsWith("ch") || token.endsWith("s") || token.endsWith("z") || token.endsWith("sh") || token.endsWith("x")) {
+            return new Word(token + "es", plural_noun);
+        } else if (token.endsWith("y") && token.length() > 1 && !ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
+            return new Word(token.substring(0, token.length() - 1) + "ies", plural_noun);
+        } else if (token.endsWith("um")) {
+            return new Word(token.substring(0, token.length() - 2) + "a", plural_noun);
         } else {
-            return new Word(word.getToken() + "s", tagSet.PLURAL_NOUN);
+            return new Word(token + "s", plural_noun);
         }
     }
 
-    public Word makeVerbSingular(Word word) {
-        if (word.getToken().equalsIgnoreCase("are") || word.getToken().equalsIgnoreCase("'re") || word.getToken().equalsIgnoreCase("'m") || word.getToken().equalsIgnoreCase("am")) {
-            return new Word("is", tagSet.VERB_THIRD_SING);
-        } else if (word.getToken().equalsIgnoreCase("have")) {
-            return new Word("has", tagSet.VERB_THIRD_SING);
-        } else if (word.getToken().equalsIgnoreCase("do")) {
-            return new Word("does", tagSet.VERB_THIRD_SING);
-        } else if (word.getToken().equalsIgnoreCase("go")) {
-            return new Word("goes", tagSet.VERB_THIRD_SING);
-        } else if (word.getToken().endsWith("y") && word.getToken().length() > 1 && !ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 2))) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ies", tagSet.VERB_THIRD_SING);
-        } else if (word.getToken().endsWith("ch") || word.getToken().endsWith("x") || word.getToken().endsWith("s") || word.getToken().endsWith("z") || word.getToken().endsWith("sh")) {
-            return new Word(word.getToken() + "es", tagSet.VERB_THIRD_SING);
+    public Word nonThirdSingularToThirdSingular(Word word) {
+        final String tag = tagSet.VERB_THIRD_SING;
+        final String token = word.getToken();
+
+        if (token.equalsIgnoreCase("are") || token.equalsIgnoreCase("'re") || token.equalsIgnoreCase("'m") || token.equalsIgnoreCase("am")) {
+            return new Word("is", tag);
+        } else if (token.equalsIgnoreCase("have")) {
+            return new Word("has", tag);
+        } else if (token.equalsIgnoreCase("do")) {
+            return new Word("does", tag);
+        } else if (token.equalsIgnoreCase("go")) {
+            return new Word("goes", tag);
+        } else if (token.equalsIgnoreCase("shall")) {
+            return new Word(token, tag, token);
+        } else if (token.endsWith("y") && token.length() > 1 && !ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
+            return new Word(token.substring(0, token.length() - 1) + "ies", tag);
+        } else if (token.endsWith("ch") || token.endsWith("x") || token.endsWith("s") || token.endsWith("z") || token.endsWith("sh")) {
+            return new Word(token + "es", tag);
         } else {
-            return new Word(word.getToken() + "s", tagSet.VERB_THIRD_SING);
+            return new Word(token + "s", tag);
         }
     }
 
-    public Word makeVerbPlural(Word word) {
-        //System.out.println("In makeVerbPlural");
-        if (word.getToken().equalsIgnoreCase("is") || word.getToken().equalsIgnoreCase("'s")) {
-            return new Word("are", tagSet.VERB_NON_THIRD_SING);
-        } else if (word.getToken().equalsIgnoreCase("has")) {
-            return new Word("have", tagSet.VERB_NON_THIRD_SING);
-        } else if (word.getToken().equalsIgnoreCase("does")) {
-            return new Word("do", tagSet.VERB_NON_THIRD_SING);
-        } else if (word.getToken().equalsIgnoreCase("goes")) {
-            return new Word("go", tagSet.VERB_NON_THIRD_SING);
-        } else if (word.getToken().endsWith("ies")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2) + "y", tagSet.VERB_NON_THIRD_SING);
-        } else if (word.getToken().endsWith("sses") || word.getToken().endsWith("ches") || word.getToken().endsWith("xes") || word.getToken().endsWith("zes") || word.getToken().endsWith("shes")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2), tagSet.VERB_NON_THIRD_SING);
-        } else if (word.getToken().length() > 0) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1), tagSet.VERB_NON_THIRD_SING);
+    public Word thirdSingularToNonThirdSingular(Word word) {
+        final String tag = tagSet.VERB_NON_THIRD_SING;
+        final String token = word.getToken();
+
+        if (token.equalsIgnoreCase("is") || token.equalsIgnoreCase("'s")) {
+            return new Word("are", tag);
+        } else if (token.equalsIgnoreCase("has")) {
+            return new Word("have", tag);
+        } else if (token.equalsIgnoreCase("does")) {
+            return new Word("do", tag);
+        } else if (token.equalsIgnoreCase("goes")) {
+            return new Word("go", tag);
+        } else if (token.equalsIgnoreCase("shall")) {
+            return new Word(token, tag, token);
+        } else if (token.endsWith("ies")) {
+            return new Word(token.substring(0, token.length() - 2) + "y", tag);
+        } else if (token.endsWith("sses") || token.endsWith("ches") || token.endsWith("xes") || token.endsWith("zzes") || token.endsWith("shes")) {
+            return new Word(token.substring(0, token.length() - 2), tag);
+        } else if (token.length() > 0) {
+            return new Word(token.substring(0, token.length() - 1), tag);
         } else {
             return null;
         }
@@ -294,7 +308,6 @@ public class SubstWrongFormError extends SubstError {
         }
     }
 
-
     public Word nonThirdSingToPresP(Word word) {
         String tag = tagSet.VERB_PRES_PART;
         if (word.getToken().equalsIgnoreCase("are")) {
@@ -310,34 +323,6 @@ public class SubstWrongFormError extends SubstError {
             return new Word(word.getToken() + "ing", tag);
         }
     }
-
-    /*
-    public Word pastpToPresp(Word word) {
-        String tag = tagSet.VERB_PRES_PART;
-        if (word.getToken().equalsIgnoreCase("been")) {
-            return new Word("being", tag);
-        } else if (word.getToken().equalsIgnoreCase("had")) {
-            return new Word("having", tag);
-        } else if (word.getToken().equalsIgnoreCase("done")) {
-            return new Word("doing", tag);
-        } else if (word.getToken().equalsIgnoreCase("gone")) {
-            return new Word("going", tag);
-        } else if (word.getToken().equalsIgnoreCase("taken")) {
-            return new Word("taking", tag);
-        } else if (word.getToken().equalsIgnoreCase("left")) {
-            return new Word("leaving", tag);
-        } else if (word.getToken().endsWith("come")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ing", tag);
-        } else if (word.getToken().endsWith("ied")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "ying", tag);
-        } else if (word.getToken().length() > 1) {
-            //ed
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2) + "ing", tag);
-        } else {
-            return null;
-        }
-    }
-    */
 
     public Word baseToPresP(Word word) {
         String tag = tagSet.VERB_PRES_PART;

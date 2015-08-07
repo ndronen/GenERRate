@@ -21,45 +21,94 @@ public class SubstWrongFormErrorTest extends TestCase {
         fail("not implemented");
     }
 
+    // NNS -> NN
     public void testMakeNounSingular() throws Exception {
         fail("not implemented");
     }
 
+    // NN -> NNS
     public void testMakeNounPlural() throws Exception {
         fail("not implemented");
     }
 
-    /*
-    165 SubstWrongFormVBPVBZError
-    746 SubstWrongFormVBVBGError
-    */
-    public void testMakeVerbSingular() throws Exception {
-        fail("not implemented");
+    public void testNonThirdSingularToThirdSingular() throws Exception {
+        // VBP (verb, non-third person) -> VBZ (verb, third person)
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("are", "is");
+        expectations.put("am", "is");
+        expectations.put("have", "has");
+        expectations.put("do", "does");
+        expectations.put("go", "goes");
+        expectations.put("walk", "walks");
+        expectations.put("Shall", "Shall");
+        expectations.put("apologize", "apologizes");
+        expectations.put("apologise", "apologises");
+        expectations.put("categorize", "categorizes");
+        expectations.put("categorise", "categorises");
+        expectations.put("color", "colors");
+        expectations.put("colour", "colours");
+        expectations.put("cooter", "cooters");
+        expectations.put("cowrite", "cowrites");
+        expectations.put("facilitate", "facilitates");
+        expectations.put("favor", "favors");
+        expectations.put("favour", "favours");
+        expectations.put("materialize", "materializes");
+        expectations.put("materialise", "materialises");
+        expectations.put("buzz", "buzzes");
+
+        PartOfSpeech tagSet = new PartOfSpeech();
+        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING);
+            Word replacement = obj.nonThirdSingularToThirdSingular(word);
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
     }
 
-    public void testMakeVerbPlural() throws Exception {
-        fail("not implemented");
+    // VBZ -> VBP
+    public void testThirdSingularToNonThirdSingular() throws Exception {
+        // VBZ (verb, third person) -> VBP (verb, non-third person)
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("is", "are");
+        expectations.put("has", "have");
+        expectations.put("does", "do");
+        expectations.put("goes", "go");
+        expectations.put("walks", "walk");
+        expectations.put("Shall", "Shall");
+        expectations.put("apologizes", "apologize");
+        expectations.put("apologises", "apologise");
+        expectations.put("categorizes", "categorize");
+        expectations.put("categorises", "categorise");
+        expectations.put("colors", "color");
+        expectations.put("colours", "colour");
+        expectations.put("cowrites", "cowrite");
+        expectations.put("facilitates", "facilitate");
+        expectations.put("favors", "favor");
+        expectations.put("favours", "favour");
+        expectations.put("materializes", "materialize");
+        expectations.put("materialises", "materialise");
+        expectations.put("buzzes", "buzz");
+
+        PartOfSpeech tagSet = new PartOfSpeech();
+        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING);
+            Word replacement = obj.thirdSingularToNonThirdSingular(word);
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
     }
 
-    /*
-    359 SubstWrongFormVBZVBGError
-    300 SubstWrongFormVBZVBPError
-     */
+    // VBZ -> VBG
     public void testThirdSingToPresP() throws Exception {
         fail("not implemented");
     }
 
+    // VBP -> VBG
     public void testNonThirdSingToPresP() throws Exception {
         fail("not implemented");
     }
 
-    public void testPastpToPresp() throws Exception {
-        fail("not implemented");
-    }
-
-    /*
-    343 SubstWrongFormTOVBGError
-    */
+    // VB -> VBG
     public void testBaseToPresP() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
         expectations.put("Blandish", "Blandishing");
@@ -70,7 +119,6 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("allegorize", "allegorizing");
         expectations.put("analyze", "analyzing");
         expectations.put("apologize", "apologizing");
-        // ? expectations.put("backup", "backing up");
         expectations.put("beat", "beating");
         expectations.put("beg", "begging");
         expectations.put("benefit", "benefiting");
@@ -246,7 +294,6 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("self-insure", "self-insuring");
         expectations.put("serialise", "serialising");
         expectations.put("set", "setting");
-        // ? expectations.put("set-up", "setting-up");
         expectations.put("shed", "shedding");
         expectations.put("shoot", "shooting");
         expectations.put("shout", "shouting");
@@ -255,7 +302,6 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("snap", "snapping");
         expectations.put("sob", "sobbing");
         expectations.put("solicit", "soliciting");
-        // ? expectations.put("speed-up", "speeding-up");
         expectations.put("spur", "spurring");
         expectations.put("stem", "stemming");
         expectations.put("stir", "stirring");
@@ -264,7 +310,6 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("swap", "swapping");
         expectations.put("swim", "swimming");
         expectations.put("tag", "tagging");
-        // ? expectations.put("take-up", "taking-up");
         expectations.put("target", "targeting");
         expectations.put("teleport", "teleporting");
         expectations.put("thermoregulate", "thermoregulating");
@@ -291,13 +336,12 @@ public class SubstWrongFormErrorTest extends TestCase {
         }
     }
 
+    // VBG -> VBN
     public void testPresPToPastP() throws Exception {
         fail("not implemented");
     }
 
-    /*
-    1102 SubstWrongFormVBGVBZError
-     */
+    // VBG -> VBZ
     public void testPresPToThirdSing() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
 
@@ -1341,13 +1385,12 @@ public class SubstWrongFormErrorTest extends TestCase {
         }
     }
 
+    // VBG -> VBP
     public void testPresPToNonThirdSing() throws Exception {
         fail("not implemented");
     }
 
-    /*
-    1148 SubstWrongFormVBGTOError
-     */
+    // VBG -> TO
     public void testPresPToInf() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
         expectations.put("Addressing", "Address");
@@ -2436,15 +2479,8 @@ public class SubstWrongFormErrorTest extends TestCase {
 
     }
 
-    /*
-    1722 SubstWrongFormVBNVBZError
-     */
+    // VBN -> VBZ
     public void testPastPToThirdSing() throws Exception {
-        // VBN -> past particple
-        // VBZ -> present tense, 3rd person
-        // I'll implement these inflectional changes by
-        //     VBN -> TO
-        //     TO  -> VBZ
         final Map<String, String> expectations = new HashMap<String, String>();
         expectations.put("Abandoned", "Abandons");
         expectations.put("Adjusted", "Adjusts");
@@ -4144,41 +4180,47 @@ public class SubstWrongFormErrorTest extends TestCase {
 
     }
 
+    // VBN -> VBG
     public void testPastPToPresP() throws Exception {
         fail("not implemented");
     }
 
+    // VB -> VBZ
     public void testBaseToThirdSing() throws Exception {
         fail("not implemented");
     }
 
+    // JJ -> JJR
     public void testRegularAdjToComparative() throws Exception {
         fail("not implemented");
     }
 
+    // JJ -> JJS
     public void testRegularAdjToSuperlative() throws Exception {
         fail("not implemented");
     }
 
+    // JJR -> JJS
     public void testComparativeAdjToSuperlative() throws Exception {
         fail("not implemented");
     }
 
+    // JJS -> JJR
     public void testSuperlativeAdjToComparative() throws Exception {
         fail("not implemented");
     }
 
+    // JJR -> JJ
     public void testComparativeAdjToRegular() throws Exception {
         fail("not implemented");
     }
 
+    // JJS -> JJ
     public void testSuperlativeAdjToRegular() throws Exception {
         fail("not implemented");
     }
 
-    /*
-    310 SubstWrongFormRBJJError
-     */
+    // RB -> JK
     public void testAdverbToAdj() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
         expectations.put("Angrily", "Angry");
