@@ -267,6 +267,19 @@ public class SubstWrongFormError extends SubstError {
         }
     }
 
+    protected boolean isIES(String token) {
+        token = token.toLowerCase();
+        return token.equals("ties") ||
+                token.equals("unties") ||
+                token.equals("lies") ||
+                token.equals("dies");
+    }
+
+    protected boolean isIESToY(String token) {
+        token = token.toLowerCase();
+        return token.endsWith("ies");
+    }
+
     public Word thirdSingularToNonThirdSingular(Word word) {
         final String tag = tagSet.VERB_NON_THIRD_SING;
         final String token = word.getToken();
@@ -281,10 +294,24 @@ public class SubstWrongFormError extends SubstError {
             return new Word("go", tag);
         } else if (token.equalsIgnoreCase("shall")) {
             return new Word(token, tag, token);
-        } else if (token.endsWith("ies")) {
-            return new Word(token.substring(0, token.length() - 2) + "y", tag);
-        } else if (token.endsWith("sses") || token.endsWith("ches") || token.endsWith("xes") || token.endsWith("zzes") || token.endsWith("shes")) {
+        } else if (token.toLowerCase().endsWith("iases")) {
+            return new Word(token.substring(0, token.length() - 2), tag, token);
+        } else if (isIES(token)) {
+            return new Word(token.substring(0, token.length() - 1), tag, token);
+        } else if (isIESToY(token)) {
+            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+        } else if (token.endsWith("oes")) {
             return new Word(token.substring(0, token.length() - 2), tag);
+        } else if (token.toLowerCase().startsWith("focus")) {
+            System.out.println("returning 'focus'");
+            return new Word("focus", tag, token);
+        } else if (token.endsWith("sses") || token.endsWith("ches") || token.endsWith("xes") ||
+                token.endsWith("zzes") || token.endsWith("shes")) {
+            if (token.endsWith("uizzes")) {
+                return new Word("quiz", tag, token);
+            } else {
+                return new Word(token.substring(0, token.length() - 2), tag);
+            }
         } else if (token.length() > 0) {
             return new Word(token.substring(0, token.length() - 1), tag);
         } else {
