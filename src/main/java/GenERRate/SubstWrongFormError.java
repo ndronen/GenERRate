@@ -29,31 +29,32 @@ public class SubstWrongFormError extends SubstError {
     private final PartOfSpeech tagSet;
 
     /**
-     * The posTag of the word to be changed.
+     * The sourceTag of the word to be changed.
      */
-    private final String posTag;
+    private final String sourceTag;
+
     /**
-     * The nature of the change to the word. What form the change can take will depend on the part-of-speech for the word.
+     * The nature of the change to the word. What targetTag the change can take will depend on the part-of-speech for the word.
      * For a verb, for example, this might be the tense or number. For an adjective or an adverb, the change will be between comparative,  superlative or normal forms.
      */
-    private final String form;
+    private final String targetTag;
 
     private final List<String> extraWords;
 
-    public SubstWrongFormError(Sentence sentence, PartOfSpeech tagSet, String posTag, String newPosTag, List<String> extraWords) {
+    public SubstWrongFormError(Sentence sentence, PartOfSpeech tagSet, String sourceTag, String targetTag, List<String> extraWords) {
         super(sentence);
         this.tagSet = tagSet;
-        this.posTag = posTag;
-        this.form = newPosTag;
+        this.sourceTag = sourceTag;
+        this.targetTag = targetTag;
         this.extraWords = extraWords;
-        super.errorInfo = "errortype=\"SubstWrongForm" + this.posTag + form + "Error\"";
+        super.errorInfo = "errortype=\"SubstWrongForm" + this.sourceTag + this.targetTag + "Error\"";
     }
 
     /**
-     * Selects a word of the given posTag from the sentence and changes the word based on
-     * the value of the form attribute.
-     * Throws a CannotCreateErrorException if the sentence does not contain a posTag with
-     * this form.
+     * Selects a word of the given sourceTag from the sentence and changes the word based on
+     * the value of the targetTag attribute.
+     * Throws a CannotCreateErrorException if the sentence does not contain a sourceTag with
+     * this targetTag.
      *
      * @return Sentence
      */
@@ -65,26 +66,26 @@ public class SubstWrongFormError extends SubstError {
         }
         //if the sentence is not tagged, this type of substitution error cannot be substituted
         if (!inputSentence.areTagsIncluded()) {
-            throw new CannotCreateErrorException("Cannot substitute a word with posTag tag " + posTag + ". The input sentence is not tagged.");
+            throw new CannotCreateErrorException("Cannot substitute a word with sourceTag tag " + sourceTag + ". The input sentence is not tagged.");
         }
         Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
-        //find all words in the sentence tagged as posTag
+        //find all words in the sentence tagged as sourceTag
         List<Integer> listPOS = new ArrayList<Integer>();
         Word word;
         for (int i = 0; i < newSentence.size(); i++) {
             word = newSentence.getWord(i);
-            if (word.getTag().equals(posTag) && posTag.equals(tagSet.INF)) {
+            if (word.getTag().equals(sourceTag) && sourceTag.equals(tagSet.INF)) {
                 Word nextWord = newSentence.getWord(i + 1);
                 if (nextWord != null && nextWord.getTag().equals(tagSet.VERB_BASE)) {
                     listPOS.add(i);
                 }
-            } else if (word.getTag().equals(posTag)) {
+            } else if (word.getTag().equals(sourceTag)) {
                 listPOS.add(i);
             }
         }
-        //throw an exception if there is no word of this posTag in the sentence
+        //throw an exception if there is no word of this sourceTag in the sentence
         if (listPOS.size() < 1) {
-            throw new CannotCreateErrorException("Cannot substitute a word with posTag " + posTag + " because there is none in the sentence.");
+            throw new CannotCreateErrorException("Cannot substitute a word with sourceTag " + sourceTag + " because there is none in the sentence.");
         }
         Random random = new Random(newSentence.toString().hashCode());
 
@@ -97,61 +98,61 @@ public class SubstWrongFormError extends SubstError {
         Word anotherNewWord = null;
         int where2 = -1;
 
-        //examine the posTag and the form to see how to substitute the word
-        if ((posTag.equals(tagSet.SINGULAR_NOUN)) && (form.equals(tagSet.PLURAL_NOUN))) {
+        //examine the sourceTag and the targetTag to see how to substitute the word
+        if ((sourceTag.equals(tagSet.SINGULAR_NOUN)) && (targetTag.equals(tagSet.PLURAL_NOUN))) {
             newWord = makeNounPlural(oldWord);
-        } else if ((posTag.equals(tagSet.PLURAL_NOUN)) && (form.equals(tagSet.SINGULAR_NOUN))) {
+        } else if ((sourceTag.equals(tagSet.PLURAL_NOUN)) && (targetTag.equals(tagSet.SINGULAR_NOUN))) {
             newWord = makeNounSingular(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_THIRD_SING)) && (form.equals(tagSet.VERB_NON_THIRD_SING))) {
+        } else if ((sourceTag.equals(tagSet.VERB_THIRD_SING)) && (targetTag.equals(tagSet.VERB_NON_THIRD_SING))) {
             newWord = thirdSingularToNonThirdSingular(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_NON_THIRD_SING)) && (form.equals(tagSet.VERB_THIRD_SING))) {
+        } else if ((sourceTag.equals(tagSet.VERB_NON_THIRD_SING)) && (targetTag.equals(tagSet.VERB_THIRD_SING))) {
             newWord = nonThirdSingularToThirdSingular(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_THIRD_SING)) && (form.equals(tagSet.VERB_PRES_PART))) {
+        } else if ((sourceTag.equals(tagSet.VERB_THIRD_SING)) && (targetTag.equals(tagSet.VERB_PRES_PART))) {
             newWord = thirdSingToPresP(oldWord);
         }
-    /*else if ((posTag.equals(tagSet.VERB_NON_THIRD_SING)) && (form.equals(tagSet.VERB_PAST_PART)))
-	{
+    /*else if ((sourceTag.equals(tagSet.VERB_NON_THIRD_SING)) && (targetTag.equals(tagSet.VERB_PAST_PART)))
+    {
 		newWord = nonThirdSingToPastP(oldWord);
 	}*/
-        else if ((posTag.equals(tagSet.VERB_PRES_PART)) && (form.equals(tagSet.VERB_PAST_PART))) {
+        else if ((sourceTag.equals(tagSet.VERB_PRES_PART)) && (targetTag.equals(tagSet.VERB_PAST_PART))) {
             newWord = presPToPastP(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_PRES_PART)) && (form.equals(tagSet.VERB_THIRD_SING))) {
+        } else if ((sourceTag.equals(tagSet.VERB_PRES_PART)) && (targetTag.equals(tagSet.VERB_THIRD_SING))) {
             newWord = presPToThirdSing(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_PRES_PART)) && (form.equals(tagSet.VERB_NON_THIRD_SING))) {
+        } else if ((sourceTag.equals(tagSet.VERB_PRES_PART)) && (targetTag.equals(tagSet.VERB_NON_THIRD_SING))) {
             newWord = presPToNonThirdSing(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_PRES_PART)) && (form.equals(tagSet.INF))) {
+        } else if ((sourceTag.equals(tagSet.VERB_PRES_PART)) && (targetTag.equals(tagSet.INF))) {
             newWord = presPToInf(oldWord);
             anotherNewWord = new Word("to", tagSet.INF);
-        } else if ((posTag.equals(tagSet.INF)) && (form.equals(tagSet.VERB_PRES_PART))) {
+        } else if ((sourceTag.equals(tagSet.INF)) && (targetTag.equals(tagSet.VERB_PRES_PART))) {
             oldWord = newSentence.getWord(where + 1);
             newWord = baseToPresP(oldWord);
             where2 = where + 1;
-        } else if ((posTag.equals(tagSet.VERB_BASE)) && (form.equals(tagSet.VERB_PRES_PART))) {
+        } else if ((sourceTag.equals(tagSet.VERB_BASE)) && (targetTag.equals(tagSet.VERB_PRES_PART))) {
             newWord = baseToPresP(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_NON_THIRD_SING)) && (form.equals(tagSet.VERB_PRES_PART))) {
+        } else if ((sourceTag.equals(tagSet.VERB_NON_THIRD_SING)) && (targetTag.equals(tagSet.VERB_PRES_PART))) {
             newWord = nonThirdSingToPresP(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_PAST_PART)) && (form.equals(tagSet.VERB_THIRD_SING))) {
+        } else if ((sourceTag.equals(tagSet.VERB_PAST_PART)) && (targetTag.equals(tagSet.VERB_THIRD_SING))) {
             newWord = pastPToThirdSing(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_PAST_PART)) && (form.equals(tagSet.VERB_PRES_PART))) {
+        } else if ((sourceTag.equals(tagSet.VERB_PAST_PART)) && (targetTag.equals(tagSet.VERB_PRES_PART))) {
             newWord = pastPToPresP(oldWord);
-        } else if ((posTag.equals(tagSet.VERB_BASE)) && (form.equals(tagSet.VERB_THIRD_SING))) {
+        } else if ((sourceTag.equals(tagSet.VERB_BASE)) && (targetTag.equals(tagSet.VERB_THIRD_SING))) {
             newWord = baseToThirdSing(oldWord);
-        } else if ((posTag.equals(tagSet.ADJ)) && (form.equals(tagSet.ADJ_COMP))) {
+        } else if ((sourceTag.equals(tagSet.ADJ)) && (targetTag.equals(tagSet.ADJ_COMP))) {
             newWord = regularAdjToComparative(oldWord);
-        } else if ((posTag.equals(tagSet.ADJ)) && (form.equals(tagSet.ADJ_SUP))) {
+        } else if ((sourceTag.equals(tagSet.ADJ)) && (targetTag.equals(tagSet.ADJ_SUP))) {
             newWord = regularAdjToSuperlative(oldWord);
-        } else if ((posTag.equals(tagSet.ADJ_COMP)) && (form.equals(tagSet.ADJ_SUP))) {
+        } else if ((sourceTag.equals(tagSet.ADJ_COMP)) && (targetTag.equals(tagSet.ADJ_SUP))) {
             newWord = comparativeAdjToSuperlative(oldWord);
-        } else if ((posTag.equals(tagSet.ADJ_COMP)) && (form.equals(tagSet.ADJ))) {
+        } else if ((sourceTag.equals(tagSet.ADJ_COMP)) && (targetTag.equals(tagSet.ADJ))) {
             newWord = comparativeAdjToRegular(oldWord);
-        } else if ((posTag.equals(tagSet.ADJ_SUP)) && (form.equals(tagSet.ADJ))) {
+        } else if ((sourceTag.equals(tagSet.ADJ_SUP)) && (targetTag.equals(tagSet.ADJ))) {
             newWord = superlativeAdjToRegular(oldWord);
-        } else if ((posTag.equals(tagSet.ADJ_SUP)) && (form.equals(tagSet.ADJ_COMP))) {
+        } else if ((sourceTag.equals(tagSet.ADJ_SUP)) && (targetTag.equals(tagSet.ADJ_COMP))) {
             newWord = superlativeAdjToComparative(oldWord);
-        } else if ((posTag.equals(tagSet.ADV)) && (form.equals(tagSet.ADJ)) && (oldWord.getToken().endsWith("ly"))) {
+        } else if ((sourceTag.equals(tagSet.ADV)) && (targetTag.equals(tagSet.ADJ)) && (oldWord.getToken().endsWith("ly"))) {
             newWord = adverbToAdj(oldWord);
         } else {
-            //find all the words tagged as form in the extra word list
+            //find all the words tagged as targetTag in the extra word list
             List<String> formList = new ArrayList<String>();
             String tokenTag;
             String pos;
@@ -164,14 +165,14 @@ public class SubstWrongFormError extends SubstError {
                 }
                 if (tokens.hasMoreTokens()) {
                     pos = tokens.nextToken();
-                    if (pos.equals(form)) {
+                    if (pos.equals(targetTag)) {
                         formList.add(tokenTag);
                     }
                 }
 
             }
             if (formList.size() == 0) {
-                throw new CannotCreateErrorException("No word with the posTag " + form + " in the extra word list. Cannot create an " + errorInfo);
+                throw new CannotCreateErrorException("No word with the sourceTag " + targetTag + " in the extra word list. Cannot create an " + errorInfo);
             }
 
             //randomly select the replacing word
@@ -767,7 +768,10 @@ public class SubstWrongFormError extends SubstError {
 
                 token.endsWith("iping")     || // e.g. wiping -> wipe
                 token.endsWith("aping") || // e.g. taping -> tape
-                token.endsWith("oping")     || // e.g. eloping -> elope
+                token.endsWith("coping") || // e.g. scoping -> scope
+                token.endsWith("doping") || // e.g. doping -> dope
+                token.endsWith("roping") || // e.g. groping -> grope
+                token.equals("eloping") || // e.g. eloping -> elope
                 token.endsWith("yping")     || // e.g. genotyping -> genotype
                 token.endsWith("caping")    || // e.g. escaping -> escape
                 token.endsWith("haping") || // e.g. reshaping -> reshapes
@@ -832,72 +836,225 @@ public class SubstWrongFormError extends SubstError {
     protected boolean removeD(String token) {
         token = token.toLowerCase();
 
-        return token.endsWith("aced") || // e.g. faced -> face
-                token.endsWith("cenced") || // e.g. licenced -> licence
+        return token.endsWith("ibed") || // e.g. enticed -> entice
+
+                token.endsWith("aced") || // e.g. faced -> face
+                token.endsWith("iced") || // e.g. sacrificed -> sacrifice
+                //token.endsWith("oiced") || // e.g. voiced -> voice, rejoiced -> rejoice
+                //token.endsWith("ticed") || // e.g. enticed -> entice
+                //token.endsWith("viced") || // e.g. serviced -> service
+                token.endsWith("nced") || // e.g. licenced -> licence
+                //token.endsWith("enced") || // e.g. licenced -> licence
+                //token.endsWith("fenced") || // e.g. fenced -> fence
+                //token.endsWith("tenced") || // e.g. sentenced -> sentence
+                //token.endsWith("vanced") || // e.g. advanced -> advance
+                //token.endsWith("vinced") || // e.g. evinced -> evince
+                //token.endsWith("ounced") || // e.g. pronounced -> pronounce
                 token.endsWith("rced") || // e.g. sourced -> source
                 token.endsWith("uced") || // e.g. introduced -> introduce
+
+                token.endsWith("caded") || // e.g. barricaded -> barricade
+                token.endsWith("ceded") || // e.g. conceded -> concede
+                token.endsWith("raded") || // e.g. paraded -> parade
+                token.endsWith("jaded") || // e.g. jaded -> jade
+                token.endsWith("uaded") || // e.g. persuaded -> persuade
+                token.endsWith("vaded") || // e.g. invaded -> invade
+                token.endsWith("acceded") || // e.g. acceeded -> accede
+                token.endsWith("peded") || // e.g. impeded -> impede
                 token.endsWith("llided") || // e.g. collided -> collide
-                token.endsWith("brided") || // e.g. debrided -> debride
+                token.endsWith("cided") || // e.g. coincided
+                token.endsWith("hided") || // e.g. chided -> chide
+                token.endsWith("rided") || // e.g. debrided, prided
+                token.endsWith("bsided") || // e.g. subsided -> subside
+                token.endsWith("esided") || // e.g. presided -> preside
+                token.endsWith("uided") || // e.g. guided -> guide
+                token.endsWith("vided") || // e.g. provided -> provide
                 token.endsWith("graded") || // e.g. down-graded -> down-grade
                 token.equals("ceded") ||
-                token.endsWith("jaded") || // e.g. jaded -> jade
+                token.endsWith("eceded") || // e.g. preceded -> precede
                 token.endsWith("coded") || // e.g. coded -> code
+                token.endsWith("loded") || // e.g. exploded -> explode
+                token.endsWith("roded") || // e.g. corroded -> corrode
+                token.endsWith(("luded")) || // e.g. precluded -> preclude
+
                 token.endsWith("emceed") || // e.g. emceed -> emcee
                 token.endsWith("reed") || // e.g. freed -> free
                 token.endsWith("teed") || // e.g. guaranteed -> guarantee
+
+                token.endsWith("afed") || // e.g. chafed -> chafe
+
                 token.equals("aged") ||
+                token.endsWith("daged") || // e.g. bandaged -> bandage
                 token.endsWith("riaged") || // e.g. triaged -> triage
+                token.endsWith("ckaged") || // e.g. packaged -> package
+                token.endsWith("gaged") || // e.g. disengaged -> disengage
+                token.endsWith("laged") || // e.g. pillaged -> pillage, camoflaged -> camoflage
+                token.endsWith("maged") || // e.g. damaged -> damage
                 token.endsWith("naged") || // e.g. managed -> manage
                 token.endsWith("paged") || // e.g. paged -> page
+                token.endsWith("taged") || // e.g. staged -> stage
+                token.endsWith("raged") || // e.g. averaged -> average
+                token.endsWith("saged") || // e.g. envisaged -> envisage
+                token.endsWith("vaged") || // e.g. salvaged -> salvage, ravaged -> ravage
+                token.endsWith("yaged") || // e.g. voyaged -> voyage
                 token.endsWith("dged") || // e.g. bridged -> bridge
+                token.endsWith("ieged") || // e.g. besieged -> besiege
+                token.endsWith("liged") || // e.g. obliged -> oblige
                 token.endsWith("lged") || // e.g. indulged -> indulge
-                token.endsWith("nged") || // e.g. changed -> change
+                token.endsWith("mpinged") || // e.g. impinged -> impinge
+                token.endsWith("changed") || // e.g. changed -> change
+                token.endsWith("ranged") || // e.g. arranged -> arrange
+                token.endsWith("fringed") || // e.g. infringed -> infringe
+                token.endsWith("unged") || // e.g. expunged -> expunge
                 token.endsWith("rged") || // e.g. emerged -> emerge
-                token.endsWith("athed") || // e.g. breathed -> breathe
+
+                token.endsWith("reathed") || // e.g. breathed -> breathe
                 token.endsWith("ythed") || // e.g. scythed -> scythe
+
                 token.endsWith("faked") || // e.g. faked -> fake
                 token.endsWith("raked") || // e.g. raked -> rake
                 token.endsWith("iked") || // e.g. liked -> like
+                token.endsWith("hoked") || // e.g. choked -> choke
+                token.endsWith("moked") || // e.g. smoked -> smoke
+                token.endsWith("voked") || // e.g. invoked -> invoke
+
                 token.endsWith("caled") || // e.g. down-scales -> down-scale
+                token.endsWith("haled") || // e.g. exhaled -> exhale
+                token.endsWith("paled") || // e.g. impaled -> impale
+                token.endsWith("saled") || // e.g. wholesaled -> wholesale
                 token.endsWith("bled") || // e.g. assembled -> assemble, enabled -> enable
+                token.endsWith("cled") || // e.g. bespectacled -> bespectacle
+                token.endsWith("dled") || // e.g. puddled -> puddle
+                token.endsWith("fled") || // e.g. baffled -> baffle
+                token.endsWith("ggled") || // e.g. struggled -> struggle
+                token.endsWith("ngled") || // e.g. mingled -> mingle
                 token.endsWith("ogled") || // e.g. ogled -> ogle, googled -> google
+                token.endsWith("rgled") || // e.g. burgled -> burgle
+                token.endsWith("ciled") || // e.g. reconciled -> reconcile
+                token.endsWith("filed") || // e.g. profiled -> profile
+                token.endsWith("miled") || // e.g. smiled -> smile
+                token.endsWith("piled") || // e.g. piled -> pile
+                token.endsWith("xiled") || // e.g. exiled -> exile
+                token.endsWith("kled") || // e.g. sprinkled -> sprinkle
+                token.endsWith("joled") || // e.g. cajoled -> cajole
                 token.endsWith("aroled") || // e.g. paroled -> parole
+                token.endsWith("pled") || // e.g. coupled -> couple
                 token.endsWith("tled") || // e.g. titled -> title
                 token.endsWith("duled") || // e.g. scheduled -> schedule
-                token.endsWith("timed") || // e.g. timed -> time
+                token.endsWith("ruled") || // e.g. ruled -> rule
+                token.endsWith("yled") || // e.g. styled -> style
+                token.endsWith("zled") || // e.g. puzzled -> puzzle
+
+                token.endsWith("famed") || // e.g. famed -> fame
+                token.endsWith("lamed") || // e.g. flamed -> flame
                 token.endsWith("named") || // e.g. codenamed -> codename
+                token.endsWith("ramed") || // e.g. framed -> frame
+                token.endsWith("hemed") || // e.g. themed -> theme, blasphemed -> blaspheme
+                token.equals("mimed") ||
+                token.endsWith("rimed") || // e.g. rimed -> rime
+                token.endsWith("timed") || // e.g. timed -> time
+                token.endsWith("comed") || // e.g. welcomed -> welcome
+                token.endsWith("umed") || // e.g. consumed -> consume
+                token.endsWith("rhymed") || // e.g. rhymed -> rhyme
+
+                token.endsWith("paned") || // e.g. paned -> pane, waned -> wane
+                token.endsWith("waned") || // e.g. paned -> pane, waned -> wane
+                token.endsWith("vened") || // e.g. contravened -> contravene
+                token.endsWith("bined") || // e.g. combined -> combine
                 token.endsWith("fined") || // e.g. defined -> define
                 token.endsWith("lined") || // e.g. lined -> line
                 token.endsWith("mined") || // e.g. examined -> examine
+                token.endsWith("pined") || // e.g. opined -> opine
+                token.endsWith("rined") || // e.g. enshrined -> enshrine
+                token.endsWith("tined") || // e.g. quarrantined -> quarrantine
+                token.endsWith("wined") || // e.g. intertwined -> intertwine
+                token.endsWith("condoned") || // e.g. condoned -> condone
                 token.endsWith("boned") || // e.g. boned -> bone
+                token.endsWith("honed") || // e.g. phoned -> phone
+                token.endsWith("loned") || // e.g. cloned -> clone
                 token.endsWith("poned") || // e.g. postponed -> postpone
+                token.endsWith("roned") || // e.g. enthroned -> enthrone
                 token.equals("zoned") || // e.g. zoned -> zone
                 token.equals("re-zoned") || // e.g. zoned -> zone
                 token.endsWith("gined") || // e.g. imagined -> imagine
+                token.endsWith("pruned") || // e.g. pruned -> prune
                 token.endsWith("tuned") || // e.g. tuned -> tune
-                token.endsWith("iped") || // e.g. wiped -> wipe
-                token.endsWith("yped") || // e.g. typed -> type
+
+                token.endsWith("caped") || // e.g. escaped -> escape
+                token.endsWith("haped") || // e.g. shaped -> shape
+                token.endsWith("taped") || // e.g. videotaped -> videotape
+                token.endsWith("wiped") || // e.g. wiped -> wipe
                 token.endsWith("roped") || // e.g. roped -> rope
+                token.endsWith("duped") || // e.g. duped -> dupe
+                token.endsWith("yped") || // e.g. typed -> type
+
                 token.endsWith("dared") || // e.g. dared -> dare
+                token.endsWith("hared") || // e.g. shared -> share
+                token.endsWith("clared") || // e.g. declared -> declare
+                token.endsWith("nared") || // e.g. ensnared -> ensnare
+                token.endsWith("pared") || // e.g. compare -> compared
+                token.endsWith("uared") || // e.g. squared -> square
                 token.endsWith("cred") || // e.g. massacred -> massacre
+                token.endsWith("dhered") || // e.g. adhered -> adhere
+                token.endsWith("rfered") || // e.g. interfered -> interfere
                 token.endsWith("bored") || // e.g. bored -> bore
+                token.endsWith("dored") || // e.g. adored -> adore
+                token.endsWith("plored") || // e.g. explored -> explore
+                token.endsWith("gnored") || // e.g. ignored -> ignore
+                token.endsWith("stored") || // e.g. restored -> restore
                 token.endsWith("hired") || // e.g. hired -> hire
+                token.endsWith("mired") || // e.g. mired -> mire
+                token.endsWith("pired") || // e.g. umpired -> umpire
+                token.endsWith("sired") || // e.g. sired -> sire, desired -> desire
+                token.endsWith("tired") || // e.g. retired -> retire
                 token.endsWith("uired") || // e.g. enquired -> enquire
+                token.endsWith("wired") || // e.g. rewired -> rewire
                 token.endsWith("tred") || // e.g. centred -> centre
                 token.endsWith("cured") || // e.g. cured -> cure
+                token.endsWith("dured") || // e.g. endured -> endure
                 token.endsWith("gured") || // e.g. reconfigured -> reconfigure
                 token.endsWith("jured") || // e.g. injured -> injure
                 token.equals("lured") || // e.g. lured -> lure
+                token.endsWith("nured") || // e.g. tenured -> tenure
+                token.endsWith("sured") || // e.g. assured -> assure
+                token.endsWith("tured") || // e.g. ventured -> venture
+
+                token.endsWith("based") || // e.g. rebased -> rebase
+                token.endsWith("cased") || // e.g. showcased -> showcase
+                token.endsWith("ceased") || // e.g. deceased -> decease
                 token.endsWith("leased") || // e.g. released -> release
+                token.endsWith("reased") || // e.g. creased -> crease
+                token.endsWith("hased") || // e.g. purchased -> purchase
+                token.endsWith("iased") ||  // e.g. biased -> bias
+                token.endsWith("rased") || // e.g. erased -> erase
                 token.endsWith("ised") || // e.g. criminalised -> criminalise
                 token.endsWith("nsed") || // e.g. licensed -> license
+                token.endsWith("cored") || // e.g. scored -> score
+                token.endsWith("ulsed") || // e.g. pulsed -> pulse
                 token.endsWith("osed") || // e.g. opposed -> oppose
-                token.equals("owed") || // e.g. owed -> owe
-                token.endsWith("ursed") || // e.g. accursed -> accurse
+                token.endsWith("psed") || // e.g. lapsed -> lapse
+                token.endsWith("rsed") || // e.g. accursed -> accurse, interspersed -> intersperse
+                token.endsWith("essed") || // e.g. reprocessed -> reprocess
+                token.endsWith("ncussed") || // e.g. concussed -> concuss
+                token.equals("used") || // e.g. used -> use
+                token.equals("reused") ||
+                token.equals("misused") ||
+                token.endsWith("-used") || // e.g. re-used
+                token.endsWith("aused") || // e.g. caused -> cause
+                token.endsWith("bused") || // e.g. abused -> abuse
+                token.endsWith("fused") || // e.g. confused -> confuse
+                token.endsWith("hused") || // e.g. enthused -> enthuse
+                token.endsWith("mused") || // e.g. amused -> amuse
+                token.endsWith("oused") || // e.g. aroused -> arouse, espoused -> espouse
                 token.endsWith("ysed") || // e.g. catalysed -> catalyse
+
                 token.endsWith("rrotted") || // e.g. garrotted -> garrottes
+                token.equals("garrotted") || // e.g. garotted
+                token.endsWith("bated") || // e.g. debated -> debate
                 token.endsWith("cated") || // e.g. located -> locate
                 token.endsWith("dated") || // e.g. consolidated -> consolidate
+                token.endsWith("lated") || // e.g. dilated -> dilate
+                token.endsWith("kated") || // e.g. skated -> skate
                 token.endsWith("created") || // e.g. created -> create
                 token.endsWith("gated") || // e.g. relegated -> relegate
                 token.endsWith("iated") || // e.g. affiliated -> affiliate
@@ -905,22 +1062,41 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("ylated") || // e.g. methylated -> methylate
                 token.endsWith("nated") || // e.g. hyphenated -> hyphenate
                 token.endsWith("mated") || // e.g. decimated -> decimate, desquamated -> desquamate
+                token.endsWith("pated") || // e.g. dissipated -> disspate
                 token.endsWith("rated") || // e.g. frustrated -> frustrate
                 token.endsWith("tated") || // e.g. reinstated -> reinstate
+                token.endsWith("uated") || // e.g. situated -> situate
                 token.endsWith("vated") || // e.g. activated -> activate
+                token.endsWith("eleted") || // e.g. deleted -> delete
+                token.endsWith("oleted") || // e.g. obsoleted -> obsolete
+                token.endsWith("pleted") || // e.g. completed -> complete
                 token.equals("meted") || // e.g. meted -> mete
+                token.endsWith("peted") || // e.g. competed -> compete
                 token.equals("cited") || // e.g. cited -> cite
-                token.endsWith("uetted") || // e.g. silhouetted -> silhouette
-                token.endsWith("zetted") || // e.g. gazetted -> gazette
-                token.endsWith("ibuted") || // e.g. misattributed -> misattribute
-                token.endsWith("ocuted") || // e.g. electrocuted -> electrocute
-                token.endsWith("muted") || // e.g. commuted -> commute
+                token.endsWith("ecited") || // e.g. recited -> recite
+                token.endsWith("ncited") || // e.g. incited -> incite
+                token.endsWith("xcited") || // e.g. excited -> excite
+                token.endsWith("adited") || // e.g. extradited -> extradite
+                token.endsWith("nited") || // e.g. united -> unite
                 token.endsWith("moted") || // e.g. promoted -> promote
                 token.endsWith("noted") || // e.g. denoted -> denote
                 token.endsWith("voted") || // e.g. voted -> vote
+                token.endsWith("tasted") || // e.g. tasted -> taste
+                token.endsWith("wasted") || // e.g. wasted -> waste
+                token.endsWith("uetted") || // e.g. silhouetted -> silhouette
+                token.endsWith("zetted") || // e.g. gazetted -> gazette
+                token.endsWith("ibuted") || // e.g. misattributed -> misattribute
+                token.endsWith("cuted") || // e.g. electrocuted -> electrocute, persecuted -> persecute
+                token.endsWith("futed") || // e.g. refuted -> refute
+                token.endsWith("luted") || // e.g. diluted -> dilute
                 token.equals("routed") || // e.g. routed -> route
-                token.equals("re-routed") || // e.g. routed -> route
+                token.equals("rerouted") || // e.g. routed -> route
+                token.endsWith("-routed") || // e.g. routed -> route
+                token.endsWith("puted") || // e.g. computed -> compute
+                token.endsWith("tuted") || // e.g. constituted -> contitute
+                token.endsWith("muted") || // e.g. commuted -> commute
                 token.endsWith("sputed") || // e.g. disputed -> dispute
+
                 token.endsWith("bued") || // e.g. imbued -> imbue
                 token.endsWith("cued") || // e.g. rescued -> rescue
                 token.endsWith("dued") || // e.g. subdued -> subdue
@@ -932,13 +1108,23 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("crued") || // e.g. accrued -> accrue
                 token.endsWith("strued") || // e.g. construed -> construe
                 token.endsWith("sued") || // e.g. sued -> sue, issued -> issue
+
                 token.endsWith("aved") || // e.g. saved -> save
+                token.endsWith("eved") || // e.g. relieved -> relieve
                 token.endsWith("ived") || // e.g. outlived -> outlive
+                token.endsWith("lved") || // e.g. revolved -> revolve
                 token.endsWith("oved") || // e.g. loved -> love
                 token.endsWith("rved") || // e.g. reserved -> reserve
+
+                token.equals("owed") || // e.g. owed -> owe
+
                 token.endsWith("xed") || // e.g. axed -> axe
+
                 token.endsWith("dyed") || // e.g. dyed -> dye
+
                 token.endsWith("dazed") || // e.g. dazed -> daze
+                token.endsWith("lazed") || // e.g. glazed -> glaze
+                token.endsWith("mazed") || // e.g. amazed -> amaze
                 token.endsWith("razed") || // e.g. crazed -> craze
                 token.endsWith("ized") || // e.g. criminalized -> criminalize
                 token.endsWith("tzed") || // e.g. waltzed -> waltz
@@ -949,7 +1135,8 @@ public class SubstWrongFormError extends SubstError {
         return CONSONANT_CONSONANT_ED.matcher(token).matches() &&
                 !token.toLowerCase().endsWith("balled") && // e.g. blackballed
                 !token.toLowerCase().endsWith("called") && // e.g. called
-                !token.toLowerCase().endsWith("dalled") && // e.g. medalled
+                !token.toLowerCase().endsWith("palled") && // e.g. appalled
+                !token.toLowerCase().endsWith("ralled") && // e.g. enthralled
                 !token.toLowerCase().endsWith("talled") && // e.g. installed
                 !token.toLowerCase().endsWith("walled") && // e.g. walled
                 !token.toLowerCase().endsWith("felled") && // e.g. felled
@@ -972,10 +1159,16 @@ public class SubstWrongFormError extends SubstError {
                 !token.toLowerCase().endsWith("willed") && // e.g. willed
                 !token.toLowerCase().endsWith("polled") && // e.g. polled
                 !token.toLowerCase().equals("rolled") && // e.g. rolled
+                !token.toLowerCase().endsWith("enrolled") && // e.g. enrolled
                 !token.toLowerCase().equals("tolled") && // e.g. rolled
                 !token.toLowerCase().equals("trolled") && // e.g. trolled
-                !token.toLowerCase().endsWith("ulled") && // e.g. culled
+                !token.toLowerCase().endsWith("ffed") && // e.g. buffed
+                !token.toLowerCase().endsWith("culled") && // e.g. culled
+                !token.toLowerCase().endsWith("fulled") && // e.g. fulled
+                !token.toLowerCase().endsWith("pulled") && // e.g. pulled
                 !token.toLowerCase().endsWith("ossed") && // e.g. crossed
+                !token.toLowerCase().endsWith("assed") && // e.g. passed, bypassed
+                !token.toLowerCase().endsWith("cotted") && // e.g. boycotted
                 !token.toLowerCase().endsWith("uzzed"); // e.g. buzzed
     }
 
@@ -1041,6 +1234,7 @@ public class SubstWrongFormError extends SubstError {
                 token.equals("riverbed") ||
                 token.equals("linseed") ||
                 token.equals("sinced") ||
+                token.equals("infrared") ||
                 containsPunctuation(token);
     }
 
@@ -1056,6 +1250,8 @@ public class SubstWrongFormError extends SubstError {
             return new Word("be", tag, token);
         } else if (token.equalsIgnoreCase("had")) {
             return new Word("have", tag, token);
+        } else if (token.equalsIgnoreCase("used")) {
+            return new Word("use", tag, token);
         } else if (token.endsWith("done")) {
             return new Word(token.substring(0, token.length() - 2), tag, token);
         } else if (token.endsWith("gone")) {
@@ -1081,7 +1277,8 @@ public class SubstWrongFormError extends SubstError {
                 token.toLowerCase().endsWith("strewn")) {
             return new Word(token.substring(0, token.length() - 1), tag);
         } else if (token.equalsIgnoreCase("fed") || token.equalsIgnoreCase("overfed") ||
-                token.equalsIgnoreCase("bred") || token.equalsIgnoreCase("overbred")) {
+                token.equalsIgnoreCase("bred") || token.equalsIgnoreCase("overbred") ||
+                token.equalsIgnoreCase("sped")) {
             return new Word(token.substring(0, token.length() - 1) + "ed", tag, token);
         } else if (token.endsWith("torn")) {
             return new Word("tear", tag, token);
@@ -1197,10 +1394,12 @@ public class SubstWrongFormError extends SubstError {
         } else if (removeD(token)) {
             return new Word(token.substring(0, token.length() - 1), tag);
         } else if (removeEDAndConsonant(token)) {
+            System.out.println("removing ED and constant: '" + token + "'");
             return new Word(token.substring(0, token.length() - 3), tag);
         } else if (replaceIEDWithY(token)) {
             return new Word(token.substring(0, token.length() - 3) + "y", tag);
         } else if (token.endsWith("ed")) {
+            System.out.println("reached default remove -ed rule: " + token);
             return new Word(token.substring(0, token.length() - 2), tag);
         } else {
             // System.out.println("Probably not a past particple " + token);
@@ -1235,9 +1434,10 @@ public class SubstWrongFormError extends SubstError {
 
         final String token = replacement.getToken();
 
-        // System.out.println(word.getToken() + " => " + token);
+        System.out.println(word.getToken() + " => " + token);
 
         if (token.equalsIgnoreCase("be")) {
+            System.out.println("be => is");
             return new Word("is", tag, token);
         } else if (token.equalsIgnoreCase("have")) {
             return new Word("has", tag, token);
@@ -1253,7 +1453,7 @@ public class SubstWrongFormError extends SubstError {
             return new Word(token.substring(0, token.length() - 1) + "ies", tag, token);
         } else if (token.endsWith("ch") || token.endsWith("sh") || token.endsWith("ss") ||
                 token.endsWith("es") || token.endsWith("cus") ||
-                token.endsWith("zz") ||
+                token.endsWith("zz") || token.endsWith("to") /* e.g. veto */ ||
                 token.endsWith("ucco") /* e.g. stucco */) {
             return new Word(token + "es", tag, token);
         } else if (appendSES(token)) {

@@ -9,8 +9,6 @@ import java.util.StringTokenizer;
  * @author Jennifer Foster
  */
 public class Sentence {
-
-
     /**
      * The list of words in the sentence
      */
@@ -19,14 +17,12 @@ public class Sentence {
     /**
      * Is the sentence POS-tagged?
      */
-    private boolean areTagsIncluded;
-
-
+    private boolean isTagged;
+    
     /**
      * If the sentence is ungrammatical, a string representing what is wrong with the sentence
      */
     private String errorDescription;
-
 
     /**
      * The SGML mark-up surrounding an input sentence
@@ -34,15 +30,15 @@ public class Sentence {
     private String sentenceSGML = "<s ";
 
 
-    public Sentence(String theSentence, boolean includeTags) {
-        if (includeTags) {
+    public Sentence(String sentence, boolean isTagged) {
+        if (isTagged) {
             //tokenise the sentence and place each token/tag into the vector of words
-            StringTokenizer tokens = new StringTokenizer(theSentence, " ");
+            StringTokenizer tokens = new StringTokenizer(sentence, " ");
             words = new ArrayList<Word>();
             String tag;
             String word;
             if (tokens.countTokens() % 2 == 1) {
-                System.out.println("Problem creating sentence: \t" + theSentence + " uneven number of tags and tokens");
+                System.out.println("Problem creating sentence: \t" + sentence + " uneven number of tags and tokens");
             }
             while (tokens.hasMoreTokens()) {
                 word = tokens.nextToken();
@@ -55,13 +51,13 @@ public class Sentence {
             }
         } else {
             //tokenise the sentence and place each token into the vector of words
-            StringTokenizer tokens = new StringTokenizer(theSentence, " ");
+            StringTokenizer tokens = new StringTokenizer(sentence, " ");
             words = new ArrayList<Word>();
             while (tokens.hasMoreTokens()) {
                 words.add(new Word(tokens.nextToken()));
             }
         }
-        areTagsIncluded = includeTags;
+        this.isTagged = isTagged;
     }
 
     /**
@@ -86,7 +82,7 @@ public class Sentence {
      * Are tags included in the sentence
      */
     public boolean areTagsIncluded() {
-        return areTagsIncluded;
+        return isTagged;
     }
 
     /**
@@ -112,10 +108,10 @@ public class Sentence {
         String theSentence = "";
         String theWord;
         for (int i = 0; i < words.size(); i++) {
-            if (areTagsIncluded) {
+            if (isTagged) {
                 theWord = words.get(i).toString();
             } else {
-                theWord = ((Word) words.get(i)).getToken();
+                theWord = words.get(i).getToken();
             }
             if (i < words.size() - 1) {
                 theSentence += theWord + " ";
@@ -136,7 +132,7 @@ public class Sentence {
         String theSentence = "";
         String theWord;
         for (int i = 0; i < words.size(); i++) {
-            theWord = ((Word) words.get(i)).getToken();
+            theWord = words.get(i).getToken();
 
             if (i < words.size() - 1) {
                 theSentence += theWord + " ";
@@ -197,7 +193,7 @@ public class Sentence {
     /**
      * Set the error description for this sentence
      */
-    public void setErrorDescription(String anErrorDesc) {
-        errorDescription = anErrorDesc;
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
     }
 }

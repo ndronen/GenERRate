@@ -24,7 +24,11 @@ public class Word {
     }
 
     private String preserveCase(String token, String original) {
-        return original.substring(0, 1) + token.substring(1);
+        if (Character.isUpperCase(original.charAt(0))) {
+            return Character.toUpperCase(token.charAt(0)) + token.substring(1);
+        } else {
+            return token;
+        }
     }
 
     /**
