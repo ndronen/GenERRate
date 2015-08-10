@@ -861,8 +861,10 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("vaded") || // e.g. invaded -> invade
                 token.endsWith("acceded") || // e.g. acceeded -> accede
                 token.endsWith("peded") || // e.g. impeded -> impede
+                token.endsWith("seded") || // e.g. superseded > supersede
                 token.endsWith("llided") || // e.g. collided -> collide
                 token.endsWith("cided") || // e.g. coincided
+                token.endsWith("fided") || // e.g. confided
                 token.endsWith("hided") || // e.g. chided -> chide
                 token.endsWith("rided") || // e.g. debrided, prided
                 token.endsWith("bsided") || // e.g. subsided -> subside
@@ -876,6 +878,7 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("loded") || // e.g. exploded -> explode
                 token.endsWith("roded") || // e.g. corroded -> corrode
                 token.endsWith(("luded")) || // e.g. precluded -> preclude
+                token.endsWith("nuded") || // e.g. denuded -> denude
 
                 token.endsWith("emceed") || // e.g. emceed -> emcee
                 token.endsWith("reed") || // e.g. freed -> free
@@ -899,23 +902,30 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("yaged") || // e.g. voyaged -> voyage
                 token.endsWith("dged") || // e.g. bridged -> bridge
                 token.endsWith("ieged") || // e.g. besieged -> besiege
+                token.endsWith("leged") || // e.g. alleged -> allege
                 token.endsWith("liged") || // e.g. obliged -> oblige
                 token.endsWith("lged") || // e.g. indulged -> indulge
                 token.endsWith("mpinged") || // e.g. impinged -> impinge
                 token.endsWith("changed") || // e.g. changed -> change
                 token.endsWith("ranged") || // e.g. arranged -> arrange
+                token.endsWith("lenged") || // e.g. challenged -> challenge
+                token.endsWith("venged") || // e.g. avenged -> avenge
                 token.endsWith("fringed") || // e.g. infringed -> infringe
                 token.endsWith("unged") || // e.g. expunged -> expunge
                 token.endsWith("rged") || // e.g. emerged -> emerge
+                token.endsWith("auged") || // e.g. gauged -> gauge
 
                 token.endsWith("reathed") || // e.g. breathed -> breathe
                 token.endsWith("ythed") || // e.g. scythed -> scythe
 
                 token.endsWith("faked") || // e.g. faked -> fake
                 token.endsWith("raked") || // e.g. raked -> rake
+                token.endsWith("taked") || // e.g. staked -> stake
                 token.endsWith("iked") || // e.g. liked -> like
                 token.endsWith("hoked") || // e.g. choked -> choke
                 token.endsWith("moked") || // e.g. smoked -> smoke
+                token.endsWith("roked") || // e.g. stroked -> stroke
+                token.endsWith("toked") || // e.g. stoked -> stoke
                 token.endsWith("voked") || // e.g. invoked -> invoke
 
                 token.endsWith("caled") || // e.g. down-scales -> down-scale
@@ -940,12 +950,14 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("aroled") || // e.g. paroled -> parole
                 token.endsWith("pled") || // e.g. coupled -> couple
                 token.endsWith("tled") || // e.g. titled -> title
+                token.endsWith("culed") || // e.g. ridiculed -> ridicule
                 token.endsWith("duled") || // e.g. scheduled -> schedule
                 token.endsWith("ruled") || // e.g. ruled -> rule
                 token.endsWith("yled") || // e.g. styled -> style
                 token.endsWith("zled") || // e.g. puzzled -> puzzle
 
                 token.endsWith("famed") || // e.g. famed -> fame
+                token.endsWith("hamed") || // e.g. shamed -> shame
                 token.endsWith("lamed") || // e.g. flamed -> flame
                 token.endsWith("named") || // e.g. codenamed -> codename
                 token.endsWith("ramed") || // e.g. framed -> frame
@@ -974,7 +986,9 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("loned") || // e.g. cloned -> clone
                 token.endsWith("poned") || // e.g. postponed -> postpone
                 token.endsWith("roned") || // e.g. enthroned -> enthrone
+                token.endsWith("toned") || // e.g. intoned -> intone, stoned -> stone
                 token.equals("zoned") || // e.g. zoned -> zone
+                token.equals("rezoned") || // e.g. zoned -> zone
                 token.equals("re-zoned") || // e.g. zoned -> zone
                 token.endsWith("gined") || // e.g. imagined -> imagine
                 token.endsWith("pruned") || // e.g. pruned -> prune
@@ -982,6 +996,7 @@ public class SubstWrongFormError extends SubstError {
 
                 token.endsWith("caped") || // e.g. escaped -> escape
                 token.endsWith("haped") || // e.g. shaped -> shape
+                token.endsWith("raped") || // e.g. draped -> drape
                 token.endsWith("taped") || // e.g. videotaped -> videotape
                 token.endsWith("wiped") || // e.g. wiped -> wipe
                 token.endsWith("roped") || // e.g. roped -> rope
@@ -991,6 +1006,7 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("dared") || // e.g. dared -> dare
                 token.endsWith("hared") || // e.g. shared -> share
                 token.endsWith("clared") || // e.g. declared -> declare
+                token.endsWith("flared") || // e.g. flared -> flare
                 token.endsWith("nared") || // e.g. ensnared -> ensnare
                 token.endsWith("pared") || // e.g. compare -> compared
                 token.endsWith("uared") || // e.g. squared -> square
@@ -1021,6 +1037,7 @@ public class SubstWrongFormError extends SubstError {
 
                 token.endsWith("based") || // e.g. rebased -> rebase
                 token.endsWith("cased") || // e.g. showcased -> showcase
+                token.equals("eased") || // e.g. eased -> ease
                 token.endsWith("ceased") || // e.g. deceased -> decease
                 token.endsWith("leased") || // e.g. released -> release
                 token.endsWith("reased") || // e.g. creased -> crease
@@ -1053,6 +1070,7 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("bated") || // e.g. debated -> debate
                 token.endsWith("cated") || // e.g. located -> locate
                 token.endsWith("dated") || // e.g. consolidated -> consolidate
+                token.endsWith("neated") || // e.g. lineated -> lineate
                 token.endsWith("lated") || // e.g. dilated -> dilate
                 token.endsWith("kated") || // e.g. skated -> skate
                 token.endsWith("created") || // e.g. created -> create
@@ -1064,6 +1082,7 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("mated") || // e.g. decimated -> decimate, desquamated -> desquamate
                 token.endsWith("pated") || // e.g. dissipated -> disspate
                 token.endsWith("rated") || // e.g. frustrated -> frustrate
+                token.endsWith("sated") || // e.g. compensated -> compensate
                 token.endsWith("tated") || // e.g. reinstated -> reinstate
                 token.endsWith("uated") || // e.g. situated -> situate
                 token.endsWith("vated") || // e.g. activated -> activate
@@ -1078,8 +1097,10 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("xcited") || // e.g. excited -> excite
                 token.endsWith("adited") || // e.g. extradited -> extradite
                 token.endsWith("nited") || // e.g. united -> unite
+                token.endsWith("vited") || // e.g. disinvited -> disinvite
                 token.endsWith("moted") || // e.g. promoted -> promote
                 token.endsWith("noted") || // e.g. denoted -> denote
+                token.endsWith("uoted") || // e.g. quoted -> quote
                 token.endsWith("voted") || // e.g. voted -> vote
                 token.endsWith("tasted") || // e.g. tasted -> taste
                 token.endsWith("wasted") || // e.g. wasted -> waste
@@ -1126,7 +1147,9 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("lazed") || // e.g. glazed -> glaze
                 token.endsWith("mazed") || // e.g. amazed -> amaze
                 token.endsWith("razed") || // e.g. crazed -> craze
+                token.endsWith("eezed") || // e.g. squeezed -> squeeze
                 token.endsWith("ized") || // e.g. criminalized -> criminalize
+                token.endsWith("ozed") || // e.g. dozed -> doze
                 token.endsWith("tzed") || // e.g. waltzed -> waltz
                 token.endsWith("yzed"); // || // e.g. criminalized -> criminalize
     }
@@ -1164,6 +1187,7 @@ public class SubstWrongFormError extends SubstError {
                 !token.toLowerCase().equals("trolled") && // e.g. trolled
                 !token.toLowerCase().endsWith("ffed") && // e.g. buffed
                 !token.toLowerCase().endsWith("culled") && // e.g. culled
+                !token.toLowerCase().endsWith("dulled") && // e.g. dulled
                 !token.toLowerCase().endsWith("fulled") && // e.g. fulled
                 !token.toLowerCase().endsWith("pulled") && // e.g. pulled
                 !token.toLowerCase().endsWith("ossed") && // e.g. crossed
@@ -1394,12 +1418,12 @@ public class SubstWrongFormError extends SubstError {
         } else if (removeD(token)) {
             return new Word(token.substring(0, token.length() - 1), tag);
         } else if (removeEDAndConsonant(token)) {
-            System.out.println("removing ED and constant: '" + token + "'");
+            //System.out.println("removing ED and constant: '" + token + "'");
             return new Word(token.substring(0, token.length() - 3), tag);
         } else if (replaceIEDWithY(token)) {
             return new Word(token.substring(0, token.length() - 3) + "y", tag);
         } else if (token.endsWith("ed")) {
-            System.out.println("reached default remove -ed rule: " + token);
+            //System.out.println("reached default remove -ed rule: " + token);
             return new Word(token.substring(0, token.length() - 2), tag);
         } else {
             // System.out.println("Probably not a past particple " + token);
@@ -1434,10 +1458,9 @@ public class SubstWrongFormError extends SubstError {
 
         final String token = replacement.getToken();
 
-        System.out.println(word.getToken() + " => " + token);
+        //System.out.println(word.getToken() + " => " + token);
 
         if (token.equalsIgnoreCase("be")) {
-            System.out.println("be => is");
             return new Word("is", tag, token);
         } else if (token.equalsIgnoreCase("have")) {
             return new Word("has", tag, token);

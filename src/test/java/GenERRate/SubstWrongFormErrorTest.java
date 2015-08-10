@@ -3852,7 +3852,6 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("peaked", "peaks");
         expectations.put("peeled", "peels");
         expectations.put("pegged", "pegs");
-        expectations.put("penciled", "pencils");
         expectations.put("pencilled", "pencils");
         expectations.put("penned", "pens");
         expectations.put("permitted", "permits");
@@ -4805,7 +4804,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("adhered", "adheres");
         expectations.put("Dressed", "Dresses");
         expectations.put("wasted", "wastes");
-        expectations.put("visualied", "visualizes");
+        expectations.put("visualized", "visualizes");
         expectations.put("videotaped", "videotapes");
         expectations.put("unheralded", "unheralds");
         expectations.put("umpired", "umpires");
@@ -4929,6 +4928,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("superceded", "supercedes");
         expectations.put("suckled", "suckles");
         expectations.put("stroked", "strokes");
+        expectations.put("stoked", "stokes");
         expectations.put("strangled", "strangles");
         expectations.put("straggled", "straggles");
         expectations.put("stoned", "stones");
@@ -5126,7 +5126,7 @@ public class SubstWrongFormErrorTest extends TestCase {
                 token = null;
             }
             i += 1;
-            System.out.println(entry.toString() + " " + token + " " + i + "/" + expectations.size());
+            // System.out.println(entry.toString() + " " + token + " " + i + "/" + expectations.size());
             assertEquals(entry.getValue(), token);
         }
 
