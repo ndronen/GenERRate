@@ -22,6 +22,7 @@ public class SubstWrongFormError extends SubstError {
     private static final Pattern CONSONANT_CONSONANT_ED = Pattern.compile(".*([" + CONSONANT + "])\\1ed");
     private static final Pattern VOWEL_CONSONANT = Pattern.compile("(.*[" + VOWEL + "])([" + CONSONANT + "])");
     private static final Pattern CONSONANT_E = Pattern.compile(".*[" + CONSONANT + "]e$");
+    private static final Pattern VOWEL_VOWEL_CONSONANT = Pattern.compile(".*[" + VOWEL + "][" + VOWEL + "][" + CONSONANT + "]$");
 
     /**
      * The part-of-speech tag set in effect (WSJ, CLAWS).
@@ -446,14 +447,27 @@ public class SubstWrongFormError extends SubstError {
         String tag = tagSet.VERB_PRES_PART;
         final String token = word.getToken();
 
+        final Matcher vvcMatcher = VOWEL_VOWEL_CONSONANT.matcher(token);
+
         if (token.equalsIgnoreCase("be")) {
             return new Word("being", tag);
+        } else if (token.toLowerCase().endsWith("saw")) {
+            return new Word(token.substring(0, token.length() - 2) + "eeing", tag, token);
+        } else if (vvcMatcher.matches()) {
+            if (token.toLowerCase().endsWith("quit")) {
+                return new Word(token + "ting", tag, token);
+            } else {
+                return new Word(token + "ing", tag, token);
+            }
+        } else if (token.endsWith("an")) {
+            // e.g. man -> manning, pan -> panning
+            return new Word(token + "ning", tag, token);
         } else if (token.endsWith("e") && !token.endsWith("ee")) {
-            if (token.endsWith("noe")) {
-                // e.g. canoe -> canoeing
+            if (token.toLowerCase().endsWith("hoe") || token.endsWith("noe")) {
+                // e.g. hoe -> hoeing, shoe -> shoeing, canoe -> canoeing
                 return new Word(token + "ing", tag);
-            } else if (token.endsWith("ie") && token.length() == 3) {
-                // e.g. tie -> tying, die -> dying
+            } else if (token.endsWith("ie") /* && token.length() == 3 */) {
+                // e.g. tie -> tying, die -> dying, underlie -> underlying
                 return new Word(token.substring(0, token.length() - 2) + "ying", tag);
             } else {
                 // e.g. hope -> hoping
@@ -471,17 +485,16 @@ public class SubstWrongFormError extends SubstError {
             // e.g. subsidise -> subsidising
             return new Word(token.substring(0, token.length() - 1) + "ing", tag);
         } else if (token.endsWith("er")) {
-            if (token.endsWith("der") || token.endsWith("eer") || token.endsWith("iter") || token.endsWith("ester")) {
-                // e.g. engender -> engendering, engineer -> engineering,
-                // reconnoiter -> reconnoitering, pester -> pestering
-                return new Word(token + "ing", tag);
-            } else if (token.endsWith("ier") || token.endsWith("euver")) {
-                // e.g. tier -> tiering, manoeuver -> manoeuvering
-                return new Word(token + "ing", tag);
-            } else {
-                // e.g. refer -> referring
+            if (token.endsWith("efer") || token.endsWith("nfer") || token.endsWith("sfer") ||
+                    token.endsWith("deter")) {
+                // e.g. refer -> referring, confer -> conferring, transfer -> transferring, deter -> deterring
                 return new Word(token + "ring", tag);
+            } else {
+                return new Word(token + "ing", tag);
             }
+        } else if (token.endsWith("eed") || token.endsWith("eem")) {
+            // e.g. seed -> seeding, need -> needing, teem -> teeming, deem -> deeming
+            return new Word(token + "ing", tag, token);
         } else if (token.endsWith("id") || token.endsWith("ed") || token.endsWith("ud")) {
             // e.g. forbid -> forbidding, stud -> studding
             return new Word(token + "ding", tag);
@@ -494,51 +507,71 @@ public class SubstWrongFormError extends SubstError {
         } else if (token.endsWith("ek") || token.endsWith("ic")) {
             // e.g. trek -> trekking, mimic -> mimicking
             return new Word(token + "king", tag);
-        } else if (token.endsWith("el")) {
-            // e.g. excel -> excelling
-            return new Word(token + "ling", tag);
+        } else if (token.endsWith("el") || token.endsWith("ul")) {
+            if (token.endsWith("ncel") || token.endsWith("del") || token.endsWith("llel") || token.endsWith("evel")) {
+                // e.g. cancel -> canceling, model -> modeling, parallel -> paralleling, level -> leveling
+                return new Word(token + "ing", tag);
+            } else {
+                // e.g. excel -> excelling
+                return new Word(token + "ling", tag);
+            }
         } else if (token.endsWith("ag") || token.endsWith("eg") || token.endsWith("ig") || token.endsWith("og") || token.endsWith("ug")) {
             // e.g. rig -> rigging, hug -> hugging
             return new Word(token + "ging", tag);
         } else if (token.endsWith("em") || token.endsWith("im")) {
             // e.g. swim -> swimming
             return new Word(token + "ming", tag);
-        } else if (token.endsWith("in") && token.length() == 3) {
-            // e.g. win -> winning, pin -> pinning
-            return new Word(token + "ning", tag);
-        } else if (token.endsWith("ap") || token.endsWith("ip") || token.endsWith("up")) {
-            // e.g. kidnap -> kidnapping
-            return new Word(token + "ping", tag);
+        } else if (token.endsWith("in") || token.endsWith("on") || token.endsWith("un")) {
+            if (token.toLowerCase().endsWith("ammon")) {
+                // e.g. backgammon -> backgammoning
+                return new Word(token + "ing", tag, token);
+            } else {
+                return new Word(token + "ning", tag, token);
+            }
+        } else if (token.endsWith("ap") || token.endsWith("ep") || token.endsWith("ip") || token.endsWith("op") || token.endsWith("up")) {
+            if (token.toLowerCase().endsWith("velop")) {
+                return new Word(token + "ing", tag, token);
+            } else {
+                // e.g. kidnap -> kidnapping, drop -> dropping
+                return new Word(token + "ping", tag);
+            }
         } else if (token.endsWith("ol")) {
             // e.g. control -> controlling
             return new Word(token + "ling", tag);
-        } else if (token.endsWith("un")) {
-            // e.g. run -> running
-            return new Word(token + "ning", tag);
-        } else if (token.endsWith("ir") || token.endsWith("ur")) {
+        } else if (token.endsWith("ir") || token.endsWith("or") || token.endsWith("ur")) {
             if (token.endsWith("our")) {
-                // e.g. favour -> favouring
+                // e.g. deliver -> delivering, favour -> favouring
                 return new Word(token + "ing", tag);
             } else {
                 // e.g. incur -> incurring, spur -> spurring, stir -> stirring
                 return new Word(token + "ring", tag);
             }
-        } else if (token.toLowerCase().endsWith("set") || token.toLowerCase().endsWith("fit") ||
-                token.toLowerCase().endsWith("cut") || token.toLowerCase().endsWith("hit") ||
-                token.toLowerCase().endsWith("put") || token.toLowerCase().endsWith("let")) {
-            if (token.endsWith("nefit") || token.endsWith("rofit")) {
-                // e.g. benefit -> benefiting, profit -> profiting
+        } else if (token.endsWith("at") || token.endsWith("et") || token.endsWith("it") || token.endsWith("ot") || token.endsWith("ut")) {
+            // System.out.println(token + " ends with 't'");
+            if (token.endsWith("mbat") || // e.g. combat -> combating
+                    token.endsWith("abit") ||
+                    token.endsWith("ibit") ||
+                    token.endsWith("icit") ||
+                    token.endsWith("ket") || // e.g. market -> marketing
+                    token.toLowerCase().endsWith("efit") ||
+                    token.toLowerCase().endsWith("profit") ||
+                    token.toLowerCase().endsWith("rit") || // e.g. inherit -> inheriting
+                    token.toLowerCase().endsWith("arget") || // e.g. target -> targeting
+                    token.toLowerCase().endsWith("xit") || // e.g. exit -> exiting
+                    token.toLowerCase().endsWith("rrot") || // e.g. parrot -> parroting
+                    /* token.endsWith("nefit") ||  token.endsWith("rofit") || */ token.equalsIgnoreCase("debut") ||
+                    token.toLowerCase().endsWith("visit") || token.toLowerCase().endsWith("osit") ||
+                    token.toLowerCase().endsWith("imit") || token.toLowerCase().endsWith("pret") ||
+                    token.toLowerCase().endsWith("ivet")) {
+                // e.g. benefit -> benefiting, profit -> profiting, debut -> debuting, deposit -> depositing,
+                // limit -> limiting, interpret -> interpreting, elicit -> eliciting, rivet -> riveting
+                // System.out.println(token + " doesn't get an extra t");
                 return new Word(token + "ing", tag);
             } else {
-
-                // e.g. set -> setting
+                // e.g. set -> setting, fret -> fretting, outwit -> outwitting
+                System.out.println(token + " gets an extra t");
                 return new Word(token + "ting", tag);
             }
-// I'm not going to take the time to understand this block. Five conditions?
-//        } else if ((word.getToken().endsWith("t") && word.getToken().length() > 1)
-//                && ((word.getToken().length() > 3) && !(word.getToken().substring(word.getToken().length() - 4, word.getToken().length() - 2).equals("ea")))
-//                && (ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 2)))) {
-//            return new Word(word.getToken() + "ting", tag);
         } else {
             return new Word(token + "ing", tag);
         }
