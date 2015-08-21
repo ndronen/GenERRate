@@ -593,6 +593,8 @@ public class SubstWrongFormError extends SubstError {
             return infinitive;
         }
 
+        //System.out.println(word.getToken() + " => " + infinitive.getToken());
+
         return baseToThirdSing(infinitive);
     }
 
@@ -635,43 +637,56 @@ public class SubstWrongFormError extends SubstError {
 
                 token.endsWith("arauding")  || // e.g. marauding -> maraude
                 token.endsWith("cading")    || // e.g. cascading -> cascade
+                token.endsWith("nading") || // e.g. serenading -> serenade
                 token.endsWith("rading")    || // e.g. degrading -> degrade
                 token.endsWith("uading")    || // e.g. persuading -> persuade
                 token.endsWith("vading")    || // e.g. pervading -> pervade
                 token.endsWith("ceding") || // e.g. conceding -> concede
                 token.endsWith("peding") || // e.g. impeding -> impede
                 token.endsWith("seding") || // e.g. superseding -> supersede
-                token.endsWith("iding")     || // e.g. deciding -> decide
+                token.endsWith("iding") ||
+                //token.endsWith("ciding")     || // e.g. deciding -> decide
+                //token.endsWith("hiding") || // e.g. chiding -> chide
+                //token.endsWith("liding") || // e.g. sliding -> slide, eliding -> elide
+                //token.endsWith("siding")    || // e.g. subsiding -> subside
+                //token.endsWith("uiding") || // e.g. guiding -> guide
+                //token.endsWith("viding") || // e.g. providing -> provide
                 token.endsWith("oding")     || // e.g. eroding -> erode
                 token.endsWith("luding") || // e.g. including -> include
+                token.endsWith("ruding") || // e.g. protruding -> protrude
+
+                token.endsWith("afing") || // e.g. chafing -> chafe
 
                 token.endsWith("caching") || // e.g. caching -> cache
 
-                token.endsWith("biling") || // e.g. snowmobiling -> snowmobile
+
+                token.endsWith("oking") || // e.g. joking -> joke, choking -> choke
+
+                token.endsWith("haling") || // e.g. whaling -> whale
                 token.equalsIgnoreCase("taling") || // e.g. taling -> tale
                 token.endsWith("mbling")    || // e.g. rumbling -> rumble
                 token.endsWith("abling")    || // e.g. disabling -> disable
-                token.endsWith("ipling") || // e.g. tripling -> triple
-                token.endsWith("mpling") || // e.g. trampling -> trample
-                token.endsWith("upling")    || // e.g. coupling -> couple
-                token.endsWith("ppling")    || // e.g. rippling -> ripple
-                token.endsWith("haling")    || // e.g. whaling -> whale
-                token.endsWith("piling") || // e.g. compiling -> compile
                 token.endsWith("cling")     || // e.g. circling -> circle
+                token.endsWith("dling") || // e.g. waddling -> waddle
+                token.endsWith("fling") || // e.g. stifling -> stifle
                 token.endsWith("ggling")    || // e.g. wiggling -> wiggle
                 token.endsWith("ngling")    || // e.g. singling -> single
                 token.endsWith("ogling")    || // e.g. ogling -> ogle
-                token.endsWith("fling")     || // e.g. stifling -> stifle
+                token.endsWith("biling") || // e.g. snowmobiling -> snowmobile
+                token.endsWith("piling") || // e.g. compiling -> compile
                 token.endsWith("ckling")    || // e.g. tickling -> tickle
                 token.endsWith("inkling")   || // e.g. wrinkling -> wrinkle
                 token.endsWith("ntling")    || // e.g. dismantling -> dismantle
+                token.endsWith("ipling") || // e.g. tripling -> triple
+                token.endsWith("mpling") || // e.g. trampling -> trample
+                token.endsWith("upling") || // e.g. coupling -> couple
+                token.endsWith("ppling") || // e.g. rippling -> ripple
                 token.endsWith("rtling") || // e.g. wrestling -> wrestle
                 token.endsWith("stling") || // e.g. hurtling -> hurtle
                 token.endsWith("ttling")    || // e.g. settling -> settle
                 token.endsWith("zzling")    || // e.g. embezzling -> embezzle
                 token.endsWith("bling")     || // e.g. troubling -> trouble (overrides next rule)
                 token.endsWith("bbling")    || // e.g. babbling -> babble
-                token.endsWith("dling")     || // e.g. waddling -> waddle
                 token.endsWith("paling") || // e.g. impaling -> impale
                 token.endsWith("ciling") || // e.g. reconciling -> reconcile
                 token.endsWith("filing") || // e.g. filing -> file
@@ -687,82 +702,33 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("yling")     || // e.g. styling -> style
 
                 token.endsWith("aging")     || // e.g. managing -> manage
+                token.endsWith("dging") || // e.g. abridge -> abridge
                 token.endsWith("ieging")     || // e.g. besieging -> besiege
                 token.endsWith("leging")     || // e.g. alleging -> allege
                 token.endsWith("arging")    || // e.g. charging -> charge
                 token.endsWith("erging")    || // e.g. emerging -> emerge
                 token.endsWith("orging") || // e.g. forging -> forge
                 token.endsWith("ulging")    || // e.g. indulging -> indulge
-                token.endsWith("urging")    || // e.g. puring -> purge
+                token.endsWith("urging") || // e.g. purging -> purge
                 token.endsWith("uging")     || // e.g. gouging -> gouge
 
-                token.endsWith("rsing") || // e.g. parsing -> parse
-                token.endsWith("casing")    || // e.g. truecasing -> truecase
-                token.endsWith("chasing")   || // e.g. purchasing -> purchase
-                token.endsWith("ising")     || // e.g. reorganising -> reorganise
-                token.endsWith("eansing") || // e.g. cleansing -> cleanse
-                token.endsWith("ensing")    || // e.g. condensing -> condense
-                token.endsWith("earsing") || // e.g. rehearsing -> rehearse
-                token.endsWith("easing") || // e.g. releasing -> release
-                token.endsWith("ersing")    || // e.g. traversing -> traverse
-                token.endsWith("ursing")    || // e.g. coursing -> course
-                token.endsWith("ulsing") || // e.g. pulsing -> pulse
-                token.endsWith("oosing")    || // e.g. choosing -> choose
-                token.endsWith("orsing") || // e.g. endoring -> endorse
-                token.endsWith("using")     || // e.g. reusing -> reuse
-                token.endsWith("posing")    || // e.g. supposing -> suppose
-                token.endsWith("osing")     || // e.g. closing -> close
-                token.endsWith("psing")     || // e.g. collapsing -> collapse
-                token.endsWith("ysing")     || // e.g. catalysing -> catalyse
+                token.endsWith("rafing") || // e.g. strafing -> strafe
 
-                token.endsWith("cating")    || // e.g. reciprocating -> reciprocate
-                token.endsWith("dating") || // e.g. predating -> predate
-                token.endsWith("rating") || // e.g. rating -> rate
-                token.endsWith("creating") || // e.g. creating -> create
-                token.endsWith("kating") || // e.g. skating -> skate
-                token.endsWith("nciting") || // e.g. inciting -> incite
-                token.endsWith("xciting") || // e.g. exciting -> excite
-                token.endsWith("ctating")   || // e.g. nictating -> nictate
-                token.endsWith("aseating")  || // e.g. caseating -> caseate
-                token.endsWith("leting")    || // e.g. completing -> complete
-                token.endsWith("peting")    || // e.g. competing -> compete
-                token.endsWith("niting") || // e.g. uniting -> unite
-                token.endsWith("writing")   || // e.g. writing -> write
-                token.endsWith("buting")    || // e.g. attributing -> attribute
-                token.endsWith("iluting")   || // e.g. diluting -> dilute
-                token.endsWith("tuting")    || // e.g. substituting -> substitute
-                token.endsWith("iating")    || // e.g. obviating -> obviate
-                token.endsWith("nating")    || // e.g. designating -> designate
-                token.endsWith("erating")   || // e.g. operating -> operate
-                token.endsWith("gating") || // e.g. segregating -> segregate
-                token.endsWith("wasting") || // e.g. wasting -> waste
-                token.endsWith("uating")    || // e.g. evaluating -> evaluate
-                token.endsWith("ulating") || // e.g. articulating -> articulate
-                token.endsWith("uting")     || // e.g. diluting -> dilute
-
-                token.endsWith("afing")     || // e.g. strafing -> strafe
                 token.endsWith("iking")     || // e.g. hiking -> hike
-                token.endsWith("oking")     || // e.g. invoking -> invoke
+                token.endsWith("voking") || // e.g. invoking -> invoke
                 token.endsWith("uking")     || // e.g. rebuking -> rebuke
                 token.endsWith("making")    || // e.g. making -> make
                 token.endsWith("taking")    || // e.g. taking -> take
 
                 token.endsWith("uming") || // e.g. assuming -> assume
                 token.endsWith("coming") || // e.g. unbecoming -> unbecome
-                token.endsWith("aming")     || // e.g. flaming -> flame
+                token.endsWith("aming") || // e.g. flaming -> flame, framing -> frame, naming -> name
+                //token.endsWith("laming")     || // e.g. flaming -> flame
+                // token.endsWith("raming")     || // e.g. framing -> frame
                 token.endsWith("iming") || // e.g. chiming -> chime
 
-                token.endsWith("azing")     || // e.g. gazing -> gaze
-                token.endsWith("uiring") || // e.g. enquiring -> enquire
-                token.endsWith("faring") || // e.g. seafaring -> seafare
-                token.endsWith("fering")    || // e.g. interfering -> interfere
-                token.endsWith("rsevering") || // e.g. persevering -> persevere
-                token.endsWith("juring")    || // e.g. injuring -> injure
-                token.endsWith("suring") || // e.g. reinsuring -> reinsure
-                token.endsWith("turing")    || // e.g. manufacturing -> manufacture
-                token.endsWith("ntring")    || // e.g. centring -> centre
-                token.endsWith("arving")    || // e.g. carving -> carve
-
+                token.endsWith("laning") || // e.g. laning -> lane
+                token.endsWith("waning") || // e.g. waning -> wane
                 token.endsWith("bining")    || // e.g. combining -> combine
                 token.endsWith("lining")    || // e.g. lining -> line
                 token.endsWith("gining")    || // e.g. imagining -> imagine
@@ -772,7 +738,6 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("mining")    || // e.g. examining -> examine
                 token.endsWith("twining")   || // e.g. intertwining -> intertwine
                 token.endsWith("vining") || // e.g. divining -> diving
-                token.endsWith("aning")     || // e.g. laning -> lane
                 token.endsWith("vening")    || // e.g. intervening -> intervene
                 token.endsWith("boning") || // e.g. boning -> bones
                 token.endsWith("doning")    || // e.g. condoning -> condone
@@ -782,16 +747,6 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("roning")    || // e.g. dethroning -> dethrone
                 token.endsWith("toning") || // e.g. intoning -> intone
                 token.endsWith("zoning")    || // e.g. zoning -> zone
-
-                token.endsWith("aving")     || // e.g. saving -> save
-                token.endsWith("hiding")    || // e.g. chiding -> chide
-
-                token.endsWith("lving")     || // e.g. halving -> halve
-
-                token.endsWith("iving")     || // e.g. receiving -> receive
-                token.endsWith("izing")     || // e.g. dualizing -> dualize
-                token.endsWith("siding")    || // e.g. subsiding -> subside
-                token.endsWith("uiding")    || // e.g. guiding -> guide
 
                 token.endsWith("iping")     || // e.g. wiping -> wipe
                 token.endsWith("aping") || // e.g. taping -> tape
@@ -803,6 +758,72 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("caping")    || // e.g. escaping -> escape
                 token.endsWith("haping") || // e.g. reshaping -> reshapes
 
+                token.endsWith("tiring") || // e.g. retiring -> retire
+                token.endsWith("uiring") || // e.g. enquiring -> enquire
+                token.endsWith("faring") || // e.g. seafaring -> seafare
+                token.endsWith("paring") || // e.g. comparing -> compare
+                token.endsWith("fering") || // e.g. interfering -> interfere
+                token.endsWith("rsevering") || // e.g. persevering -> persevere
+                token.endsWith("firing") || // e.g. misfiring -> misfire
+                token.endsWith("curing") || // e.g. securing -> secure
+                token.endsWith("juring") || // e.g. injuring -> injure
+                token.endsWith("suring") || // e.g. reinsuring -> reinsure
+                token.endsWith("turing") || // e.g. manufacturing -> manufacture
+                token.endsWith("ntring") || // e.g. centring -> centre
+
+                token.endsWith("rsing") || // e.g. parsing -> parse
+                token.endsWith("basing") || // e.g. rebasing -> rebase
+                token.endsWith("casing") || // e.g. truecasing -> truecase
+                token.endsWith("chasing") || // e.g. purchasing -> purchase
+                token.endsWith("phrasing") || // e.g. paraphrasing -> paraphrase
+                token.endsWith("ising") || // e.g. reorganising -> reorganise
+                token.endsWith("eansing") || // e.g. cleansing -> cleanse
+                token.endsWith("ensing") || // e.g. condensing -> condense
+                token.endsWith("earsing") || // e.g. rehearsing -> rehearse
+                token.endsWith("easing") || // e.g. releasing -> release
+                token.endsWith("ersing") || // e.g. traversing -> traverse
+                token.endsWith("ursing") || // e.g. coursing -> course
+                token.endsWith("ulsing") || // e.g. pulsing -> pulse
+                token.endsWith("oosing") || // e.g. choosing -> choose
+                token.endsWith("orsing") || // e.g. endorsing -> endorse
+                token.endsWith("using") || // e.g. reusing -> reuse
+                token.endsWith("posing") || // e.g. supposing -> suppose
+                token.endsWith("osing") || // e.g. closing -> close
+                token.endsWith("psing") || // e.g. collapsing -> collapse
+                token.endsWith("ysing") || // e.g. catalysing -> catalyse
+
+                token.endsWith("cating") || // e.g. reciprocating -> reciprocate
+                token.endsWith("dating") || // e.g. predating -> predate
+                token.endsWith("creating") || // e.g. creating -> create
+                token.endsWith("aseating") || // e.g. caseating -> caseate
+                token.endsWith("iating") || // e.g. obviating -> obviate
+                token.endsWith("gating") || // e.g. segregating -> segregate
+                token.endsWith("kating") || // e.g. skating -> skate
+                token.endsWith("lating") || // e.g. relating -> relate
+                token.endsWith("ulating") || // e.g. articulating -> articulate
+                token.endsWith("nating") || // e.g. designating -> designate
+                token.endsWith("rating") || // e.g. rating -> rate
+                token.endsWith("erating") || // e.g. operating -> operate
+                token.endsWith("sating") || // e.g. compensating -> compensate
+                token.endsWith("ctating") || // e.g. nictating -> nictate
+                token.endsWith("itating") || // e.g. facilitating -> facilitate
+                token.endsWith("otating") || // e.g. rotating -> rotate
+                token.endsWith("uating") || // e.g. evaluating -> evaluate
+                token.endsWith("vating") || // e.g. deactivating -> deactivate
+                token.endsWith("leting") || // e.g. completing -> complete
+                token.endsWith("peting") || // e.g. competing -> compete
+                token.endsWith("nciting") || // e.g. inciting -> incite
+                token.endsWith("xciting") || // e.g. exciting -> excite
+                token.endsWith("niting") || // e.g. uniting -> unite
+                token.endsWith("writing") || // e.g. writing -> write
+                token.endsWith("moting") || // e.g. promoting -> promote
+                token.endsWith("noting") || // e.g. denoting -> denote
+                token.endsWith("buting") || // e.g. attributing -> attribute
+                token.endsWith("iluting") || // e.g. diluting -> dilute
+                token.endsWith("tuting") || // e.g. substituting -> substitute
+                token.endsWith("wasting") || // e.g. wasting -> waste
+                token.endsWith("uting") || // e.g. diluting -> dilute
+
                 token.endsWith("buing") || // e.g. imbuing -> imbue
                 token.endsWith("cuing")     || // e.g. rescuing -> rescue
                 token.endsWith("duing")     || // e.g. subduing -> subdue
@@ -813,8 +834,20 @@ public class SubstWrongFormError extends SubstError {
                 token.endsWith("quing")     || // e.g. critiquing -> critique
                 token.endsWith("suing") || // e.g. ensuing -> ensue
 
+                token.endsWith("aving") || // e.g. saving -> save
+                token.endsWith("ieving") || // e.g. relieving -> relieve
+                token.endsWith("arving") || // e.g. carving -> carve
+                token.endsWith("erving") || // e.g. serving -> serve
+                token.endsWith("lving") || // e.g. halving -> halve
+                token.endsWith("iving") || // e.g. receiving -> receive
+                token.endsWith("oving") || // e.g. approving -> approve, moving -> move
+
                 token.endsWith("owsing") || // e.g. browsing -> browse
-                token.equalsIgnoreCase("owing"); //|| // e.g. owing -> owe
+                token.equalsIgnoreCase("owing") || // e.g. owing -> owe
+
+                token.endsWith("azing") || // e.g. gazing -> gaze
+                token.endsWith("izing") || // e.g. dualizing -> dualize
+                token.endsWith("yzing"); // analyzing -> analyze
         // token.endsWith("Xing"); //|| // e.g. Xing -> X
         // token.endsWith("Xing"); //|| // e.g. Xing -> X
         // token.endsWith("Xing"); //|| // e.g. Xing -> X
@@ -826,7 +859,9 @@ public class SubstWrongFormError extends SubstError {
 
     protected boolean presPToInfConvertCkToC(String token) {
         token = token.toLowerCase();
-        return token.endsWith("icking");  // e.g. panicking -> panic
+        return token.endsWith("panicking") ||
+                token.endsWith("mimicking") ||
+                token.endsWith("picnicking");
     }
 
     public Word presPToInf(Word word) {
@@ -840,13 +875,14 @@ public class SubstWrongFormError extends SubstError {
         } else if (token.equalsIgnoreCase("lying")) {
             return new Word(token.substring(0, token.length() - 4) + "ie", tag);
         } else if (infEndsWithE(token)) {
-            // System.out.println(token + " matches[1] infEndsWithE");
+            //System.out.println(token + " matches[1] infEndsWithE");
             return new Word(token.substring(0, token.length() - 3) + "e", tag);
         } else if (CONSONANT_CONSONANT_ING.matcher(token).matches()) {
-            // System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
-            if (token.endsWith("ssing") || token.endsWith("zzing") || token.endsWith("spelling") ||
+            //System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
+            if (token.endsWith("ssing") || token.endsWith("uzzing") || token.endsWith("spelling") ||
                     token.endsWith("stalling") || token.endsWith("selling") || token.endsWith("welling") ||
-                    token.endsWith("cotting") || token.endsWith("affing")) {
+                    token.endsWith("cotting") || token.endsWith("affing") || token.endsWith("uffing") ||
+                    token.endsWith("yelling") || token.equalsIgnoreCase("rolling")) {
                 return new Word(token.substring(0, token.length() - 3), tag);
             } else {
                 return new Word(token.substring(0, token.length() - 4), tag);
