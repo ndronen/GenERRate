@@ -579,7 +579,7 @@ public class SubstWrongFormError extends SubstError {
             // e.g. trek -> trekking, mimic -> mimicking
             return new Word(token + "king", tag);
         } else if (token.endsWith("el") || token.endsWith("ul")) {
-            if (token.endsWith("ncel") || token.endsWith("del") || token.endsWith("llel") || token.endsWith("evel")) {
+            if (token.endsWith("del") || token.endsWith("llel")) {
                 // e.g. cancel -> canceling, model -> modeling, parallel -> paralleling, level -> leveling
                 return new Word(token + "ing", tag);
             } else {
