@@ -156,27 +156,35 @@ subst	POS1	POS2
 Substitute a word tagged as POS1 for a word tagged as POS2 from the extra word list UNLESS POS1 and POS2 are one of the pairs below. 
 If they are, the inflection of the word is changed.
 
-singular noun, plural noun
-plural noun, singular noun
-third singular verb, non third singular verb
-non third singular verb, third singular verb
-third singular verb, present participle verb
-present participle verb, third singular verb
-present participle verb, past participle verb
-past participle verb, present participle verb
-present participle verb, non third singular verb
-non third singular verb, present participle verb
-present participle verb, inf marker
-inf marker, present participle verb
-base verb, present participle verb
-past participle verb, third singular verb
-base verb, third singular verb
-base adjective, comparative adjective
-base adjective, superlative adjective
-comparative adjective, superlative adjective
-comparative adjective, base adjective
-superlative adjective, comparative adjective
-superlative adjective, base adjective
-adverb, adjective
+singular noun, plural noun (WSJ: NN -> NNS)
+plural noun, singular noun (WSJ: NNS -> NN)
 
+third singular verb, non third singular verb (WSJ: VBZ -> VBP)
+non third singular verb, third singular verb (WSJ: VBP -> VBZ)
 
+third singular verb, present participle verb (WSJ: VBZ -> VBG)
+present participle verb, third singular verb (WSJ: VBG -> VBZ)
+
+present participle verb, past participle verb (WSJ: VBG -> VBN)
+past participle verb, present participle verb (WSJ: VBN -> VBG)
+
+present participle verb, non third singular verb (WSJ: VBG -> VBP)
+non third singular verb, present participle verb (WSJ: VBP -> VBG)
+
+present participle verb, inf marker (WSJ: VBG -> TO)
+inf marker, present participle verb (WSJ: TO -> VBG)
+
+base verb, present participle verb (WSJ: VB -> VBG)
+past participle verb, third singular verb (WSJ: VBN -> VBZ)
+base verb, third singular verb (WSJ: VB -> VBZ)
+
+base adjective, comparative adjective (WSJ: JJ -> JJR)
+base adjective, superlative adjective (WSJ: JJ -> JJS)
+
+comparative adjective, superlative adjective (WSJ: JJR -> JJS)
+comparative adjective, base adjective (WSJ: JJR -> JJ)
+
+superlative adjective, comparative adjective (WSJ: JJS -> JJR)
+superlative adjective, base adjective (WSJ: JJS -> JJ)
+
+adverb, adjective (WSJ: RB -> JJ)

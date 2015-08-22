@@ -1701,14 +1701,32 @@ public class SubstWrongFormError extends SubstError {
         }
     }
 
+    // VB -> VBZ
     public Word baseToThirdSing(Word word) {
         final String tag = tagSet.VERB_THIRD_SING;
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("be")) {
             return new Word("is", tag);
+        } else if (token.toLowerCase().endsWith("do") || token.toLowerCase().endsWith("go")) {
+            return new Word(token + "es", tag, token);
         } else if (token.equalsIgnoreCase("have")) {
             return new Word("has", tag);
+        } else if (token.endsWith("y")) {
+            if (token.length() == 3) {
+                if (!ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
+                    // try -> tries
+                    return new Word(token.substring(0, token.length() - 1) + "ies", tag, token);
+                } else {
+                    // say -> says
+                    return new Word(token + "s", tag, token);
+                }
+            }
+            if (ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
+                return new Word(token + "s", tag, token);
+            } else {
+                return new Word(token.substring(0, token.length() - 1) + "ies", tag, token);
+            }
         } else if (token.endsWith("sh") || token.endsWith("ch") || token.endsWith("ss") ||
                 token.endsWith("sso") ||
                 token.endsWith("xi") || token.endsWith("x")) {
