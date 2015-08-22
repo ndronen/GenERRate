@@ -17,12 +17,21 @@ public class SubstWrongFormError extends SubstError {
     private static final String VOWEL = "aeiou";
     private static final String CONSONANT = "bcdfghjklmnpqrstvwxyz";
     private static final String PUNCTUATION = "!\"#$%&'()*+,./:;<=>?@[]^_`{|}~";
-    private static final Pattern CONSONANT_CONSONANT_ING = Pattern.compile(".*([" + CONSONANT + "])\\1ing");
-    private static final Pattern VOWEL_VOWEL_M = Pattern.compile(".*[aeiou][aeuio]m$");
-    private static final Pattern CONSONANT_CONSONANT_ED = Pattern.compile(".*([" + CONSONANT + "])\\1ed");
-    private static final Pattern VOWEL_CONSONANT = Pattern.compile("(.*[" + VOWEL + "])([" + CONSONANT + "])");
-    private static final Pattern CONSONANT_E = Pattern.compile(".*[" + CONSONANT + "]e$");
-    private static final Pattern VOWEL_VOWEL_CONSONANT = Pattern.compile(".*[" + VOWEL + "][" + VOWEL + "][" + CONSONANT + "]$");
+
+    private static final Pattern CONSONANT_CONSONANT_ING = Pattern.compile(
+            ".*([" + CONSONANT + "])\\1ing", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VOWEL_VOWEL_M = Pattern.compile(
+            ".*[aeiou][aeuio]m$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CONSONANT_CONSONANT_ED = Pattern.compile(
+            ".*([" + CONSONANT + "])\\1ed", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VOWEL_CONSONANT = Pattern.compile(
+            "(.*[" + VOWEL + "])([" + CONSONANT + "])", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CONSONANT_E = Pattern.compile(
+            ".*[" + CONSONANT + "]e$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VOWEL_VOWEL_CONSONANT = Pattern.compile(
+            ".*[" + VOWEL + "][" + VOWEL + "][" + CONSONANT + "]$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CONSONANT_VOWEL_CONSONANT = Pattern.compile(
+            "(.*[" + CONSONANT + "][" + VOWEL + "])([" + CONSONANT + "])$", Pattern.CASE_INSENSITIVE);
 
     /**
      * The part-of-speech tag set in effect (WSJ, CLAWS).
@@ -330,9 +339,11 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("is")) {
-            return new Word("be", tag);
+            return new Word("be", tag, token);
+        } else if (token.toLowerCase().endsWith("does") || token.toLowerCase().endsWith("goes")) {
+            return new Word(token.substring(0, token.length() - 2), tag, token);
         } else if (token.equalsIgnoreCase("has")) {
-            return new Word("have", tag);
+            return new Word("have", tag, token);
         } else if (token.endsWith("ies")) {
             return new Word(token.substring(0, token.length() - 3) + "y", tag);
         } else if (token.equalsIgnoreCase("begat")) {
@@ -342,12 +353,6 @@ public class SubstWrongFormError extends SubstError {
             return new Word(token.substring(0, token.length() - 1), tag);
         } else if (token.endsWith("es")) {
             return new Word(token.substring(0, token.length() - 1), tag);
-            //} else if (thirdSingToPresPAddTING(token)) {
-            //    return new Word(token.substring(0, token.length() - 1) + "ting", tag);
-            //} else if (thirdSingToPresPDuplicateFinalConsonant(token, matcher)) {
-//            MatchResult result = matcher.toMatchResult();
-//            String newToken = result.group(1) + result.group(2) + result.group(2) + "ing";
-//            return new Word(newToken, tag, token);
         } else if (token.length() > 0) {
             return new Word(token.substring(0, token.length() - 1), tag);
         } else {
@@ -357,51 +362,111 @@ public class SubstWrongFormError extends SubstError {
     }
 
     protected boolean thirdSingToPresPDuplicateFinalConsonant(String token, Matcher matcher) {
-        return matcher.matches() &&
-                !token.endsWith("in") && // e.g. obtain -> obtaining
+        if (!matcher.matches()) {
+            //System.out.println(token + " doesn't match CVC");
+            return false;
+        }
 
-                !token.endsWith("eep") && // e.g. keep -> keeping
-                !token.endsWith("oop") && // e.g. stoop -> stooping
-                !token.endsWith("lop") && // e.g. develop -> developing
+        token = token.toLowerCase();
 
-                !token.endsWith("ear") && // e.g. appear -> appearing
-                !token.endsWith("air") && // e.g. chair -> chairing
-                !token.endsWith("er") && // e.g. offer -> offering
-                !token.endsWith("bor") && // e.g. harbor -> harboring
-                !token.endsWith("our") && // e.g. harbour -> harbouring
+        //System.out.println("matches CVC: " + token);
+        // The word ends with consonant-vowel-consonant.
+        if (token.endsWith("h") || token.endsWith("w") ||
+                token.endsWith("x") || token.endsWith("y")) {
+            // Words that end in these characters are never doubled.
+            //System.out.println("doesn't end in a non-doubling character: " + token);
+            return false;
+        }
 
-                !token.endsWith("at") && // e.g. eat -> eating
-                !token.endsWith("ret") && // e.g. interpret -> interpreting
-                !token.endsWith("et") && // e.g. target -> targeting, market -> marketing
-                !token.endsWith("ait") && // e.g. await -> awaiting
-                !token.endsWith("bit") && // e.g. orbit -> orbiting
-                !token.endsWith("cit") && // e.g. elicit -> eliciting
-                !token.endsWith("dit") && // e.g. edit -> editing
-                !token.endsWith("eit") && // e.g. forfeit -> forfeiting
-                !token.endsWith("fit") && // e.g. benefit -> benefiting
-                !token.endsWith("imit") && // e.g. limit -> limiting
-                !token.endsWith("oit") && // e.g. exploit -> exploiting
-                !token.endsWith("rit") && // e.g. inherit -> inheriting
-                !token.endsWith("isit") && // e.g. revisit -> revisiting
-                !token.endsWith("osit") && // e.g. posit -> positing
-                !token.endsWith("uit") && // e.g. recruit -> recruiting
-                !token.endsWith("ot") && // e.g. pivot -> pivoting
-                !token.endsWith("ut"); // e.g. shout -> shouting
+        if (token.length() == 3) {
+            // e.g. set -> settting, get -> getting
+            return true;
+        }
+
+        return !token.endsWith("nger") &&
+                !token.endsWith("mber") &&
+                !token.endsWith("eaten") &&
+                !token.endsWith("aden") &&
+                !token.endsWith("atten") &&
+                !token.endsWith("avel") &&
+                !token.endsWith("ider") &&
+                !token.endsWith("nder") &&
+                !token.endsWith("wer") &&
+                !token.endsWith("ken") &&
+                !token.endsWith("cit") &&
+                !token.endsWith("rit") &&
+                !token.endsWith("ven") &&
+                !token.endsWith("avor") &&
+                !token.endsWith("over") &&
+                !token.endsWith("ther") &&
+                !token.endsWith("rsen") &&
+                !token.endsWith("mirror") &&
+                !token.endsWith("outlaw") &&
+                !token.endsWith("liken") &&
+                !token.endsWith("visit") &&
+                !token.endsWith("target") &&
+                !token.endsWith("market") &&
+                !token.endsWith("rival") &&
+                !token.endsWith("caper") &&
+                !token.endsWith("taper") &&
+                !token.endsWith("chisel") &&
+                !token.endsWith("counter") &&
+                !token.endsWith("ghten") &&
+                !token.endsWith("gthen") &&
+                !token.endsWith("iden") &&
+                !token.endsWith("pen") &&
+                !token.endsWith("edit") &&
+                !token.endsWith("ender") &&
+                !token.endsWith("enter") &&
+                !token.endsWith("onder") &&
+                !token.endsWith("utter") &&
+                !token.endsWith("order") &&
+                !token.endsWith("osit") &&
+                !token.endsWith("ffer") &&
+                !token.endsWith("fit") &&
+                !token.endsWith("gger") &&
+                !token.endsWith("ister") &&
+                !token.endsWith("isten") &&
+                !token.endsWith("llel") &&
+                !token.endsWith("otal") &&
+                !token.endsWith("ander") &&
+                !token.endsWith("sor") &&
+                !token.endsWith("bit") &&
+                !token.endsWith("met") &&
+                !token.endsWith("pret") &&
+                !token.endsWith("limit") &&
+                !token.endsWith("eter") &&
+                !token.endsWith("ndon") &&
+                !token.endsWith("debut") &&
+                !token.endsWith("cover") &&
+                !token.endsWith("sper") &&
+                !token.endsWith("mpet") &&
+                !token.endsWith("itor") &&
+                !token.endsWith("iver") &&
+                !token.endsWith("uffer") &&
+                !token.endsWith("ater") &&
+                !token.endsWith("lter") &&
+                !token.endsWith("ster") &&
+                !token.endsWith("elop") &&
+                !token.endsWith("pivot");
     }
 
     public Word thirdSingToPresP(Word word) {
         final String tag = tagSet.VERB_PRES_PART;
         final Word base = thirdSingToBase(word);
         final String token = base.getToken();
-        final Matcher vcMatcher = VOWEL_CONSONANT.matcher(token);
+        final Matcher cvcMatcher = CONSONANT_VOWEL_CONSONANT.matcher(token);
         final Matcher ceMatcher = CONSONANT_E.matcher(token);
 
-        // System.out.println(word.getToken() + " => " + token);
+        //System.out.println("third sing " + word.getToken() + " => base " + token);
 
         if (token.equalsIgnoreCase("be")) {
             return new Word("being", tag);
         } else if (token.equalsIgnoreCase("have")) {
             return new Word("having", tag);
+        } else if (token.endsWith("ue")) {
+            // e.g. continue -> continuing
+            return new Word(token.substring(0, token.length() - 1) + "ing", tag, token);
         } else if (token.equalsIgnoreCase("beget")) {
             return new Word("begetting", tag, token);
         } else if (token.endsWith("ye") || token.endsWith("y")) {
@@ -411,16 +476,22 @@ public class SubstWrongFormError extends SubstError {
             return new Word(token + "king", tag, token);
         } else if (ceMatcher.matches()) {
             return new Word(token.substring(0, token.length() - 1) + "ing", tag);
-//        } else if (thirdSingToPresPAddTING(token)) {
-//            System.out.println("append ting");
-//            return new Word(token.substring(0, token.length()) + "ting", tag);
-        } else if (thirdSingToPresPDuplicateFinalConsonant(token, vcMatcher)) {
-            // System.out.println("append TRAILING CONSONANT ing");
-            MatchResult result = vcMatcher.toMatchResult();
-            String newToken = result.group(1) + result.group(2) + result.group(2) + "ing";
-            return new Word(newToken, tag, token);
+        } else if (thirdSingToPresPDuplicateFinalConsonant(token, cvcMatcher)) {
+            //System.out.println("append TRAILING CONSONANT ing: " + token);
+            if (token.length() == 3) {
+                Character last = token.charAt(token.length() - 1);
+                return new Word(token + last.toString() + "ing", tag, token);
+            } else {
+                MatchResult result = cvcMatcher.toMatchResult();
+                String newToken = result.group(1) + result.group(2) + result.group(2) + "ing";
+                return new Word(newToken, tag, token);
+            }
+        } else if (token.toLowerCase().endsWith("quit") || token.toLowerCase().endsWith("quat") ||
+                token.toLowerCase().endsWith("qual") || token.toLowerCase().endsWith("quip")) {
+            Character last = token.charAt(token.length() - 1);
+            return new Word(token + last.toString() + "ing", tag, token);
         } else if (token.length() > 0) {
-            // System.out.println("DEFAULT: append ing");
+            //System.out.println("DEFAULT: append ing");
             return new Word(token.substring(0, token.length()) + "ing", tag);
         } else {
             return null;
@@ -1729,14 +1800,34 @@ public class SubstWrongFormError extends SubstError {
 
         if (token.equalsIgnoreCase("angrily")) {
             return new Word(token.substring(0, 1) + "ngry", tag);
-        } else if (token.endsWith("xically")) {
-            // e.g. lexically -> lexical
-            return new Word(token.substring(0, token.length() - 2), tag);
-            //} else if (token.endsWith("cically") || token.endsWith("stemically")) {
         } else if (token.endsWith("ically")) {
-            // e.g. catastrophically -> catastrophic
-            // e.g. epistemically -> epistemic
-            return new Word(token.substring(0, token.length() - 4), tag);
+            String lower = token.toLowerCase();
+            if ((lower.endsWith("typically") && !lower.startsWith("phenotyp")) ||
+                    lower.endsWith("identically") ||
+                    lower.endsWith("topologically") ||
+                    lower.endsWith("athologically") ||
+                    lower.endsWith("theologically") ||
+                    lower.endsWith("liturgically") ||
+                    lower.endsWith("psychologically") ||
+                    lower.endsWith("vertically") ||
+                    lower.endsWith("chemically") ||
+                    lower.endsWith("chronologically") ||
+                    lower.endsWith("mathematically") ||
+                    lower.endsWith("zygotically") ||
+                    lower.endsWith("canonically") ||
+                    lower.endsWith("spherically") ||
+                    lower.endsWith("lexically") ||
+                    lower.endsWith("practically") ||
+                    lower.endsWith("technologically") ||
+                    lower.endsWith("surgically") ||
+                    lower.endsWith("technically") ||
+                    lower.endsWith("theatrically") ||
+                    lower.endsWith("categorically") ||
+                    (lower.endsWith("radically") && !lower.startsWith("spor"))) {
+                return new Word(token.substring(0, token.length() - 2), tag);
+            } else {
+                return new Word(token.substring(0, token.length() - 4), tag);
+            }
         } else if (token.endsWith("ably") || token.endsWith("ibly")) {
             // e.g. unsustainably -> unsustainable
             return new Word(token.substring(0, token.length() - 1) + "e", tag);
@@ -1750,7 +1841,7 @@ public class SubstWrongFormError extends SubstError {
             } else {
                 return new Word(token.substring(0, token.length() - 3) + "y", tag);
             }
-        } else if (token.endsWith("bly") || token.endsWith("btly")) {
+        } else if (token.endsWith("bly") || token.endsWith("btly") || token.endsWith("mply")) {
             // e.g. feebly -> feeble, subtly -> subtle
             return new Word(token.substring(0, token.length() - 1) + "e", tag);
         } else if (token.endsWith("uly")) {
@@ -1758,7 +1849,13 @@ public class SubstWrongFormError extends SubstError {
             return new Word(token.substring(0, token.length() - 2) + "e", tag);
         } else if (token.endsWith("ully")) {
             // e.g. fully -> full, thankfully -> thankful
-            return new Word(token.substring(0, token.length() - 1), tag);
+            if (token.toLowerCase().equals("fully")) {
+                return new Word(token.substring(0, token.length() - 1), tag);
+            } else {
+                return new Word(token.substring(0, token.length() - 2), tag);
+            }
+        } else if (token.endsWith("olly")) {
+            return new Word(token.substring(0, token.length() - 2) + "e", tag, token);
         } else if (token.endsWith("doubly")) {
             // e.g. doubly -> double (?)
             return new Word(token.substring(0, token.length() - 1) + "e", tag);

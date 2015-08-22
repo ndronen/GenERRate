@@ -499,14 +499,195 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("wonders", "wondering");
         expectations.put("wraps", "wrapping");
 
+        expectations.put("abandons", "abandoning"); // 9 SubstWrongFormVBZVBGError
+        expectations.put("abuts", "abutting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("acquits", "acquitting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("aids", "aiding"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("aims", "aiming"); // 30 SubstWrongFormVBZVBGError
+        expectations.put("aliases", "aliasing"); // 3 SubstWrongFormVBZVBGError
+        expectations.put("allows", "allowing"); // 155 SubstWrongFormVBZVBGError
+        expectations.put("apportions", "apportioning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("argues", "arguing"); // 36 SubstWrongFormVBZVBGError
+        expectations.put("Arrows", "Arrowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("avoids", "avoiding"); // 5 SubstWrongFormVBZVBGError
+        expectations.put("awakens", "awakening"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("banknotes", "banknoting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("barrows", "barrowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("beams", "beaming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("begins", "beginning"); // 150 SubstWrongFormVBZVBGError
+        expectations.put("beheads", "beheading"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("bemoans", "bemoaning"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("blackmails", "blackmailing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("blooms", "blooming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("Blows", "Blowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("borrows", "borrowing"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("bows", "bowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("breaks", "breaking"); // 13 SubstWrongFormVBZVBGError
+        expectations.put("brews", "brewing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("brightens", "brightening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("broadens", "broadening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("cautions", "cautioning"); // 4 SubstWrongFormVBZVBGError
+        expectations.put("chisels", "chiseling"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("cites", "citing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("claims", "claiming"); // 68 SubstWrongFormVBZVBGError
+        expectations.put("clings", "clinging"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("confers", "conferring"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("continues", "continuing"); // 186 SubstWrongFormVBZVBGError
+        expectations.put("cuts", "cutting"); // 8 SubstWrongFormVBZVBGError
+        expectations.put("dampens", "dampening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("deals", "dealing"); // 25 SubstWrongFormVBZVBGError
+        expectations.put("deems", "deeming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("deepens", "deepening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("defines", "defining"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("derails", "derailing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("does", "doing"); // 374 SubstWrongFormVBZVBGError
+        expectations.put("draws", "drawing"); // 30 SubstWrongFormVBZVBGError
+        expectations.put("dreams", "dreaming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("duplexes", "duplexing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("endows", "endowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("ensues", "ensuing"); // 5 SubstWrongFormVBZVBGError
+        expectations.put("entails", "entailing"); // 8 SubstWrongFormVBZVBGError
+        expectations.put("envisions", "envisioning"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("equals", "equalling"); // 7 SubstWrongFormVBZVBGError
+        expectations.put("eschews", "eschewing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("Evens", "Evening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("exceeds", "exceeding"); // 7 SubstWrongFormVBZVBGError
+        expectations.put("exclaims", "exclaiming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("fails", "failing"); // 15 SubstWrongFormVBZVBGError
+        expectations.put("favors", "favoring"); // 3 SubstWrongFormVBZVBGError
+        expectations.put("feeds", "feeding"); // 24 SubstWrongFormVBZVBGError
+        expectations.put("feels", "feeling"); // 34 SubstWrongFormVBZVBGError
+        expectations.put("fits", "fitting"); // 5 SubstWrongFormVBZVBGError
+        expectations.put("flattens", "flattening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("flows", "flowing"); // 87 SubstWrongFormVBZVBGError
+        expectations.put("follows", "following"); // 120 SubstWrongFormVBZVBGError
+        expectations.put("forgets", "forgetting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("frets", "fretting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("frightens", "frightening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("functions", "functioning"); // 10 SubstWrongFormVBZVBGError
+        expectations.put("gets", "getting"); // 77 SubstWrongFormVBZVBGError
+        expectations.put("gleams", "gleaming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("glows", "glowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("goads", "goading"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("goes", "going"); // 153 SubstWrongFormVBZVBGError
+        expectations.put("grins", "grinning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("grows", "growing"); // 65 SubstWrongFormVBZVBGError
+        expectations.put("hails", "hailing"); // 11 SubstWrongFormVBZVBGError
+        expectations.put("Happens", "Happening"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("happens", "happening"); // 27 SubstWrongFormVBZVBGError
+        expectations.put("hauls", "hauling"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("Heads", "Heading"); // 5 SubstWrongFormVBZVBGError
+        expectations.put("heightens", "heightening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("infers", "inferring"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("issues", "issuing"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("juts", "jutting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("Knows", "Knowing"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("labels", "labelling"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("lampoons", "lampooning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("Leads", "Leading"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("leans", "leaning"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("leaps", "leaping"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("lets", "letting"); // 13 SubstWrongFormVBZVBGError
+        expectations.put("likens", "likening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("listens", "listening"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("looks", "looking"); // 38 SubstWrongFormVBZVBGError
+        expectations.put("looms", "looming"); // 4 SubstWrongFormVBZVBGError
+        expectations.put("mails", "mailing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("means", "meaning"); // 146 SubstWrongFormVBZVBGError
+        expectations.put("mentions", "mentioning"); // 39 SubstWrongFormVBZVBGError
+        expectations.put("mirrors", "mirroring"); // 17 SubstWrongFormVBZVBGError
+        expectations.put("misleads", "misleading"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("moans", "moaning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("monitors", "monitoring"); // 8 SubstWrongFormVBZVBGError
+        expectations.put("Narrows", "Narrowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("needs", "needing"); // 47 SubstWrongFormVBZVBGError
+        expectations.put("opens", "opening"); // 40 SubstWrongFormVBZVBGError
+        expectations.put("outdoes", "outdoing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("outlaws", "outlawing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("outputs", "outputting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("overflows", "overflowing"); // 3 SubstWrongFormVBZVBGError
+        expectations.put("overlooks", "overlooking"); // 11 SubstWrongFormVBZVBGError
+        expectations.put("parallels", "paralleling"); // 5 SubstWrongFormVBZVBGError
+        expectations.put("plays", "playing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("pleads", "pleading"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("prefers", "preferring"); // 6 SubstWrongFormVBZVBGError
+        expectations.put("prevails", "prevailing"); // 7 SubstWrongFormVBZVBGError
+        expectations.put("proceeds", "proceeding"); // 14 SubstWrongFormVBZVBGError
+        expectations.put("proclaims", "proclaiming"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("pursues", "pursuing"); // 11 SubstWrongFormVBZVBGError
+        expectations.put("puts", "putting"); // 33 SubstWrongFormVBZVBGError
+        expectations.put("queens", "queening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("questions", "questioning"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("quits", "quitting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("raids", "raiding"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("reads", "reading"); // 23 SubstWrongFormVBZVBGError
+        expectations.put("redeems", "redeeming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("reels", "reeling"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("refers", "referring"); // 153 SubstWrongFormVBZVBGError
+        expectations.put("regrets", "regretting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("regroups", "regrouping"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("relays", "relaying"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("rescues", "rescuing"); // 4 SubstWrongFormVBZVBGError
+        expectations.put("resets", "resetting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("retails", "retailing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("Reveals", "Revealing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("reviews", "reviewing"); // 11 SubstWrongFormVBZVBGError
+        expectations.put("rivals", "rivaling"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("roars", "roaring"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("rots", "rotting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("sails", "sailing"); // 3 SubstWrongFormVBZVBGError
+        expectations.put("sanctions", "sanctioning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("screams", "screaming"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("seals", "sealing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("seeks", "seeking"); // 33 SubstWrongFormVBZVBGError
+        expectations.put("seems", "seeming"); // 92 SubstWrongFormVBZVBGError
+        expectations.put("Sets", "Setting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("Shows", "Showing"); // 8 SubstWrongFormVBZVBGError
+        expectations.put("slows", "slowing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("sows", "sowing"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("speaks", "speaking"); // 39 SubstWrongFormVBZVBGError
+        expectations.put("speeds", "speeding"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("spins", "spinning"); // 5 SubstWrongFormVBZVBGError
+        expectations.put("sponsors", "sponsoring"); // 6 SubstWrongFormVBZVBGError
+        expectations.put("spots", "spotting"); // 3 SubstWrongFormVBZVBGError
+        expectations.put("spreads", "spreading"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("squats", "squatting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("steals", "stealing"); // 11 SubstWrongFormVBZVBGError
+        expectations.put("strengthens", "strengthening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("succeeds", "succeeding"); // 4 SubstWrongFormVBZVBGError
+        expectations.put("swallows", "swallowing"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("thins", "thinning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("threatens", "threatening"); // 9 SubstWrongFormVBZVBGError
+        expectations.put("throws", "throwing"); // 26 SubstWrongFormVBZVBGError
+        expectations.put("totals", "totaling"); // 3 SubstWrongFormVBZVBGError
+        expectations.put("trails", "trailing"); // 28 SubstWrongFormVBZVBGError
+        expectations.put("transfers", "transferring"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("travels", "traveling"); // 34 SubstWrongFormVBZVBGError
+        expectations.put("treads", "treading"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("undercuts", "undercutting"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("undergoes", "undergoing"); // 10 SubstWrongFormVBZVBGError
+        expectations.put("underpins", "underpinning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("undoes", "undoing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("values", "valuing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("views", "viewing"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("vows", "vowing"); // 11 SubstWrongFormVBZVBGError
+        expectations.put("walks", "walking"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("widens", "widening"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("wins", "winning"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("withdraws", "withdrawing"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("worsens", "worsening"); // 1 SubstWrongFormVBZVBGError
+        expectations.put("worships", "worshipping"); // 2 SubstWrongFormVBZVBGError
+        expectations.put("zooms", "zooming"); // 3 SubstWrongFormVBZVBGError
+
+
         PartOfSpeech tagSet = new PartOfSpeech();
         int i = 1;
         SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
         for (Map.Entry<String, String> entry : expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.VERB_THIRD_SING);
             Word replacement = obj.thirdSingToPresP(word);
-            System.out.println(i + "/" + expectations.size() + " " + entry);
-            i += 1;
+            //System.out.println(i + "/" + expectations.size() + " " + entry);
+            //i += 1;
             assertEquals(entry.getValue(), replacement.getToken());
         }
     }
@@ -5764,8 +5945,7 @@ public class SubstWrongFormErrorTest extends TestCase {
 
     }
 
-
-    // RB -> JK
+    // RB -> JJ
     public void testAdverbToAdj() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
         expectations.put("Angrily", "Angry");
@@ -5792,7 +5972,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("Tragically", "Tragic");
         expectations.put("allosterically", "allosteric");
         expectations.put("alpha-numerically", "alpha-numeric");
-        expectations.put("amphitheatrically", "amphitheatric");
+        expectations.put("ampitheatrically", "ampitheatrical");
         expectations.put("anachronistically", "anachronistic");
         expectations.put("analytically", "analytic");
         expectations.put("artistically", "artistic");
@@ -5914,7 +6094,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("virgously", "virgous");
         expectations.put("volcanically", "volcanic");
         expectations.put("worthily", "worthy");
-        expectations.put("zygotically", "zygotic");
+        expectations.put("zygotically", "zygotical");
         expectations.put("Domestically", "Domestic");
         expectations.put("Heavily", "Heavy");
         expectations.put("Incredibly", "Incredible");
@@ -6040,13 +6220,74 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("fully", "full");
         expectations.put("probably", "probable");
         expectations.put("primarily", "primary");
+        expectations.put("awfully", "awful"); // 1 SubstWrongFormRBJJError
+        expectations.put("beautifully", "beautiful"); // 9 SubstWrongFormRBJJError
+        expectations.put("Biochemically", "Biochemical"); // 1 SubstWrongFormRBJJError
+        expectations.put("canonically", "canonical"); // 2 SubstWrongFormRBJJError
+        expectations.put("carefully", "careful"); // 27 SubstWrongFormRBJJError
+        expectations.put("categorically", "categorical"); // 3 SubstWrongFormRBJJError
+        expectations.put("Chemically", "Chemical"); // 1 SubstWrongFormRBJJError
+        expectations.put("Chronologically", "Chronological"); // 1 SubstWrongFormRBJJError
+        expectations.put("colorfully", "colorful"); // 2 SubstWrongFormRBJJError
+        expectations.put("delightfully", "delightful"); // 2 SubstWrongFormRBJJError
+        expectations.put("Doubtfully", "Doubtful"); // 1 SubstWrongFormRBJJError
+        expectations.put("dreadfully", "dreadful"); // 1 SubstWrongFormRBJJError
+        expectations.put("Faithfully", "Faithful"); // 1 SubstWrongFormRBJJError
+        expectations.put("forcefully", "forceful"); // 4 SubstWrongFormRBJJError
+        expectations.put("gracefully", "graceful"); // 1 SubstWrongFormRBJJError
+        expectations.put("Hopefully", "Hopeful"); // 1 SubstWrongFormRBJJError
+        expectations.put("identically", "identical"); // 2 SubstWrongFormRBJJError
+        expectations.put("lawfully", "lawful"); // 4 SubstWrongFormRBJJError
+        expectations.put("Liturgically", "Liturgical"); // 1 SubstWrongFormRBJJError
+        expectations.put("lustfully", "lustful"); // 1 SubstWrongFormRBJJError
+        expectations.put("masterfully", "masterful"); // 1 SubstWrongFormRBJJError
+        expectations.put("Mathematically", "Mathematical"); // 2 SubstWrongFormRBJJError
+        expectations.put("mathematically", "mathematical"); // 3 SubstWrongFormRBJJError
+        expectations.put("painfully", "painful"); // 3 SubstWrongFormRBJJError
+        expectations.put("Painfully", "Painful"); // 1 SubstWrongFormRBJJError
+        expectations.put("pathologically", "pathological"); // 1 SubstWrongFormRBJJError
+        expectations.put("peacefully", "peaceful"); // 13 SubstWrongFormRBJJError
+        expectations.put("Practically", "Practical"); // 1 SubstWrongFormRBJJError
+        expectations.put("practically", "practical"); // 15 SubstWrongFormRBJJError
+        expectations.put("psychologically", "psychological"); // 5 SubstWrongFormRBJJError
+        expectations.put("radically", "radical"); // 12 SubstWrongFormRBJJError
+        expectations.put("respectfully", "respectful"); // 3 SubstWrongFormRBJJError
+        expectations.put("rightfully", "rightful"); // 3 SubstWrongFormRBJJError
+        expectations.put("shamefully", "shameful"); // 1 SubstWrongFormRBJJError
+        expectations.put("simply", "simple"); // 180 SubstWrongFormRBJJError
+        expectations.put("Simply", "Simple"); // 7 SubstWrongFormRBJJError
+        expectations.put("skillfully", "skillful"); // 3 SubstWrongFormRBJJError
+        expectations.put("spherically", "spherical"); // 1 SubstWrongFormRBJJError
+        expectations.put("successfully", "successful"); // 175 SubstWrongFormRBJJError
+        expectations.put("Successfully", "Successful"); // 1 SubstWrongFormRBJJError
+        expectations.put("surgically", "surgical"); // 2 SubstWrongFormRBJJError
+        expectations.put("tactfully", "tactful"); // 2 SubstWrongFormRBJJError
+        expectations.put("technically", "technical"); // 22 SubstWrongFormRBJJError
+        expectations.put("technologically", "technological"); // 2 SubstWrongFormRBJJError
+        expectations.put("thankfully", "thankful"); // 2 SubstWrongFormRBJJError
+        expectations.put("theatrically", "theatrical"); // 15 SubstWrongFormRBJJError
+        expectations.put("theologically", "theological"); // 2 SubstWrongFormRBJJError
+        expectations.put("topologically", "topological"); // 2 SubstWrongFormRBJJError
+        expectations.put("typically", "typical"); // 214 SubstWrongFormRBJJError
+        expectations.put("Typically", "Typical"); // 32 SubstWrongFormRBJJError
+        expectations.put("unlawfully", "unlawful"); // 1 SubstWrongFormRBJJError
+        expectations.put("unsuccessfully", "unsuccessful"); // 70 SubstWrongFormRBJJError
+        expectations.put("usefully", "useful"); // 1 SubstWrongFormRBJJError
+        expectations.put("vertically", "vertical"); // 6 SubstWrongFormRBJJError
+        expectations.put("wholly", "whole"); // 30 SubstWrongFormRBJJError
+        expectations.put("willfully", "willful"); // 2 SubstWrongFormRBJJError
+        expectations.put("wonderfully", "wonderful"); // 4 SubstWrongFormRBJJError
+        expectations.put("wrongfully", "wrongful"); // 2 SubstWrongFormRBJJError
 
         PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
         SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
         for (Map.Entry<String, String> entry: expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.ADV);
             Word replacement = obj.adverbToAdj(word);
-            assertEquals(replacement.getToken(), entry.getValue());
+            System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
         }
     }
 }
