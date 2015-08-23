@@ -1,9 +1,6 @@
 package GenERRate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,12 +48,16 @@ public class SubstWrongFormError extends SubstError {
 
     private final List<String> extraWords;
 
-    public SubstWrongFormError(Sentence sentence, PartOfSpeech tagSet, String sourceTag, String targetTag, List<String> extraWords) {
+    private final Set<String> dictionary;
+
+    public SubstWrongFormError(Sentence sentence, PartOfSpeech tagSet, String sourceTag, String targetTag,
+                               List<String> extraWords, Set<String> dictionary) {
         super(sentence);
         this.tagSet = tagSet;
         this.sourceTag = sourceTag;
         this.targetTag = targetTag;
         this.extraWords = extraWords;
+        this.dictionary = dictionary;
         super.errorInfo = "errortype=\"SubstWrongForm" + this.sourceTag + this.targetTag + "Error\"";
     }
 
@@ -194,44 +195,63 @@ public class SubstWrongFormError extends SubstError {
             }
         }
 
-        if (newWord == null) {
-            throw new CannotCreateErrorException("There was a problem inserting a SubstWrongFormError.");
+        validateReplacement(oldWord, newWord);
+
+        if (where2 == -1) {
+            newSentence.removeWord(where);
         } else {
-            //String oldWord = ((Word) newSentence.getWord(where)).getToken();
-            if (where2 == -1) {
-                newSentence.removeWord(where);
-            } else {
-                //oldWord += " " + ((Word) newSentence.getWord(where+1)).getToken();
-                newSentence.removeWord(where);
-                newSentence.removeWord(where);
-            }
-            if (anotherNewWord == null) {
-                newSentence.insertWord(newWord, where);
-            } else {
-                newSentence.insertWord(anotherNewWord, where);
-                newSentence.insertWord(newWord, where + 1);
-            }
-            newSentence.setErrorDescription(errorInfo + " details=\"" + oldWord.getToken() + "/" + newWord.getToken() + " at " + (where + 1) + "\"");
+            newSentence.removeWord(where);
+            newSentence.removeWord(where);
         }
+
+        if (anotherNewWord == null) {
+            newSentence.insertWord(newWord, where);
+        } else {
+            newSentence.insertWord(anotherNewWord, where);
+            newSentence.insertWord(newWord, where + 1);
+        }
+
+        newSentence.setErrorDescription(errorInfo + " details=\"" + oldWord.getToken() + "/" + newWord.getToken() + " at " + (where + 1) + "\"");
 
         return newSentence;
 
     }
 
+    public void validateReplacement(Word original, Word replacement) throws CannotCreateErrorException {
+        if (replacement == null) {
+            throw new CannotCreateErrorException(
+                    "There was a problem inserting a SubstWrongFormError.");
+        }
+
+        if (dictionary != null && dictionary.size() != 0) {
+            if (!dictionary.contains(replacement.getToken().toLowerCase())) {
+                throw new CannotCreateErrorException(
+                        "The replacement performed by SubstWrongFormError " +
+                                "is invalid because the replacement word does not exist in the dictionary: '" +
+                                original.getToken().toLowerCase() + "/" + original.getTag() + "' => '" +
+                                replacement.getToken().toLowerCase() + "/" + replacement.getTag() + "'");
+            }
+        }
+    }
+
     public Word makeNounSingular(Word word) {
-        final String singular_noun = tagSet.SINGULAR_NOUN;
+        final String newTag = tagSet.SINGULAR_NOUN;
         final String token = word.getToken();
 
         if (token.endsWith("ies")) {
-            return new Word(token.substring(0, token.length() - 3) + "y", singular_noun);
+            if (token.equalsIgnoreCase("movies")) {
+                return new Word(token.substring(0, token.length() - 1), newTag, token);
+            } else {
+                return new Word(token.substring(0, token.length() - 3) + "y", newTag, token);
+            }
         } else if (token.endsWith("men")) {
-            return new Word(token.substring(0, token.length() - 3) + "man", singular_noun);
+            return new Word(token.substring(0, token.length() - 3) + "man", newTag);
         } else if (token.endsWith("a")) {
-            return new Word(token.substring(0, token.length() - 1) + "um", singular_noun);
+            return new Word(token.substring(0, token.length() - 1) + "um", newTag);
         } else if (token.endsWith("ches") || token.endsWith("sses") || token.endsWith("zes") || token.endsWith("shes") || token.endsWith("xes")) {
-            return new Word(token.substring(0, token.length() - 2), singular_noun);
+            return new Word(token.substring(0, token.length() - 2), newTag);
         } else if (token.length() > 0) {
-            return new Word(token.substring(0, token.length() - 1), singular_noun);
+            return new Word(token.substring(0, token.length() - 1), newTag);
         } else {
             return null;
         }
@@ -313,7 +333,6 @@ public class SubstWrongFormError extends SubstError {
         } else if (token.endsWith("oes")) {
             return new Word(token.substring(0, token.length() - 2), tag);
         } else if (token.toLowerCase().startsWith("focus")) {
-            System.out.println("returning 'focus'");
             return new Word("focus", tag, token);
         } else if (token.endsWith("sses") || token.endsWith("ches") || token.endsWith("xes") ||
                 token.endsWith("zzes") || token.endsWith("shes")) {
@@ -640,7 +659,7 @@ public class SubstWrongFormError extends SubstError {
                 return new Word(token + "ing", tag);
             } else {
                 // e.g. set -> setting, fret -> fretting, outwit -> outwitting
-                System.out.println(token + " gets an extra t");
+                // System.out.println(token + " gets an extra t");
                 return new Word(token + "ting", tag);
             }
         } else {

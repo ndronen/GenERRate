@@ -4,11 +4,14 @@ import junit.framework.TestCase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by ndronen on 8/3/15.
  */
 public class SubstWrongFormErrorTest extends TestCase {
+
+    private static final Set<String> dictionary = null;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -25,7 +28,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         Sentence sentence = new Sentence(s, includeTags);
         final PartOfSpeech tagSet = new PartOfSpeech();
         final SubstWrongFormError obj = new SubstWrongFormError(
-                sentence, tagSet, tagSet.VERB_PRES_PART, tagSet.VERB_THIRD_SING, null);
+                sentence, tagSet, tagSet.VERB_PRES_PART, tagSet.VERB_THIRD_SING, null, dictionary);
         Sentence error = obj.insertError();
         assertTrue(error.getErrorDescription().contains("developing/develops at 5"));
 
@@ -34,7 +37,21 @@ public class SubstWrongFormErrorTest extends TestCase {
 
     // NNS -> NN
     public void testMakeNounSingular() throws Exception {
-        fail("not implemented");
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("movies", "movie");
+        expectations.put("Ponies", "Pony");
+        expectations.put("ponies", "pony");
+        PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.PLURAL_NOUN);
+            Word replacement = obj.makeNounSingular(word);
+            System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
     }
 
     // VBP -> VBG
@@ -259,7 +276,8 @@ public class SubstWrongFormErrorTest extends TestCase {
 
         PartOfSpeech tagSet = new PartOfSpeech();
         int i = 0;
-        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
         for (Map.Entry<String, String> entry : expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING);
             Word replacement = obj.baseToThirdSing(word);
@@ -295,7 +313,7 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("buzz", "buzzes");
 
         PartOfSpeech tagSet = new PartOfSpeech();
-        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null, dictionary);
         for (Map.Entry<String, String> entry : expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING);
             Word replacement = obj.nonThirdSingularToThirdSingular(word);
@@ -422,7 +440,7 @@ public class SubstWrongFormErrorTest extends TestCase {
 
 
         PartOfSpeech tagSet = new PartOfSpeech();
-        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null, dictionary);
         int i = 0;
         for (Map.Entry<String, String> entry : expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING);
@@ -856,7 +874,8 @@ public class SubstWrongFormErrorTest extends TestCase {
 
         PartOfSpeech tagSet = new PartOfSpeech();
         int i = 1;
-        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
         for (Map.Entry<String, String> entry : expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.VERB_THIRD_SING);
             Word replacement = obj.thirdSingToPresP(word);
@@ -1419,7 +1438,7 @@ public class SubstWrongFormErrorTest extends TestCase {
 
         PartOfSpeech tagSet = new PartOfSpeech();
         int i = 0;
-        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null, dictionary);
         for (Map.Entry<String, String> entry: expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.ADV);
             Word replacement = obj.baseToPresP(word);
@@ -2466,7 +2485,8 @@ public class SubstWrongFormErrorTest extends TestCase {
         expectations.put("zoning", "zones");
 
         final PartOfSpeech tagSet = new PartOfSpeech();
-        final SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        final SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
 
         int i = 0;
 
@@ -3883,7 +3903,8 @@ public class SubstWrongFormErrorTest extends TestCase {
 
         PartOfSpeech tagSet = new PartOfSpeech();
         int i = 0;
-        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
         for (Map.Entry<String, String> entry: expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.ADV);
             Word replacement = obj.presPToInf(word);
@@ -6231,7 +6252,8 @@ public class SubstWrongFormErrorTest extends TestCase {
 
         final PartOfSpeech tagSet = new PartOfSpeech();
         int i = 0;
-        final SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        final SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
 
         for (Map.Entry<String, String> entry : expectations.entrySet()) {
             final Word word = new Word(entry.getKey(), tagSet.ADV);
@@ -6585,7 +6607,8 @@ public class SubstWrongFormErrorTest extends TestCase {
 
         PartOfSpeech tagSet = new PartOfSpeech();
         int i = 0;
-        SubstWrongFormError obj = new SubstWrongFormError(null, tagSet, null, null, null);
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
         for (Map.Entry<String, String> entry: expectations.entrySet()) {
             Word word = new Word(entry.getKey(), tagSet.ADV);
             Word replacement = obj.adverbToAdj(word);

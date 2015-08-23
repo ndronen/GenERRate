@@ -1,6 +1,9 @@
 package GenERRate;
 
-import org.apache.xalan.xsltc.cmdline.getopt.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import org.apache.xalan.xsltc.cmdline.getopt.GetOpt;
 
 import java.io.*;
 import java.util.*;
@@ -13,6 +16,7 @@ import java.util.*;
 
 public class GenERRate {
     public static PartOfSpeech TAG_SET;
+    private final Set<String> dictionary = new HashSet<String>();
     /**
      * The name of the file which contains a tag/token word list which can be used when creating an insertion error or a certain kind of substitution error.
      */
@@ -49,10 +53,10 @@ public class GenERRate {
      * Initialises the extraWordList attribute.
      *
      * @param corpusFile
-     * @param isTagged whether the input sentences in corpusFilename are tagged
+     * @param isTagged          whether the input sentences in corpusFilename are tagged
      * @param errorAnalysisFile
      * @param extraWordList
-     * @param tagSet the name of the tagset (Penn or CLAWS)
+     * @param tagSet            the name of the tagset (Penn or CLAWS)
      */
     public GenERRate(String corpusFile, boolean isTagged, String errorAnalysisFile, String extraWordList, String tagSet) {
         TAG_SET = new PartOfSpeech(tagSet);
@@ -61,6 +65,7 @@ public class GenERRate {
         errorAnalysis = new ArrayList();
         this.extraWords = new ArrayList();
         completeErrorMap = new HashMap();
+        initializeDictionary();
         try {
             File file = new File(corpusFile);
             FileReader read = new FileReader(file);
@@ -101,7 +106,6 @@ public class GenERRate {
             System.err.println(io.getMessage());
         }
     }
-
 
     /**
      * Opens the corpus and reads the sentences into inputSentence vector.
@@ -272,6 +276,23 @@ public class GenERRate {
                 System.err.println(e.getMessage());
                 printHelp();
             }
+        }
+    }
+
+    private void initializeDictionary() {
+        JsonParser parser = new JsonParser();
+        JsonElement jsonElement;
+
+        try {
+            jsonElement = parser.parse(new FileReader("/Users/ndronen/proj/GenERRate.local/etc/dict.json"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+        for (JsonElement e : jsonArray) {
+            dictionary.add(e.getAsString());
         }
     }
 
@@ -621,11 +642,13 @@ public class GenERRate {
                     secondToken = tokens.nextToken();
                     thirdToken = tokens.nextToken();
                     prob = Double.parseDouble(thirdToken);
-                    SubstWordConfusionError subst = new SubstWordConfusionError(sentence, extraWords, secondToken);
+                    SubstWordConfusionError subst = new SubstWordConfusionError(
+                            sentence, extraWords, secondToken);
                     subst.setProbability(prob);
                     return subst;
                 } catch (NumberFormatException n) {
-                    return new SubstWrongFormError(sentence, TAG_SET, secondToken, thirdToken, extraWords);
+                    return new SubstWrongFormError(
+                            sentence, TAG_SET, secondToken, thirdToken, extraWords, dictionary);
                 }
             } else if (tokenCount == 4) {
                 try {
@@ -634,7 +657,8 @@ public class GenERRate {
                     thirdToken = tokens.nextToken();
                     fourthToken = tokens.nextToken();
                     prob = Double.parseDouble(fourthToken);
-                    SubstWrongFormError subst = new SubstWrongFormError(sentence, TAG_SET, secondToken, thirdToken, extraWords);
+                    SubstWrongFormError subst = new SubstWrongFormError(
+                            sentence, TAG_SET, secondToken, thirdToken, extraWords, dictionary);
                     subst.setProbability(prob);
                     return subst;
 
