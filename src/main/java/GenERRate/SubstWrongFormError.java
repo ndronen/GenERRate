@@ -133,7 +133,7 @@ public class SubstWrongFormError extends SubstError {
             newWord = presPToNonThirdSing(oldWord);
         } else if ((sourceTag.equals(tagSet.VERB_PRES_PART)) && (targetTag.equals(tagSet.INF))) {
             newWord = presPToInf(oldWord);
-            anotherNewWord = new Word("to", tagSet.INF);
+            anotherNewWord = buildSubstitution("to", tagSet.INF, oldWord.getToken());
         } else if ((sourceTag.equals(tagSet.INF)) && (targetTag.equals(tagSet.VERB_PRES_PART))) {
             oldWord = newSentence.getWord(where + 1);
             newWord = baseToPresP(oldWord);
@@ -191,7 +191,7 @@ public class SubstWrongFormError extends SubstError {
             String newWordString = formList.get(newWordPos);
             tokens = new StringTokenizer(newWordString, " ");
             if (tokens.countTokens() == 2) {
-                newWord = new Word(tokens.nextToken(), tokens.nextToken());
+                newWord = buildSubstitution(tokens.nextToken(), tokens.nextToken(), tokens.nextToken());
             }
         }
 
@@ -217,6 +217,18 @@ public class SubstWrongFormError extends SubstError {
 
     }
 
+    /**
+     * Build a Word using the three-arg constructor, which preserves the case of the original token.
+     *
+     * @param replacement the token replacing the original token
+     * @param tag         the part-of-speech tag of the replacement
+     * @param original    the original token
+     * @return
+     */
+    public Word buildSubstitution(String replacement, String tag, String original) {
+        return new Word(replacement, tag, original);
+    }
+
     public void validateReplacement(Word original, Word replacement) throws CannotCreateErrorException {
         if (replacement == null) {
             throw new CannotCreateErrorException(
@@ -240,18 +252,18 @@ public class SubstWrongFormError extends SubstError {
 
         if (token.endsWith("ies")) {
             if (token.equalsIgnoreCase("movies")) {
-                return new Word(token.substring(0, token.length() - 1), newTag, token);
+                return buildSubstitution(token.substring(0, token.length() - 1), newTag, token);
             } else {
-                return new Word(token.substring(0, token.length() - 3) + "y", newTag, token);
+                return buildSubstitution(token.substring(0, token.length() - 3) + "y", newTag, token);
             }
         } else if (token.endsWith("men")) {
-            return new Word(token.substring(0, token.length() - 3) + "man", newTag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "man", newTag, token);
         } else if (token.endsWith("a")) {
-            return new Word(token.substring(0, token.length() - 1) + "um", newTag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "um", newTag, token);
         } else if (token.endsWith("ches") || token.endsWith("sses") || token.endsWith("zes") || token.endsWith("shes") || token.endsWith("xes")) {
-            return new Word(token.substring(0, token.length() - 2), newTag);
+            return buildSubstitution(token.substring(0, token.length() - 2), newTag, token);
         } else if (token.length() > 0) {
-            return new Word(token.substring(0, token.length() - 1), newTag);
+            return buildSubstitution(token.substring(0, token.length() - 1), newTag, token);
         } else {
             return null;
         }
@@ -262,15 +274,15 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.endsWith("man")) {
-            return new Word(token.substring(0, token.length() - 3) + "men", plural_noun);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "men", plural_noun, token);
         } else if (token.endsWith("ch") || token.endsWith("s") || token.endsWith("z") || token.endsWith("sh") || token.endsWith("x")) {
-            return new Word(token + "es", plural_noun);
+            return buildSubstitution(token + "es", plural_noun, token);
         } else if (token.endsWith("y") && token.length() > 1 && !ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
-            return new Word(token.substring(0, token.length() - 1) + "ies", plural_noun);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ies", plural_noun, token);
         } else if (token.endsWith("um")) {
-            return new Word(token.substring(0, token.length() - 2) + "a", plural_noun);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "a", plural_noun, token);
         } else {
-            return new Word(token + "s", plural_noun);
+            return buildSubstitution(token + "s", plural_noun, token);
         }
     }
 
@@ -279,21 +291,21 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("are") || token.equalsIgnoreCase("'re") || token.equalsIgnoreCase("'m") || token.equalsIgnoreCase("am")) {
-            return new Word("is", tag);
+            return buildSubstitution("is", tag, token);
         } else if (token.equalsIgnoreCase("have")) {
-            return new Word("has", tag);
+            return buildSubstitution("has", tag, token);
         } else if (token.equalsIgnoreCase("do")) {
-            return new Word("does", tag);
+            return buildSubstitution("does", tag, token);
         } else if (token.equalsIgnoreCase("go")) {
-            return new Word("goes", tag);
+            return buildSubstitution("goes", tag, token);
         } else if (token.equalsIgnoreCase("shall")) {
-            return new Word(token, tag, token);
+            return buildSubstitution(token, tag, token);
         } else if (token.endsWith("y") && token.length() > 1 && !ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
-            return new Word(token.substring(0, token.length() - 1) + "ies", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ies", tag, token);
         } else if (token.endsWith("ch") || token.endsWith("x") || token.endsWith("s") || token.endsWith("z") || token.endsWith("sh")) {
-            return new Word(token + "es", tag);
+            return buildSubstitution(token + "es", tag, token);
         } else {
-            return new Word(token + "s", tag);
+            return buildSubstitution(token + "s", tag, token);
         }
     }
 
@@ -315,34 +327,34 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("is") || token.equalsIgnoreCase("'s")) {
-            return new Word("are", tag);
+            return buildSubstitution("are", tag, token);
         } else if (token.equalsIgnoreCase("has")) {
-            return new Word("have", tag);
+            return buildSubstitution("have", tag, token);
         } else if (token.equalsIgnoreCase("does")) {
-            return new Word("do", tag);
+            return buildSubstitution("do", tag, token);
         } else if (token.equalsIgnoreCase("goes")) {
-            return new Word("go", tag);
+            return buildSubstitution("go", tag, token);
         } else if (token.equalsIgnoreCase("shall")) {
-            return new Word(token, tag, token);
+            return buildSubstitution(token, tag, token);
         } else if (token.toLowerCase().endsWith("iases")) {
-            return new Word(token.substring(0, token.length() - 2), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else if (isIES(token)) {
-            return new Word(token.substring(0, token.length() - 1), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (isIESToY(token)) {
-            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "y", tag, token);
         } else if (token.endsWith("oes")) {
-            return new Word(token.substring(0, token.length() - 2), tag);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else if (token.toLowerCase().startsWith("focus")) {
-            return new Word("focus", tag, token);
+            return buildSubstitution("focus", tag, token);
         } else if (token.endsWith("sses") || token.endsWith("ches") || token.endsWith("xes") ||
                 token.endsWith("zzes") || token.endsWith("shes")) {
             if (token.endsWith("uizzes")) {
-                return new Word("quiz", tag, token);
+                return buildSubstitution("quiz", tag, token);
             } else {
-                return new Word(token.substring(0, token.length() - 2), tag);
+                return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
             }
         } else if (token.length() > 0) {
-            return new Word(token.substring(0, token.length() - 1), tag);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else {
             return null;
         }
@@ -358,22 +370,22 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("is")) {
-            return new Word("be", tag, token);
+            return buildSubstitution("be", tag, token);
         } else if (token.toLowerCase().endsWith("does") || token.toLowerCase().endsWith("goes")) {
-            return new Word(token.substring(0, token.length() - 2), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else if (token.equalsIgnoreCase("has")) {
-            return new Word("have", tag, token);
+            return buildSubstitution("have", tag, token);
         } else if (token.endsWith("ies")) {
-            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "y", tag, token);
         } else if (token.equalsIgnoreCase("begat")) {
-            return new Word(token.substring(0, token.length() - 2) + "et", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "et", tag, token);
         } else if (token.endsWith("yes") || token.endsWith("ys")) {
             // e.g. eyes -> eye, relays -> relay
-            return new Word(token.substring(0, token.length() - 1), tag);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (token.endsWith("es")) {
-            return new Word(token.substring(0, token.length() - 1), tag);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (token.length() > 0) {
-            return new Word(token.substring(0, token.length() - 1), tag);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else {
             return null;
         }
@@ -480,56 +492,58 @@ public class SubstWrongFormError extends SubstError {
         //System.out.println("third sing " + word.getToken() + " => base " + token);
 
         if (token.equalsIgnoreCase("be")) {
-            return new Word("being", tag);
+            return buildSubstitution("being", tag, token);
         } else if (token.equalsIgnoreCase("have")) {
-            return new Word("having", tag);
+            return buildSubstitution("having", tag, token);
         } else if (token.endsWith("ue")) {
             // e.g. continue -> continuing
-            return new Word(token.substring(0, token.length() - 1) + "ing", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ing", tag, token);
         } else if (token.equalsIgnoreCase("beget")) {
-            return new Word("begetting", tag, token);
+            return buildSubstitution("begetting", tag, token);
         } else if (token.endsWith("ye") || token.endsWith("y")) {
             //System.out.println("append ing");
-            return new Word(token.substring(0, token.length()) + "ing", tag);
+            return buildSubstitution(token.substring(0, token.length()) + "ing", tag, token);
         } else if (baseConvertCToCk(token)) {
-            return new Word(token + "king", tag, token);
+            return buildSubstitution(token + "king", tag, token);
         } else if (ceMatcher.matches()) {
-            return new Word(token.substring(0, token.length() - 1) + "ing", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ing", tag, token);
         } else if (thirdSingToPresPDuplicateFinalConsonant(token, cvcMatcher)) {
             //System.out.println("append TRAILING CONSONANT ing: " + token);
             if (token.length() == 3) {
                 Character last = token.charAt(token.length() - 1);
-                return new Word(token + last.toString() + "ing", tag, token);
+                return buildSubstitution(token + last.toString() + "ing", tag, token);
             } else {
                 MatchResult result = cvcMatcher.toMatchResult();
                 String newToken = result.group(1) + result.group(2) + result.group(2) + "ing";
-                return new Word(newToken, tag, token);
+                return buildSubstitution(newToken, tag, token);
             }
         } else if (token.toLowerCase().endsWith("quit") || token.toLowerCase().endsWith("quat") ||
                 token.toLowerCase().endsWith("qual") || token.toLowerCase().endsWith("quip")) {
             Character last = token.charAt(token.length() - 1);
-            return new Word(token + last.toString() + "ing", tag, token);
+            return buildSubstitution(token + last.toString() + "ing", tag, token);
         } else if (token.length() > 0) {
             //System.out.println("DEFAULT: append ing");
-            return new Word(token.substring(0, token.length()) + "ing", tag);
+            return buildSubstitution(token.substring(0, token.length()) + "ing", tag, token);
         } else {
             return null;
         }
     }
 
     public Word nonThirdSingToPresP(Word word) {
-        String tag = tagSet.VERB_PRES_PART;
+        final String tag = tagSet.VERB_PRES_PART;
+        final String token = word.getToken();
+
         if (word.getToken().equalsIgnoreCase("are")) {
-            return new Word("being", tag);
+            return buildSubstitution("being", tag, token);
         } else if (word.getToken().endsWith("e") && !word.getToken().endsWith("ee")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "ing", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 1) + "ing", tag, token);
         } else if (word.getToken().endsWith("t")
                 && (!(word.getToken().substring(word.getToken().length() - 3, word.getToken().length() - 1).equals("ea")))
                 && word.getToken().length() > 1
                 && ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 2))) {
-            return new Word(word.getToken() + "ting", tag);
+            return buildSubstitution(word.getToken() + "ting", tag, token);
         } else {
-            return new Word(word.getToken() + "ing", tag);
+            return buildSubstitution(word.getToken() + "ing", tag, token);
         }
     }
 
@@ -540,101 +554,101 @@ public class SubstWrongFormError extends SubstError {
         final Matcher vvcMatcher = VOWEL_VOWEL_CONSONANT.matcher(token);
 
         if (token.equalsIgnoreCase("be")) {
-            return new Word("being", tag);
+            return buildSubstitution("being", tag, token);
         } else if (token.toLowerCase().endsWith("saw")) {
-            return new Word(token.substring(0, token.length() - 2) + "eeing", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "eeing", tag, token);
         } else if (vvcMatcher.matches()) {
             if (token.toLowerCase().endsWith("quit")) {
-                return new Word(token + "ting", tag, token);
+                return buildSubstitution(token + "ting", tag, token);
             } else {
-                return new Word(token + "ing", tag, token);
+                return buildSubstitution(token + "ing", tag, token);
             }
         } else if (token.endsWith("an")) {
             // e.g. man -> manning, pan -> panning
-            return new Word(token + "ning", tag, token);
+            return buildSubstitution(token + "ning", tag, token);
         } else if (token.endsWith("e") && !token.endsWith("ee")) {
             if (token.toLowerCase().endsWith("hoe") || token.endsWith("noe")) {
                 // e.g. hoe -> hoeing, shoe -> shoeing, canoe -> canoeing
-                return new Word(token + "ing", tag);
+                return buildSubstitution(token + "ing", tag, token);
             } else if (token.endsWith("ie") /* && token.length() == 3 */) {
                 // e.g. tie -> tying, die -> dying, underlie -> underlying
-                return new Word(token.substring(0, token.length() - 2) + "ying", tag);
+                return buildSubstitution(token.substring(0, token.length() - 2) + "ying", tag, token);
             } else {
                 // e.g. hope -> hoping
-                return new Word(token.substring(0, token.length() - 1) + "ing", tag);
+                return buildSubstitution(token.substring(0, token.length() - 1) + "ing", tag, token);
             }
         } else if (token.endsWith("am") || token.endsWith("um")) {
             if (VOWEL_VOWEL_M.matcher(token).matches()) {
                 // e.g. foam -> foaming
-                return new Word(token + "ing", tag);
+                return buildSubstitution(token + "ing", tag, token);
             } else {
                 // e.g. dam -> damming, ram -> ramming,
-                return new Word(token + "ming", tag);
+                return buildSubstitution(token + "ming", tag, token);
             }
         } else if (token.endsWith("ise")) {
             // e.g. subsidise -> subsidising
-            return new Word(token.substring(0, token.length() - 1) + "ing", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ing", tag, token);
         } else if (token.endsWith("er")) {
             if (token.endsWith("efer") || token.endsWith("nfer") || token.endsWith("sfer") ||
                     token.endsWith("deter")) {
                 // e.g. refer -> referring, confer -> conferring, transfer -> transferring, deter -> deterring
-                return new Word(token + "ring", tag);
+                return buildSubstitution(token + "ring", tag, token);
             } else {
-                return new Word(token + "ing", tag);
+                return buildSubstitution(token + "ing", tag, token);
             }
         } else if (token.endsWith("eed") || token.endsWith("eem")) {
             // e.g. seed -> seeding, need -> needing, teem -> teeming, deem -> deeming
-            return new Word(token + "ing", tag, token);
+            return buildSubstitution(token + "ing", tag, token);
         } else if (token.endsWith("id") || token.endsWith("ed") || token.endsWith("ud")) {
             // e.g. forbid -> forbidding, stud -> studding
-            return new Word(token + "ding", tag);
+            return buildSubstitution(token + "ding", tag, token);
         } else if (token.endsWith("ab") || token.endsWith("ob") || token.endsWith("ub")) {
             // e.g. log -> lobbing, rub -> rubbing, grab -> grabbing
-            return new Word(token + "bing", tag);
+            return buildSubstitution(token + "bing", tag, token);
         } else if (token.endsWith("og") || token.endsWith("ag")) {
             // e.g. log -> logging, lag -> lagging
-            return new Word(token + "ging", tag);
+            return buildSubstitution(token + "ging", tag, token);
         } else if (token.endsWith("ek") || token.endsWith("ic")) {
             // e.g. trek -> trekking, mimic -> mimicking
-            return new Word(token + "king", tag);
+            return buildSubstitution(token + "king", tag, token);
         } else if (token.endsWith("el") || token.endsWith("ul")) {
             if (token.endsWith("del") || token.endsWith("llel")) {
                 // e.g. cancel -> canceling, model -> modeling, parallel -> paralleling, level -> leveling
-                return new Word(token + "ing", tag);
+                return buildSubstitution(token + "ing", tag, token);
             } else {
                 // e.g. excel -> excelling
-                return new Word(token + "ling", tag);
+                return buildSubstitution(token + "ling", tag, token);
             }
         } else if (token.endsWith("ag") || token.endsWith("eg") || token.endsWith("ig") || token.endsWith("og") || token.endsWith("ug")) {
             // e.g. rig -> rigging, hug -> hugging
-            return new Word(token + "ging", tag);
+            return buildSubstitution(token + "ging", tag, token);
         } else if (token.endsWith("em") || token.endsWith("im")) {
             // e.g. swim -> swimming
-            return new Word(token + "ming", tag);
+            return buildSubstitution(token + "ming", tag, token);
         } else if (token.endsWith("in") || token.endsWith("on") || token.endsWith("un")) {
             if (token.toLowerCase().endsWith("ammon")) {
                 // e.g. backgammon -> backgammoning
-                return new Word(token + "ing", tag, token);
+                return buildSubstitution(token + "ing", tag, token);
             } else {
-                return new Word(token + "ning", tag, token);
+                return buildSubstitution(token + "ning", tag, token);
             }
         } else if (token.endsWith("ap") || token.endsWith("ep") || token.endsWith("ip") || token.endsWith("op") || token.endsWith("up")) {
             if (token.toLowerCase().endsWith("velop")) {
-                return new Word(token + "ing", tag, token);
+                return buildSubstitution(token + "ing", tag, token);
             } else {
                 // e.g. kidnap -> kidnapping, drop -> dropping
-                return new Word(token + "ping", tag);
+                return buildSubstitution(token + "ping", tag, token);
             }
         } else if (token.endsWith("ol")) {
             // e.g. control -> controlling
-            return new Word(token + "ling", tag);
+            return buildSubstitution(token + "ling", tag, token);
         } else if (token.endsWith("ir") || token.endsWith("or") || token.endsWith("ur")) {
             if (token.endsWith("our")) {
                 // e.g. deliver -> delivering, favour -> favouring
-                return new Word(token + "ing", tag);
+                return buildSubstitution(token + "ing", tag, token);
             } else {
                 // e.g. incur -> incurring, spur -> spurring, stir -> stirring
-                return new Word(token + "ring", tag);
+                return buildSubstitution(token + "ring", tag, token);
             }
         } else if (token.endsWith("at") || token.endsWith("et") || token.endsWith("it") || token.endsWith("ot") || token.endsWith("ut")) {
             // System.out.println(token + " ends with 't'");
@@ -656,53 +670,55 @@ public class SubstWrongFormError extends SubstError {
                 // e.g. benefit -> benefiting, profit -> profiting, debut -> debuting, deposit -> depositing,
                 // limit -> limiting, interpret -> interpreting, elicit -> eliciting, rivet -> riveting
                 // System.out.println(token + " doesn't get an extra t");
-                return new Word(token + "ing", tag);
+                return buildSubstitution(token + "ing", tag, token);
             } else {
                 // e.g. set -> setting, fret -> fretting, outwit -> outwitting
                 // System.out.println(token + " gets an extra t");
-                return new Word(token + "ting", tag);
+                return buildSubstitution(token + "ting", tag, token);
             }
         } else {
-            return new Word(token + "ing", tag);
+            return buildSubstitution(token + "ing", tag, token);
         }
     }
 
     public Word presPToPastP(Word word) {
-        String tag = tagSet.VERB_PAST_PART;
+        final String tag = tagSet.VERB_PAST_PART;
+        final String token = word.getToken();
+
         if (word.getToken().equalsIgnoreCase("being")) {
-            return new Word("been", tag);
+            return buildSubstitution("been", tag, token);
         } else if (word.getToken().equalsIgnoreCase("having")) {
-            return new Word("had", tag);
+            return buildSubstitution("had", tag, token);
         } else if (word.getToken().endsWith("coming")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "e", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "e", tag, token);
         } else if (word.getToken().equalsIgnoreCase("going")) {
-            return new Word("gone", tag);
+            return buildSubstitution("gone", tag, token);
         } else if (word.getToken().equalsIgnoreCase("doing")) {
-            return new Word("done", tag);
+            return buildSubstitution("done", tag, token);
         } else if (word.getToken().equalsIgnoreCase("leaving")) {
-            return new Word("left", tag);
+            return buildSubstitution("left", tag, token);
         } else if (word.getToken().equalsIgnoreCase("taking")) {
-            return new Word("taken", tag);
+            return buildSubstitution("taken", tag, token);
         } else if (word.getToken().equalsIgnoreCase("seeing")) {
-            return new Word("seen", tag);
+            return buildSubstitution("seen", tag, token);
         } else if (word.getToken().equalsIgnoreCase("making")) {
-            return new Word("made", tag);
+            return buildSubstitution("made", tag, token);
         } else if (word.getToken().equalsIgnoreCase("bringing")) {
-            return new Word("brought", tag);
+            return buildSubstitution("brought", tag, token);
         } else if (word.getToken().equalsIgnoreCase("teaching")) {
-            return new Word("taught", tag);
+            return buildSubstitution("taught", tag, token);
         } else if (word.getToken().equalsIgnoreCase("reading")) {
-            return new Word("read", tag);
+            return buildSubstitution("read", tag, token);
         } else if (word.getToken().equalsIgnoreCase("letting")) {
-            return new Word("let", tag);
+            return buildSubstitution("let", tag, token);
         } else if (word.getToken().endsWith("wing") &&
                 (word.getToken().charAt(word.getToken().length() - 5) == 'a' ||
                         word.getToken().charAt(word.getToken().length() - 5) == 'o')) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "n", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "n", tag, token);
         } else if (word.getToken().endsWith("ying") && !ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 5))) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 4) + "ied", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 4) + "ied", tag, token);
         } else if (word.getToken().endsWith("ing")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "ed", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "ed", tag, token);
         } else {
             return null;
         }
@@ -722,17 +738,19 @@ public class SubstWrongFormError extends SubstError {
     }
 
     public Word presPToNonThirdSing(Word word) {
-        String tag = tagSet.VERB_NON_THIRD_SING;
+        final String tag = tagSet.VERB_NON_THIRD_SING;
+        final String token = word.getToken();
+
         if (word.getToken().equalsIgnoreCase("being")) {
-            return new Word("are", tag);
+            return buildSubstitution("are", tag, token);
         } else if (word.getToken().equalsIgnoreCase("having")) {
-            return new Word("have", tag);
+            return buildSubstitution("have", tag, token);
         } else if (word.getToken().endsWith("ching")
                 || word.getToken().endsWith("ssing") || word.getToken().endsWith("oing") || word.getToken().endsWith("dging")
                 || word.getToken().endsWith("oting")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "e", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "e", tag, token);
         } else if (word.getToken().endsWith("ing")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3), tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3), tag, token);
         } else {
             return null;
         }
@@ -992,28 +1010,28 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("being")) {
-            return new Word("be", tag);
+            return buildSubstitution("be", tag, token);
         } else if (presPToInfConvertCkToC(token)) {
-            return new Word(token.substring(0, token.length() - 4), tag);
+            return buildSubstitution(token.substring(0, token.length() - 4), tag, token);
         } else if (token.equalsIgnoreCase("lying")) {
-            return new Word(token.substring(0, token.length() - 4) + "ie", tag);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "ie", tag, token);
         } else if (infEndsWithE(token)) {
             //System.out.println(token + " matches[1] infEndsWithE");
-            return new Word(token.substring(0, token.length() - 3) + "e", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "e", tag, token);
         } else if (CONSONANT_CONSONANT_ING.matcher(token).matches()) {
             //System.out.println(token + " matches[2] + " + CONSONANT_CONSONANT_ING);
             if (token.endsWith("ssing") || token.endsWith("uzzing") || token.endsWith("spelling") ||
                     token.endsWith("stalling") || token.endsWith("selling") || token.endsWith("welling") ||
                     token.endsWith("cotting") || token.endsWith("affing") || token.endsWith("uffing") ||
                     token.endsWith("yelling") || token.equalsIgnoreCase("rolling")) {
-                return new Word(token.substring(0, token.length() - 3), tag);
+                return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
             } else {
-                return new Word(token.substring(0, token.length() - 4), tag);
+                return buildSubstitution(token.substring(0, token.length() - 4), tag, token);
             }
         } else if (token.endsWith("xying")) {
-            return new Word(token.substring(0, token.length() - 4) + "i", tag);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "i", tag, token);
         } else if (token.endsWith("ing")) {
-            return new Word(token.substring(0, token.length() - 3), tag);
+            return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
         } else {
             return null;
         }
@@ -1455,162 +1473,162 @@ public class SubstWrongFormError extends SubstError {
         if (isBlackListedPastPToBase(token)) {
             return null;
         } else if (pastPToBaseNoChange(token)) {
-            return new Word(token, tag);
+            return buildSubstitution(token, tag, token);
         } else if (token.equalsIgnoreCase("been")) {
-            return new Word("be", tag, token);
+            return buildSubstitution("be", tag, token);
         } else if (token.equalsIgnoreCase("had")) {
-            return new Word("have", tag, token);
+            return buildSubstitution("have", tag, token);
         } else if (token.equalsIgnoreCase("used")) {
-            return new Word("use", tag, token);
+            return buildSubstitution("use", tag, token);
         } else if (token.endsWith("done")) {
-            return new Word(token.substring(0, token.length() - 2), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else if (token.endsWith("gone")) {
-            return new Word(token.substring(0, token.length() - 2), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else if (token.equalsIgnoreCase("taken")) {
-            return new Word("take", tag, token);
+            return buildSubstitution("take", tag, token);
         } else if (token.equalsIgnoreCase("left")) {
-            return new Word("leave", tag, token);
+            return buildSubstitution("leave", tag, token);
         } else if (token.toLowerCase().equals("got") || token.toLowerCase().endsWith("forgot")) {
-            return new Word(token.substring(0, token.length() - 3) + "get", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "get", tag, token);
         } else if (token.toLowerCase().endsWith("gotten")) {
             // e.g. gotten -> get, forgotten -> forget
-            return new Word(token.substring(0, token.length() - 5) + "et", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 5) + "et", tag, token);
         } else if (token.toLowerCase().endsWith("told") || token.toLowerCase().endsWith("sold")) {
-            return new Word(token.substring(0, token.length() - 3) + "ell", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ell", tag, token);
         } else if (token.equalsIgnoreCase("took")) {
-            return new Word("take", tag, token);
+            return buildSubstitution("take", tag, token);
         } else if (token.endsWith("sat")) {
-            return new Word(token.substring(0, token.length() - 2) + "it", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "it", tag, token);
         } else if (token.endsWith("saw")) {
-            return new Word(token.substring(0, token.length() - 2) + "ee", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "ee", tag, token);
         } else if (token.toLowerCase().endsWith("sewn") || token.toLowerCase().endsWith("hewn") ||
                 token.toLowerCase().endsWith("strewn")) {
-            return new Word(token.substring(0, token.length() - 1), tag);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (token.equalsIgnoreCase("fed") || token.equalsIgnoreCase("overfed") ||
                 token.equalsIgnoreCase("bred") || token.equalsIgnoreCase("overbred") ||
                 token.equalsIgnoreCase("sped")) {
-            return new Word(token.substring(0, token.length() - 1) + "ed", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ed", tag, token);
         } else if (token.endsWith("torn")) {
-            return new Word("tear", tag, token);
+            return buildSubstitution("tear", tag, token);
         } else if (token.equalsIgnoreCase("led") || token.equalsIgnoreCase("misled") || token.equalsIgnoreCase("co-led")) {
-            return new Word(token.substring(0, token.length() - 1) + "ad", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ad", tag, token);
         } else if (token.endsWith("lit")) {
-            return new Word(token.substring(0, token.length() - 2) + "ight", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "ight", tag, token);
         } else if (token.endsWith("paid")) {
-            return new Word(token.substring(0, token.length() - 2) + "y", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "y", tag, token);
         } else if (token.toLowerCase().endsWith("felt")) {
-            return new Word(token.substring(0, token.length() - 3) + "eel", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "eel", tag, token);
         } else if (token.toLowerCase().endsWith("dealt")) {
-            return new Word(token.substring(0, token.length() - 4) + "eal", tag);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "eal", tag, token);
         } else if (token.toLowerCase().endsWith("built")) {
-            return new Word(token.substring(0, token.length() - 1) + "d", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "d", tag, token);
         } else if (token.toLowerCase().endsWith("spelt") || token.toLowerCase().endsWith("spilt")) {
-            return new Word(token.substring(0, token.length() - 1) + "l", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "l", tag, token);
         } else if (token.toLowerCase().endsWith("held")) {
-            return new Word(token.substring(0, token.length() - 3) + "old", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "old", tag, token);
         } else if (token.toLowerCase().endsWith("rose")) {
-            return new Word(token.substring(0, token.length() - 3) + "ise", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ise", tag, token);
         } else if (token.toLowerCase().endsWith("shrunk")) {
-            return new Word(token.substring(0, token.length() - 3) + "ink", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ink", tag, token);
         } else if (token.toLowerCase().endsWith("stood")) {
-            return new Word(token.substring(0, token.length() - 3) + "and", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "and", tag, token);
         } else if (token.toLowerCase().endsWith("slid")) {
-            return new Word(token + "e", tag, token);
+            return buildSubstitution(token + "e", tag, token);
         } else if (token.toLowerCase().endsWith("broken")) {
-            return new Word(token.substring(0, token.length() - 4) + "eak", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "eak", tag, token);
         } else if (token.toLowerCase().endsWith("frozen")) {
-            return new Word(token.substring(0, token.length() - 4) + "eeze", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "eeze", tag, token);
         } else if (token.toLowerCase().endsWith("chosen")) {
-            return new Word(token.substring(0, token.length() - 4) + "oose", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "oose", tag, token);
         } else if (token.toLowerCase().endsWith("woven")) {
-            return new Word(token.substring(0, token.length() - 4) + "eave", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "eave", tag, token);
         } else if (token.toLowerCase().endsWith("hidden")) {
-            return new Word(token.substring(0, token.length() - 3) + "e", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "e", tag, token);
         } else if (token.toLowerCase().endsWith("bidden")) {
             // e.g. forbidden, bidden
-            return new Word(token.substring(0, token.length() - 3), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
         } else if (token.toLowerCase().endsWith("ridden")) {
-            return new Word(token.substring(0, token.length() - 3) + "e", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "e", tag, token);
         } else if (token.equalsIgnoreCase("risen") || token.equalsIgnoreCase("arisen")) {
-            return new Word(token.substring(0, token.length() - 1), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (token.toLowerCase().endsWith("given") || token.toLowerCase().endsWith("riven")) {
-            return new Word(token.substring(0, token.length() - 1), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (token.toLowerCase().endsWith("written") || token.toLowerCase().endsWith("bitten") ||
                 token.toLowerCase().endsWith("smitten")) {
-            return new Word(token.substring(0, token.length() - 3) + "e", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "e", tag, token);
         } else if (token.toLowerCase().endsWith("beaten")) {
-            return new Word(token.substring(0, token.length() - 2), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else if (token.toLowerCase().endsWith("shot")) {
-            return new Word(token.substring(0, token.length() - 2) + "oot", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "oot", tag, token);
         } else if (token.toLowerCase().endsWith("thought")) {
-            return new Word(token.substring(0, token.length() - 5) + "ink", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 5) + "ink", tag, token);
         } else if (token.toLowerCase().endsWith("fought")) {
-            return new Word(token.substring(0, token.length() - 5) + "ight", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 5) + "ight", tag, token);
         } else if (token.toLowerCase().endsWith("taught")) {
-            return new Word(token.substring(0, token.length() - 5) + "each", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 5) + "each", tag, token);
         } else if (token.toLowerCase().endsWith("caught")) {
-            return new Word(token.substring(0, token.length() - 5) + "atch", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 5) + "atch", tag, token);
         } else if (token.toLowerCase().endsWith("flung") || token.toLowerCase().endsWith("stung")) {
-            return new Word(token.substring(0, token.length() - 3) + "ing", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ing", tag, token);
         } else if (token.toLowerCase().endsWith("sent") || token.toLowerCase().endsWith("lent") ||
                 token.toLowerCase().endsWith("spent")) {
-            return new Word(token.substring(0, token.length() - 3) + "end", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "end", tag, token);
         } else if (token.toLowerCase().endsWith("panicked") || token.toLowerCase().endsWith("mimicked") ||
                 token.toLowerCase().endsWith("afficked")) {
-            return new Word(token.substring(0, token.length() - 3), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
         } else if (token.toLowerCase().endsWith("lain") || token.toLowerCase().endsWith("laid") || token.toLowerCase().endsWith("said")) {
-            return new Word(token.substring(0, token.length() - 3) + "ay", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ay", tag, token);
         } else if (token.toLowerCase().endsWith("rung")) {
-            return new Word(token.substring(0, token.length() - 3) + "ing", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ing", tag, token);
         } else if (token.toLowerCase().endsWith("sang") || token.toLowerCase().endsWith("sung")) {
-            return new Word(token.substring(0, token.length() - 3) + "ing", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ing", tag, token);
         } else if (token.toLowerCase().endsWith("hung")) {
-            return new Word(token.substring(0, token.length() - 3) + "ang", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ang", tag, token);
         } else if (token.toLowerCase().endsWith("sunk")) {
-            return new Word(token.substring(0, token.length() - 3) + "ink", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ink", tag, token);
         } else if (token.toLowerCase().endsWith("borne")) {
-            return new Word(token.substring(0, token.length() - 4) + "ear", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "ear", tag, token);
         } else if (token.toLowerCase().endsWith("drawn") || token.endsWith("grown") ||
                 token.toLowerCase().endsWith("seen") ||
                 token.toLowerCase().endsWith("thrown") || token.toLowerCase().endsWith("blown")) {
-            return new Word(token.substring(0, token.length() - 1), tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (token.toLowerCase().endsWith("flown")) {
-            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "y", tag, token);
         } else if (token.toLowerCase().endsWith("sworn")) {
-            return new Word(token.substring(0, token.length() - 3) + "ear", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ear", tag, token);
         } else if (token.toLowerCase().endsWith("heard")) {
-            return new Word(token.substring(0, token.length() - 4) + "ear", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "ear", tag, token);
         } else if (token.toLowerCase().endsWith("lost")) {
-            return new Word(token.substring(0, token.length() - 1) + "e", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "e", tag, token);
         } else if (token.toLowerCase().endsWith("slept") || token.toLowerCase().endsWith("swept") ||
                 token.toLowerCase().endsWith("kept")) {
-            return new Word(token.substring(0, token.length() - 2) + "ep", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "ep", tag, token);
         } else if (token.toLowerCase().endsWith("bound") || token.equalsIgnoreCase("wound")) {
-            return new Word(token.substring(0, token.length() - 4) + "ind", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "ind", tag, token);
         } else if (token.toLowerCase().endsWith("stuck")) {
-            return new Word(token.substring(0, token.length() - 4) + "tick", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "tick", tag, token);
         } else if (token.toLowerCase().endsWith("struck")) {
-            return new Word(token.substring(0, token.length() - 3) + "ike", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ike", tag, token);
         } else if (token.toLowerCase().endsWith("stricken")) {
-            return new Word(token.substring(0, token.length() - 5) + "ike", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 5) + "ike", tag, token);
         } else if (token.toLowerCase().endsWith("spun")) {
-            return new Word(token.substring(0, token.length() - 4) + "spin", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "spin", tag, token);
         } else if (token.equalsIgnoreCase("dug")) {
-            return new Word(token.substring(0, token.length() - 2) + "ig", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "ig", tag, token);
         } else if (token.toLowerCase().endsWith("woken")) {
-            return new Word(token.substring(0, token.length() - 4) + "ake", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 4) + "ake", tag, token);
         } else if (token.equalsIgnoreCase("fled")) {
-            return new Word(token.substring(0, token.length() - 1) + "e", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "e", tag, token);
         } else if (removeD(token)) {
-            return new Word(token.substring(0, token.length() - 1), tag);
+            return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
         } else if (removeEDAndConsonant(token)) {
             //System.out.println("removing ED and constant: '" + token + "'");
-            return new Word(token.substring(0, token.length() - 3), tag);
+            return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
         } else if (replaceIEDWithY(token)) {
-            return new Word(token.substring(0, token.length() - 3) + "y", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "y", tag, token);
         } else if (token.endsWith("ed")) {
             //System.out.println("reached default remove -ed rule: " + token);
-            return new Word(token.substring(0, token.length() - 2), tag);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else {
             // System.out.println("Probably not a past particple " + token);
             return null;
@@ -1647,35 +1665,35 @@ public class SubstWrongFormError extends SubstError {
         //System.out.println(word.getToken() + " => " + token);
 
         if (token.equalsIgnoreCase("be")) {
-            return new Word("is", tag, token);
+            return buildSubstitution("is", tag, token);
         } else if (token.equalsIgnoreCase("have")) {
-            return new Word("has", tag, token);
+            return buildSubstitution("has", tag, token);
         } else if (token.endsWith("do")) {
-            return new Word(token + "es", tag);
+            return buildSubstitution(token + "es", tag, token);
         } else if (token.endsWith("go")) {
-            return new Word(token + "es", tag);
+            return buildSubstitution(token + "es", tag, token);
         } else if (token.equalsIgnoreCase("take")) {
-            return new Word("takes", tag, token);
+            return buildSubstitution("takes", tag, token);
         } else if (token.equalsIgnoreCase("leave")) {
-            return new Word("leaves", tag, token);
+            return buildSubstitution("leaves", tag, token);
         } else if (replaceYWithIES(token)) {
-            return new Word(token.substring(0, token.length() - 1) + "ies", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ies", tag, token);
         } else if (token.endsWith("ch") || token.endsWith("sh") || token.endsWith("ss") ||
                 token.endsWith("es") || token.endsWith("cus") ||
                 token.endsWith("zz") || token.endsWith("to") /* e.g. veto */ ||
                 token.endsWith("ucco") /* e.g. stucco */) {
-            return new Word(token + "es", tag, token);
+            return buildSubstitution(token + "es", tag, token);
         } else if (appendSES(token)) {
-            return new Word(token + "ses", tag, token);
+            return buildSubstitution(token + "ses", tag, token);
         } else if (appendZES(token)) {
-            return new Word(token + "zes", tag, token);
+            return buildSubstitution(token + "zes", tag, token);
         } else {
-            return new Word(token + "s", tag);
+            return buildSubstitution(token + "s", tag, token);
         }
         /*
         }
         else if (token.length() > 5 && ErrorUtilities.isVowel(token.charAt(word.getToken().length() - 4))) {
-            return new Word(token.substring(0, token.length() - 1) + "s", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "s", tag, token);
         } else if
                 (token.endsWith("ied")
                         || token.endsWith("ched")
@@ -1684,10 +1702,10 @@ public class SubstWrongFormError extends SubstError {
                         || token.endsWith("lved")
                         || token.endsWith("nced")
                 ) {
-            return new Word(token.substring(0, token.length() - 1) + "s", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "s", tag, token);
 
         } else if (token.length() > 1) {
-            return new Word(token.substring(0, token.length() - 2) + "s", tag);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "s", tag, token);
 
         } else {
             return null;
@@ -1700,21 +1718,21 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("been")) {
-            return new Word("being", tag);
+            return buildSubstitution("being", tag, token);
         } else if (token.equalsIgnoreCase("had")) {
-            return new Word("having", tag);
+            return buildSubstitution("having", tag, token);
         } else if (token.equalsIgnoreCase("done")) {
-            return new Word("doing", tag);
+            return buildSubstitution("doing", tag, token);
         } else if (token.equalsIgnoreCase("gone")) {
-            return new Word("going", tag);
+            return buildSubstitution("going", tag, token);
         } else if (token.equalsIgnoreCase("taken")) {
-            return new Word("taking", tag);
+            return buildSubstitution("taking", tag, token);
         } else if (token.equalsIgnoreCase("left")) {
-            return new Word("leaving", tag);
+            return buildSubstitution("leaving", tag, token);
         } else if (token.endsWith("ied")) {
-            return new Word(token.substring(0, token.length() - 3) + "ying", tag);
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ying", tag, token);
         } else if (token.length() > 2) {
-            return new Word(token.substring(0, token.length() - 2) + "ing", tag);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "ing", tag, token);
         } else {
             return null;
         }
@@ -1726,32 +1744,32 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("be")) {
-            return new Word("is", tag);
+            return buildSubstitution("is", tag, token);
         } else if (token.toLowerCase().endsWith("do") || token.toLowerCase().endsWith("go")) {
-            return new Word(token + "es", tag, token);
+            return buildSubstitution(token + "es", tag, token);
         } else if (token.equalsIgnoreCase("have")) {
-            return new Word("has", tag);
+            return buildSubstitution("has", tag, token);
         } else if (token.endsWith("y")) {
             if (token.length() == 3) {
                 if (!ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
                     // try -> tries
-                    return new Word(token.substring(0, token.length() - 1) + "ies", tag, token);
+                    return buildSubstitution(token.substring(0, token.length() - 1) + "ies", tag, token);
                 } else {
                     // say -> says
-                    return new Word(token + "s", tag, token);
+                    return buildSubstitution(token + "s", tag, token);
                 }
             }
             if (ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
-                return new Word(token + "s", tag, token);
+                return buildSubstitution(token + "s", tag, token);
             } else {
-                return new Word(token.substring(0, token.length() - 1) + "ies", tag, token);
+                return buildSubstitution(token.substring(0, token.length() - 1) + "ies", tag, token);
             }
         } else if (token.endsWith("sh") || token.endsWith("ch") || token.endsWith("ss") ||
                 token.endsWith("sso") ||
                 token.endsWith("xi") || token.endsWith("x")) {
-            return new Word(token + "es", tag);
+            return buildSubstitution(token + "es", tag, token);
         } else {
-            return new Word(token + "s", tag);
+            return buildSubstitution(token + "s", tag, token);
         }
     }
 
@@ -1760,13 +1778,13 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.endsWith("y")) {
-            return new Word(token.substring(0, token.length() - 1) + "ier", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ier", tag, token);
         } else if (token.endsWith("t") && ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
-            return new Word(token + "ter", tag);
+            return buildSubstitution(token + "ter", tag, token);
         } else if (token.endsWith("e")) {
-            return new Word(token + "r", tag);
+            return buildSubstitution(token + "r", tag, token);
         } else {
-            return new Word(token + "er", tag);
+            return buildSubstitution(token + "er", tag, token);
         }
     }
 
@@ -1775,30 +1793,33 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.endsWith("y")) {
-            return new Word(token.substring(0, token.length() - 1) + "iest", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "iest", tag, token);
         } else if (token.endsWith("t") && ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
-            return new Word(token + "test", tag);
+            return buildSubstitution(token + "test", tag, token);
         } else if (token.endsWith("e")) {
-            return new Word(token + "st", tag);
+            return buildSubstitution(token + "st", tag, token);
         } else {
-            return new Word(token + "est", tag);
+            return buildSubstitution(token + "est", tag, token);
         }
     }
 
     public Word comparativeAdjToSuperlative(Word word) {
-        String tag = tagSet.ADJ_SUP;
+        final String tag = tagSet.ADJ_SUP;
+        final String token = word.getToken();
 
         if (word.getToken().length() > 0) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 1) + "st", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 1) + "st", tag, token);
         } else {
             return null;
         }
     }
 
     public Word superlativeAdjToComparative(Word word) {
-        String tag = tagSet.ADJ_COMP;
+        final String tag = tagSet.ADJ_COMP;
+        final String token = word.getToken();
+
         if (word.getToken().length() > 1) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2) + "r", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 2) + "r", tag, token);
         } else {
             return null;
         }
@@ -1806,26 +1827,30 @@ public class SubstWrongFormError extends SubstError {
 
     //TODO: deal with cases such as "freer" to "free"
     public Word comparativeAdjToRegular(Word word) {
-        String tag = tagSet.ADJ;
+        final String tag = tagSet.ADJ;
+        final String token = word.getToken();
+
         if (word.getToken().endsWith("ier")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3) + "y", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "y", tag, token);
         } else if (word.getToken().endsWith("tter")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3), tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3), tag, token);
         } else if (word.getToken().endsWith("er")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 2), tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 2), tag, token);
         } else {
             return null;
         }
     }
 
     public Word superlativeAdjToRegular(Word word) {
-        String tag = tagSet.ADJ;
+        final String tag = tagSet.ADJ;
+        final String token = word.getToken();
+
         if (word.getToken().endsWith("iest")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 4) + "y", tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 4) + "y", tag, token);
         } else if (word.getToken().endsWith("ttest")) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 4), tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 4), tag, token);
         } else if (word.getToken().length() > 2) {
-            return new Word(word.getToken().substring(0, word.getToken().length() - 3), tag);
+            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3), tag, token);
         } else {
             return null;
         }
@@ -1836,7 +1861,7 @@ public class SubstWrongFormError extends SubstError {
         final String token = word.getToken();
 
         if (token.equalsIgnoreCase("angrily")) {
-            return new Word(token.substring(0, 1) + "ngry", tag);
+            return buildSubstitution(token.substring(0, 1) + "ngry", tag, token);
         } else if (token.endsWith("ically")) {
             String lower = token.toLowerCase();
             if ((lower.endsWith("typically") && !lower.startsWith("phenotyp")) ||
@@ -1861,44 +1886,44 @@ public class SubstWrongFormError extends SubstError {
                     lower.endsWith("theatrically") ||
                     lower.endsWith("categorically") ||
                     (lower.endsWith("radically") && !lower.startsWith("spor"))) {
-                return new Word(token.substring(0, token.length() - 2), tag);
+                return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
             } else {
-                return new Word(token.substring(0, token.length() - 4), tag);
+                return buildSubstitution(token.substring(0, token.length() - 4), tag, token);
             }
         } else if (token.endsWith("ably") || token.endsWith("ibly")) {
             // e.g. unsustainably -> unsustainable
-            return new Word(token.substring(0, token.length() - 1) + "e", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "e", tag, token);
             // } else if (token.endsWith("arily") || token.endsWith("dily")) {
         } else if (token.endsWith("ily")) {
             // e.g. extraordinarily -> extraordinary
             // e.g. Steadily -> Steady
             // e.g. derogatorily -> derogatory
             if (token.equalsIgnoreCase("eerily")) {
-                return new Word(token.substring(0, 1) + "erie", tag);
+                return buildSubstitution(token.substring(0, 1) + "erie", tag, token);
             } else {
-                return new Word(token.substring(0, token.length() - 3) + "y", tag);
+                return buildSubstitution(token.substring(0, token.length() - 3) + "y", tag, token);
             }
         } else if (token.endsWith("bly") || token.endsWith("btly") || token.endsWith("mply")) {
             // e.g. feebly -> feeble, subtly -> subtle
-            return new Word(token.substring(0, token.length() - 1) + "e", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "e", tag, token);
         } else if (token.endsWith("uly")) {
             // e.g. unduly -> undue
-            return new Word(token.substring(0, token.length() - 2) + "e", tag);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "e", tag, token);
         } else if (token.endsWith("ully")) {
             // e.g. fully -> full, thankfully -> thankful
             if (token.toLowerCase().equals("fully")) {
-                return new Word(token.substring(0, token.length() - 1), tag);
+                return buildSubstitution(token.substring(0, token.length() - 1), tag, token);
             } else {
-                return new Word(token.substring(0, token.length() - 2), tag);
+                return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
             }
         } else if (token.endsWith("olly")) {
-            return new Word(token.substring(0, token.length() - 2) + "e", tag, token);
+            return buildSubstitution(token.substring(0, token.length() - 2) + "e", tag, token);
         } else if (token.endsWith("doubly")) {
             // e.g. doubly -> double (?)
-            return new Word(token.substring(0, token.length() - 1) + "e", tag);
+            return buildSubstitution(token.substring(0, token.length() - 1) + "e", tag, token);
         } else if (token.length() > 1) {
             //strip the "ly" from the end of the word
-            return new Word(token.substring(0, token.length() - 2), tag);
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else {
             return null;
         }
