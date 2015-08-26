@@ -72,32 +72,106 @@ public class SubstWrongFormErrorTest extends TestCase {
 
     // JJ -> JJR
     public void testRegularAdjToComparative() throws Exception {
-        fail("not implemented");
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("good", "better");
+        PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING, entry.getKey());
+            Word replacement = obj.regularAdjToComparative(word);
+            // System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
     }
 
     // JJ -> JJS
     public void testRegularAdjToSuperlative() throws Exception {
-        fail("not implemented");
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("good", "best");
+        PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING, entry.getKey());
+            Word replacement = obj.regularAdjToSuperlative(word);
+            // System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
     }
 
     // JJR -> JJS
     public void testComparativeAdjToSuperlative() throws Exception {
-        fail("not implemented");
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("better", "best");
+        PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING, entry.getKey());
+            Word replacement = obj.comparativeAdjToSuperlative(word);
+            // System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
+
     }
 
     // JJS -> JJR
     public void testSuperlativeAdjToComparative() throws Exception {
-        fail("not implemented");
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("best", "better");
+        PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING, entry.getKey());
+            Word replacement = obj.superlativeAdjToComparative(word);
+            // System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
     }
 
     // JJR -> JJ
     public void testComparativeAdjToRegular() throws Exception {
-        fail("not implemented");
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("better", "good");
+        PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING, entry.getKey());
+            Word replacement = obj.comparativeAdjToRegular(word);
+            // System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
     }
 
     // JJS -> JJ
     public void testSuperlativeAdjToRegular() throws Exception {
-        fail("not implemented");
+        final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("best", "good");
+        PartOfSpeech tagSet = new PartOfSpeech();
+        int i = 0;
+        SubstWrongFormError obj = new SubstWrongFormError(
+                null, tagSet, null, null, null, dictionary);
+        for (Map.Entry<String, String> entry : expectations.entrySet()) {
+            Word word = new Word(entry.getKey(), tagSet.VERB_NON_THIRD_SING, entry.getKey());
+            Word replacement = obj.superlativeAdjToRegular(word);
+            // System.out.println(i + "/" + expectations.size() + " " + word.getToken() + " " + replacement.getToken());
+            i += 1;
+            assertEquals(entry.getValue(), replacement.getToken());
+        }
+
     }
 
     // VBN -> VBG
@@ -454,6 +528,8 @@ public class SubstWrongFormErrorTest extends TestCase {
     // VBZ -> VBG
     public void testThirdSingToPresP() throws Exception {
         final Map<String, String> expectations = new HashMap<String, String>();
+        expectations.put("is", "being");
+        expectations.put("Is", "Being");
         expectations.put("sees", "seeing");
         expectations.put("Contains", "Containing");
         expectations.put("Delivers", "Delivering");

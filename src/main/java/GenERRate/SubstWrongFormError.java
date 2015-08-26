@@ -533,17 +533,17 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.VERB_PRES_PART;
         final String token = word.getToken();
 
-        if (word.getToken().equalsIgnoreCase("are")) {
+        if (token.equalsIgnoreCase("are")) {
             return buildSubstitution("being", tag, token);
-        } else if (word.getToken().endsWith("e") && !word.getToken().endsWith("ee")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 1) + "ing", tag, token);
-        } else if (word.getToken().endsWith("t")
-                && (!(word.getToken().substring(word.getToken().length() - 3, word.getToken().length() - 1).equals("ea")))
-                && word.getToken().length() > 1
-                && ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 2))) {
-            return buildSubstitution(word.getToken() + "ting", tag, token);
+        } else if (token.endsWith("e") && !token.endsWith("ee")) {
+            return buildSubstitution(token.substring(0, token.length() - 1) + "ing", tag, token);
+        } else if (token.endsWith("t")
+                && (!(token.substring(token.length() - 3, token.length() - 1).equals("ea")))
+                && token.length() > 1
+                && ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
+            return buildSubstitution(token + "ting", tag, token);
         } else {
-            return buildSubstitution(word.getToken() + "ing", tag, token);
+            return buildSubstitution(token + "ing", tag, token);
         }
     }
 
@@ -685,40 +685,40 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.VERB_PAST_PART;
         final String token = word.getToken();
 
-        if (word.getToken().equalsIgnoreCase("being")) {
+        if (token.equalsIgnoreCase("being")) {
             return buildSubstitution("been", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("having")) {
+        } else if (token.equalsIgnoreCase("having")) {
             return buildSubstitution("had", tag, token);
-        } else if (word.getToken().endsWith("coming")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "e", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("going")) {
+        } else if (token.endsWith("coming")) {
+            return buildSubstitution(token.substring(0, token.length() - 3) + "e", tag, token);
+        } else if (token.equalsIgnoreCase("going")) {
             return buildSubstitution("gone", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("doing")) {
+        } else if (token.equalsIgnoreCase("doing")) {
             return buildSubstitution("done", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("leaving")) {
+        } else if (token.equalsIgnoreCase("leaving")) {
             return buildSubstitution("left", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("taking")) {
+        } else if (token.equalsIgnoreCase("taking")) {
             return buildSubstitution("taken", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("seeing")) {
+        } else if (token.equalsIgnoreCase("seeing")) {
             return buildSubstitution("seen", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("making")) {
+        } else if (token.equalsIgnoreCase("making")) {
             return buildSubstitution("made", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("bringing")) {
+        } else if (token.equalsIgnoreCase("bringing")) {
             return buildSubstitution("brought", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("teaching")) {
+        } else if (token.equalsIgnoreCase("teaching")) {
             return buildSubstitution("taught", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("reading")) {
+        } else if (token.equalsIgnoreCase("reading")) {
             return buildSubstitution("read", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("letting")) {
+        } else if (token.equalsIgnoreCase("letting")) {
             return buildSubstitution("let", tag, token);
-        } else if (word.getToken().endsWith("wing") &&
-                (word.getToken().charAt(word.getToken().length() - 5) == 'a' ||
-                        word.getToken().charAt(word.getToken().length() - 5) == 'o')) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "n", tag, token);
-        } else if (word.getToken().endsWith("ying") && !ErrorUtilities.isVowel(word.getToken().charAt(word.getToken().length() - 5))) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 4) + "ied", tag, token);
-        } else if (word.getToken().endsWith("ing")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "ed", tag, token);
+        } else if (token.endsWith("wing") &&
+                (token.charAt(token.length() - 5) == 'a' ||
+                        token.charAt(token.length() - 5) == 'o')) {
+            return buildSubstitution(token.substring(0, token.length() - 3) + "n", tag, token);
+        } else if (token.endsWith("ying") && !ErrorUtilities.isVowel(token.charAt(token.length() - 5))) {
+            return buildSubstitution(token.substring(0, token.length() - 4) + "ied", tag, token);
+        } else if (token.endsWith("ing")) {
+            return buildSubstitution(token.substring(0, token.length() - 3) + "ed", tag, token);
         } else {
             return null;
         }
@@ -741,16 +741,16 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.VERB_NON_THIRD_SING;
         final String token = word.getToken();
 
-        if (word.getToken().equalsIgnoreCase("being")) {
+        if (token.equalsIgnoreCase("being")) {
             return buildSubstitution("are", tag, token);
-        } else if (word.getToken().equalsIgnoreCase("having")) {
+        } else if (token.equalsIgnoreCase("having")) {
             return buildSubstitution("have", tag, token);
-        } else if (word.getToken().endsWith("ching")
-                || word.getToken().endsWith("ssing") || word.getToken().endsWith("oing") || word.getToken().endsWith("dging")
-                || word.getToken().endsWith("oting")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "e", tag, token);
-        } else if (word.getToken().endsWith("ing")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3), tag, token);
+        } else if (token.endsWith("ching")
+                || token.endsWith("ssing") || token.endsWith("oing") || token.endsWith("dging")
+                || token.endsWith("oting")) {
+            return buildSubstitution(token.substring(0, token.length() - 3) + "e", tag, token);
+        } else if (token.endsWith("ing")) {
+            return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
         } else {
             return null;
         }
@@ -1777,7 +1777,9 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.ADJ_COMP;
         final String token = word.getToken();
 
-        if (token.endsWith("y")) {
+        if (token.equalsIgnoreCase("good")) {
+            return buildSubstitution("better", tag, token);
+        } else if (token.endsWith("y")) {
             return buildSubstitution(token.substring(0, token.length() - 1) + "ier", tag, token);
         } else if (token.endsWith("t") && ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
             return buildSubstitution(token + "ter", tag, token);
@@ -1792,7 +1794,9 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.ADJ_SUP;
         final String token = word.getToken();
 
-        if (token.endsWith("y")) {
+        if (token.equalsIgnoreCase("good")) {
+            return buildSubstitution("best", tag, token);
+        } else if (token.endsWith("y")) {
             return buildSubstitution(token.substring(0, token.length() - 1) + "iest", tag, token);
         } else if (token.endsWith("t") && ErrorUtilities.isVowel(token.charAt(token.length() - 2))) {
             return buildSubstitution(token + "test", tag, token);
@@ -1807,8 +1811,10 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.ADJ_SUP;
         final String token = word.getToken();
 
-        if (word.getToken().length() > 0) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 1) + "st", tag, token);
+        if (token.equalsIgnoreCase("better")) {
+            return buildSubstitution("best", tag, token);
+        } else if (token.length() > 0) {
+            return buildSubstitution(token.substring(0, token.length() - 1) + "st", tag, token);
         } else {
             return null;
         }
@@ -1818,8 +1824,10 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.ADJ_COMP;
         final String token = word.getToken();
 
-        if (word.getToken().length() > 1) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 2) + "r", tag, token);
+        if (token.equalsIgnoreCase("best")) {
+            return buildSubstitution("better", tag, token);
+        } else if (token.length() > 1) {
+            return buildSubstitution(token.substring(0, token.length() - 2) + "r", tag, token);
         } else {
             return null;
         }
@@ -1830,12 +1838,14 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.ADJ;
         final String token = word.getToken();
 
-        if (word.getToken().endsWith("ier")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3) + "y", tag, token);
-        } else if (word.getToken().endsWith("tter")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3), tag, token);
-        } else if (word.getToken().endsWith("er")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 2), tag, token);
+        if (token.equalsIgnoreCase("better")) {
+            return buildSubstitution("good", tag, token);
+        } else if (token.endsWith("ier")) {
+            return buildSubstitution(token.substring(0, token.length() - 3) + "y", tag, token);
+        } else if (token.endsWith("tter")) {
+            return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
+        } else if (token.endsWith("er")) {
+            return buildSubstitution(token.substring(0, token.length() - 2), tag, token);
         } else {
             return null;
         }
@@ -1845,12 +1855,14 @@ public class SubstWrongFormError extends SubstError {
         final String tag = tagSet.ADJ;
         final String token = word.getToken();
 
-        if (word.getToken().endsWith("iest")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 4) + "y", tag, token);
-        } else if (word.getToken().endsWith("ttest")) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 4), tag, token);
-        } else if (word.getToken().length() > 2) {
-            return buildSubstitution(word.getToken().substring(0, word.getToken().length() - 3), tag, token);
+        if (token.equalsIgnoreCase("best")) {
+            return buildSubstitution("good", tag, token);
+        } else if (token.endsWith("iest")) {
+            return buildSubstitution(token.substring(0, token.length() - 4) + "y", tag, token);
+        } else if (token.endsWith("ttest")) {
+            return buildSubstitution(token.substring(0, token.length() - 4), tag, token);
+        } else if (token.length() > 2) {
+            return buildSubstitution(token.substring(0, token.length() - 3), tag, token);
         } else {
             return null;
         }
