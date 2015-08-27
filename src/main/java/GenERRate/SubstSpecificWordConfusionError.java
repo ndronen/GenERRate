@@ -69,7 +69,7 @@ public class SubstSpecificWordConfusionError extends SubstError {
     }
 
     /**
-     * Searches the inputSentence for wordToBeReplaced. If it is found, it is replaced
+     * Searches the sentence for wordToBeReplaced. If it is found, it is replaced
      * by replacementWord. Otherwise a CannotCreateErrorException is thrown.
      *
      * @return Sentence
@@ -77,10 +77,10 @@ public class SubstSpecificWordConfusionError extends SubstError {
     public Sentence insertError() throws CannotCreateErrorException {
         //if the extra word list is empty and the sentence itself is empty, nothing can be added
         //throw an exception
-        if (inputSentence.size() < 1) {
+        if (sentence.size() < 1) {
             throw new CannotCreateErrorException("The sentence is empty. Cannot substitute one word for another");
         }
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
         //see if the word to be replaced is in the input sentence, if not throw an exception
         boolean isWordThere = false;
         Word word;
@@ -93,7 +93,8 @@ public class SubstSpecificWordConfusionError extends SubstError {
             }
         }
         if (!isWordThere) {
-            throw new CannotCreateErrorException("Cannot substitute one word for another. The word to be replaced " + wordToBeReplaced.getToken() + " is not in the input sentence");
+            throw new CannotCreateErrorException("Cannot substitute one word for another. " +
+                    "The word to be replaced '" + wordToBeReplaced.getToken() + "' is not in the input sentence");
         }
 
         Random random = new Random(newSentence.toString().hashCode());

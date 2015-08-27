@@ -112,13 +112,13 @@ public class MovePOSError extends MoveError {
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
-        if (inputSentence == null || inputSentence.size() < 2) {
+        if (sentence == null || sentence.size() < 2) {
             throw new CannotCreateErrorException("Either the input sentence is empty or it has only one word. Cannot insert a Move Error");
         }
-        if (!inputSentence.areTagsIncluded()) {
+        if (!sentence.areTagsIncluded()) {
             throw new CannotCreateErrorException("The input sentence is not tagged. Cannot create a " + errorInfo + ".");
         }
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
         //find all words with the preferred part of speech
         List<Integer> movePOSList = new ArrayList<Integer>();
         for (int i = 0; i < newSentence.size(); i++) {

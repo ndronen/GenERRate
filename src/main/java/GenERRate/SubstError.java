@@ -1,6 +1,5 @@
 package GenERRate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -33,13 +32,13 @@ public class SubstError extends Error {
     public Sentence insertError() throws CannotCreateErrorException {
         //if the extra word list is empty and the sentence itself is empty, nothing can be added
         //throw an exception
-        if (inputSentence.size() < 1) {
+        if (sentence.size() < 1) {
             throw new CannotCreateErrorException("The sentence is empty. Cannot substitute one word for another");
         }
         if (extraWordList == null || extraWordList.size() < 1) {
             throw new CannotCreateErrorException("Cannot substitute a word: the extra word list is empty.");
         }
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
         Random random = new Random(newSentence.toString().hashCode());
 
         //randomly choose the position in the sentence where the word should be replaced

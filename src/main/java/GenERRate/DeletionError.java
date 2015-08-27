@@ -9,8 +9,8 @@ import java.util.Random;
  */
 public class DeletionError extends Error {
 
-    public DeletionError(Sentence inputS) {
-        super(inputS);
+    public DeletionError(Sentence sentence) {
+        super(sentence);
         errorInfo = "errortype=\"DeletionError\"";
     }
 
@@ -26,31 +26,31 @@ public class DeletionError extends Error {
             System.out.println();
             System.out.println("Testing the version with tags");
             testSentence = new Sentence("This DT is VBZ a DT test NN", true);
-            deletionError.setInputSentence(testSentence);
+            deletionError.setSentence(testSentence);
             System.out.println(deletionError.insertError());
 
             System.out.println();
             System.out.println("Testing an invalid version");
             testSentence = new Sentence("Test", false);
-            deletionError.setInputSentence(testSentence);
+            deletionError.setSentence(testSentence);
             System.out.println(deletionError.insertError());
 
             System.out.println();
             System.out.println("Testing an invalid version");
             testSentence = new Sentence("Test NN", true);
-            deletionError.setInputSentence(testSentence);
+            deletionError.setSentence(testSentence);
             System.out.println(deletionError.insertError());
 
             System.out.println();
             System.out.println("Testing an invalid version");
             testSentence = new Sentence("", true);
-            deletionError.setInputSentence(testSentence);
+            deletionError.setSentence(testSentence);
             System.out.println(deletionError.insertError());
 
             System.out.println();
             System.out.println("Testing an invalid version");
             testSentence = new Sentence("", false);
-            deletionError.setInputSentence(testSentence);
+            deletionError.setSentence(testSentence);
             System.out.println(deletionError.insertError());
         } catch (CannotCreateErrorException ex) {
             System.err.println(ex.getMessage());
@@ -63,10 +63,10 @@ public class DeletionError extends Error {
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
-        if (inputSentence == null || inputSentence.size() < 2) {
+        if (sentence == null || sentence.size() < 2) {
             throw new CannotCreateErrorException("Cannot introduce a Deletion error. The input sentence has too few words.");
         } else {
-            Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+            Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
 
             Random random = new Random(newSentence.toString().hashCode());
             int randomNo = random.nextInt(newSentence.size());

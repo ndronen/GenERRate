@@ -55,17 +55,17 @@ public class SubstWordConfusionError extends SubstError {
     public Sentence insertError() throws CannotCreateErrorException {
         //if the extra word list is empty and the sentence itself is empty, nothing can be added
         //throw an exception
-        if (inputSentence.size() < 1) {
+        if (sentence.size() < 1) {
             throw new CannotCreateErrorException("The sentence is empty. Cannot substitute one word for another");
         }
         if (extraWordList == null || extraWordList.size() < 1) {
             throw new CannotCreateErrorException("Cannot substitute a word: the extra word list is empty.");
         }
         //if the sentence is not tagged, this type of substitution error cannot be substituted
-        if (!inputSentence.areTagsIncluded()) {
+        if (!sentence.areTagsIncluded()) {
             throw new CannotCreateErrorException("Cannot substitute a word with posTag tag " + posTag + ". The input sentence is not tagged.");
         }
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
         //find all words in the sentence tagged as posTag
         List<Integer> listPOS = new ArrayList<Integer>();
         Word word;

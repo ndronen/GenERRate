@@ -1,6 +1,5 @@
 package GenERRate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -68,11 +67,11 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
         //throw an exception
         if (!isSameSentence && extraWordList.size() < 1) {
             throw new CannotCreateErrorException("Cannot insert an extra word: the extra word list is empty.");
-        } else if (isSameSentence && inputSentence.size() < 1) {
+        } else if (isSameSentence && sentence.size() < 1) {
             throw new CannotCreateErrorException("Cannot insert an extra word: the sentence itself is empty.");
         }
 
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
         Random random = new Random(newSentence.toString().hashCode());
         //randomly choose the position in the sentence where the extra word should be inserted
         int where = 0;
@@ -81,7 +80,7 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
         }
         if (!isSameSentence) {
             //choose the extra word from the extra word list
-            String extraWord = (String) extraWordList.get(random.nextInt(extraWordList.size()));
+            String extraWord = extraWordList.get(random.nextInt(extraWordList.size()));
             StringTokenizer tokens = new StringTokenizer(extraWord, " ");
             newSentence.insertWord(new Word(tokens.nextToken(), tokens.nextToken()), where);
             newSentence.setErrorDescription(errorInfo + " details=\"" + extraWord + " from file at " + (where + 1) + "\"");

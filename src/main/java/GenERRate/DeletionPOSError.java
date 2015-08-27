@@ -80,12 +80,12 @@ public class DeletionPOSError extends DeletionError {
      */
     public Sentence insertError() throws CannotCreateErrorException {
         //if the input sentence isn't tagged, this method won't work
-        if (!inputSentence.areTagsIncluded()) {
+        if (!sentence.areTagsIncluded()) {
             throw new CannotCreateErrorException("Cannot introduce a Deletion Error. The input sentence is not tagged");
         }
 
         //create the new sentence
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
 
         //find the words in the sentence tagged as POS
         List<Integer> wordsForDeletion = new ArrayList<Integer>();

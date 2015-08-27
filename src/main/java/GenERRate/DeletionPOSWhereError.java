@@ -151,11 +151,11 @@ public class DeletionPOSWhereError extends DeletionPOSError {
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
-        if (!inputSentence.areTagsIncluded()) {
+        if (!sentence.areTagsIncluded()) {
             throw new CannotCreateErrorException("Cannot introduce a " + errorInfo + ". The input sentence is not tagged");
         } else {
             //create the new sentence
-            Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+            Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
             Word wordToGo, wordBefore, wordAfter, word;
 
             if (POSAfter == null) {

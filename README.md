@@ -80,11 +80,14 @@ Delete a word tagged as POS1 occurring *before* a word tagged as POS2
 delete	POS1	POS2	POS3
 Delete a word tagged as POS2 occurring between a word tagged as POS1 and a word tagged as POS3
 
-delete 	start	POS1	POS2
+delete	start	POS1	POS2
 Delete a word tagged as POS1 occurring at the start of the sentence and before a word tagged as POS2
 
 delete	POS1	POS2	end
 Delete a word tagged as POS2 occurring after a word tagged as POS1 and at the end of the sentence
+
+delete	word	word1
+Delete an occurrence of word1 in the sentence.
 
 insert	
 Insert a word at random into the sentence. Randomly choose a word from the sentence or from the extra word list.

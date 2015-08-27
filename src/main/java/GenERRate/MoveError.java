@@ -25,31 +25,31 @@ public class MoveError extends Error {
             System.out.println();
             System.out.println("Testing the version with tags");
             testSentence = new Sentence("This DT is VBZ a DT test NN", true);
-            moveError.setInputSentence(testSentence);
+            moveError.setSentence(testSentence);
             System.out.println(moveError.insertError());
 
             //System.out.println();
             //System.out.println("Testing the version with tags but only one word in the sentence");
             //testSentence = new Sentence("This DT ", true);
-            //moveError.setInputSentence(testSentence);
+            //moveError.setSentence(testSentence);
             //System.out.println(moveError.insertError());
 
             //System.out.println();
             //System.out.println("Testing the version without tags but only one word in the sentence");
             //testSentence = new Sentence("This", false);
-            //moveError.setInputSentence(testSentence);
+            //moveError.setSentence(testSentence);
             //System.out.println(moveError.insertError());
 
             //System.out.println();
             //System.out.println("Testing with no words in the sentence");
             //testSentence = new Sentence("",true);
-            //moveError.setInputSentence(testSentence);
+            //moveError.setSentence(testSentence);
             //System.out.println(moveError.insertError());
 
             System.out.println();
             System.out.println("Testing with no words in the sentence");
             testSentence = new Sentence("", false);
-            moveError.setInputSentence(testSentence);
+            moveError.setSentence(testSentence);
             System.out.println(moveError.insertError());
         } catch (CannotCreateErrorException c) {
             System.err.println(c.getMessage());
@@ -64,10 +64,10 @@ public class MoveError extends Error {
      * @return Sentence
      */
     public Sentence insertError() throws CannotCreateErrorException {
-        if (inputSentence == null || inputSentence.size() < 2) {
+        if (sentence == null || sentence.size() < 2) {
             throw new CannotCreateErrorException("Either the input sentence is empty or it has only one word. Cannot insert a Move Error");
         }
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
         Random random = new Random(newSentence.toString().hashCode());
         //randomly choose the  word to be moved
         int moveWordPosition = random.nextInt(newSentence.size());

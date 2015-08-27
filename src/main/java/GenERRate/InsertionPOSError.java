@@ -59,10 +59,10 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
         if (!isSameSentence && extraWordList.size() < 1) {
             throw new CannotCreateErrorException("Cannot insert an extra word: the extra word list is empty.");
         }
-        if (isSameSentence && inputSentence.size() < 1) {
+        if (isSameSentence && sentence.size() < 1) {
             throw new CannotCreateErrorException("Cannot insert an extra word: the sentence itself is empty.");
         }
-        Sentence newSentence = new Sentence(inputSentence.toString(), inputSentence.areTagsIncluded());
+        Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
         Random random = new Random(newSentence.toString().hashCode());
         //randomly choose the position in the sentence where the extra word should be inserted
         int where = 0;
@@ -88,7 +88,7 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
                 throw new CannotCreateErrorException("No word with this POS in the extra word list. Cannot create an " + errorInfo);
             }
             //choose the extra word from the selected extra word list
-            extraWord = (String) extraPosWordList.get(random.nextInt(extraPosWordList.size()));
+            extraWord = extraPosWordList.get(random.nextInt(extraPosWordList.size()));
             tokens = new StringTokenizer(extraWord, " ");
             String newToken = tokens.nextToken();
             String newTag = tokens.nextToken();
@@ -113,7 +113,7 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
             if (extraPosWordList.size() == 0) {
                 throw new CannotCreateErrorException("There is no word with this POS in the sentence. Cannot create an extra word error of this type.");
             }
-            Word extraWord = (Word) extraPosWordList.get(random.nextInt(extraPosWordList.size()));
+            Word extraWord = extraPosWordList.get(random.nextInt(extraPosWordList.size()));
             newSentence.insertWord(extraWord, where);
             newSentence.setErrorDescription(errorInfo + "details=\"" + extraWord.getToken() + " from sentence at " + (where + 1) + "\"");
         }

@@ -47,7 +47,7 @@ public class GenERRate {
     private String realisticErrorCorpus;
 
     /**
-     * Opens the corpus and reads the sentences into inputSentence vector.
+     * Opens the corpus and reads the sentences into sentence vector.
      * Initialises the errorAnalysis vector using the information in the error analysis
      * file.
      * Initialises the extraWordList attribute.
@@ -108,7 +108,7 @@ public class GenERRate {
     }
 
     /**
-     * Opens the corpus and reads the sentences into inputSentence vector.
+     * Opens the corpus and reads the sentences into sentence vector.
      * Initialises the errorAnalysis vector using the information in the error analysis
      * file.
      * Initialises the extraWordList attribute.
@@ -488,7 +488,7 @@ public class GenERRate {
 
     /**
      * Use the information about error frequency (if there is any) in the errorAnalysis
-     * vector and the input sentences in the inputSentence vector
+     * vector and the input sentences in the sentence vector
      * to create an error corpus (realisticErrorCorpus) with a realistic
      * error distribution
      */
@@ -548,7 +548,7 @@ public class GenERRate {
 
     /**
      * Use the information about error frequency (if there is any) in the errorAnalysis
-     * vector and the input sentences in the inputSentence vector
+     * vector and the input sentences in the sentence vector
      * to create an error corpus (realisticErrorCorpus) with a realistic
      * error distribution
      */
@@ -760,9 +760,14 @@ public class GenERRate {
                     tokens.nextToken();
                     secondToken = tokens.nextToken();
                     thirdToken = tokens.nextToken();
-                    prob = Double.parseDouble(thirdToken);
-                    DeletionPOSError delete = new DeletionPOSError(sentence, secondToken);
-                    delete.setProbability(prob);
+                    Error delete;
+                    if (secondToken.equals("word")) {
+                        delete = new DeletionWordError(sentence, thirdToken);
+                    } else {
+                        prob = Double.parseDouble(thirdToken);
+                        delete = new DeletionPOSError(sentence, secondToken);
+                        delete.setProbability(prob);
+                    }
                     return delete;
                 } catch (NumberFormatException n) {
                     return null;

@@ -9,7 +9,7 @@ public class Error {
     /**
      * The sentence into which an error will be inserted.
      */
-    protected Sentence inputSentence;
+    protected Sentence sentence;
 
 
     /**
@@ -23,8 +23,8 @@ public class Error {
      */
     protected double probability;
 
-    public Error(Sentence anInputSentence) {
-        inputSentence = anInputSentence;
+    public Error(Sentence sentence) {
+        this.sentence = sentence;
         errorInfo = "";
     }
 
@@ -53,17 +53,17 @@ public class Error {
     /**
      * Set the value of the input sentence
      *
-     * @param inputSentence The input sentence.
+     * @param sentence The input sentence.
      */
-    public void setInputSentence(Sentence inputSentence) {
-        this.inputSentence = inputSentence;
+    public void setSentence(Sentence sentence) {
+        this.sentence = sentence;
     }
 
     public Sentence insertError() throws CannotCreateErrorException {
-        if (inputSentence.size() < 1) {
+        if (sentence.size() < 1) {
             throw new CannotCreateErrorException("The input sentence is empty.");
         }
-        return inputSentence;
+        return sentence;
     }
 
     /**
