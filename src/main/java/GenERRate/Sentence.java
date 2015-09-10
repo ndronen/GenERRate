@@ -1,6 +1,7 @@
 package GenERRate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -12,7 +13,7 @@ public class Sentence {
     /**
      * The list of words in the sentence
      */
-    private ArrayList<Word> words;
+    private List<Word> words;
 
     /**
      * Is the sentence POS-tagged?
@@ -65,7 +66,7 @@ public class Sentence {
      *
      * @return the value of words
      */
-    public ArrayList getWords() {
+    public List getWords() {
         return words;
     }
 
@@ -74,7 +75,7 @@ public class Sentence {
      *
      * @param newVar the new value of words
      */
-    public void setWords(ArrayList newVar) {
+    public void setWords(List newVar) {
         words = newVar;
     }
 
@@ -172,8 +173,8 @@ public class Sentence {
     /**
      * Remove a word at the specified index from the sentence
      */
-    public void removeWord(int index) {
-        words.remove(index);
+    public Word removeWord(int index) {
+        return words.remove(index);
     }
 
     /**
@@ -181,6 +182,13 @@ public class Sentence {
      */
     public void insertWord(Word word, int index) {
         words.add(index, word);
+    }
+
+    /**
+     * Replace a word at the specified index.
+     */
+    public void replaceWord(Word word, int index) {
+        words.set(index, word);
     }
 
     /**

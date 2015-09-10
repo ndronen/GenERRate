@@ -101,15 +101,19 @@ public class SubstSpecificWordConfusionError extends SubstError {
 
         //if there is more than one instance of the word to be replaced in the sentence, randomly choose one of them
         int where = whereList.get(random.nextInt(whereList.size()));
-
-        //delete the word which was at this position in the sentence
-        newSentence.removeWord(where);
+        Word removedWord = newSentence.removeWord(where);
+        if (where == 0) {
+            if (Character.isUpperCase(removedWord.getToken().charAt(0))) {
+                replacementWord = new Word(
+                        replacementWord.getToken().substring(0, 1).toUpperCase() + replacementWord.getToken().substring(1),
+                        replacementWord.getTag());
+            }
+        }
         newSentence.insertWord(replacementWord, where);
-
-        newSentence.setErrorDescription(errorInfo + " details=\"" + wordToBeReplaced.getToken() + "/" + replacementWord.getToken() + " at " + (where + 1) + "\"");
+        newSentence.setErrorDescription(errorInfo + " details=\"" +
+                wordToBeReplaced.getToken() + "/" +
+                replacementWord.getToken() + " at " + (where + 1) + "\"");
 
         return newSentence;
-
     }
-
 }

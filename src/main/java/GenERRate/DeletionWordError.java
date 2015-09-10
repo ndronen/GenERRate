@@ -36,7 +36,7 @@ public class DeletionWordError extends DeletionError {
         int position = candidates.get(i);
         Word removed = sentenceWithError.getWord(position);
         sentenceWithError.removeWord(position);
-
+        errorInfo = "errortype=\"Deletion" + removed.getToken() + "Error\"";
         sentenceWithError.setErrorDescription(
                 errorInfo + " details=\"" + removed.getToken() + " at " + (position + 1) + "\"");
 

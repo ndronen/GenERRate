@@ -21,7 +21,6 @@ public class DeletionPOSError extends DeletionError {
     public DeletionPOSError(Sentence inputS, String thePOS) {
         super(inputS);
         POS = thePOS;
-        errorInfo = "errortype=\"Deletion" + POS + "Error\"";
     }
 
     //For testing purposes
@@ -107,6 +106,7 @@ public class DeletionPOSError extends DeletionError {
         int randomPosition = wordsForDeletion.get(randNo);
         Word wordToGo = newSentence.getWord(randomPosition);
         newSentence.removeWord(randomPosition);
+        errorInfo = "errortype=\"Deletion" + wordToGo.getToken() + "NULL" + "Error\"";
         newSentence.setErrorDescription(errorInfo + " details=\"" + wordToGo.getToken() + " at " + (randomPosition + 1) + "\"");
 
         return newSentence;

@@ -14,10 +14,9 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
 
     protected String POS;
 
-
-    public InsertionPOSError(Sentence inputS, List<String> extraWords, String aPOS) {
+    public InsertionPOSError(Sentence inputS, List<String> extraWords, String tag) {
         super(inputS, extraWords);
-        POS = aPOS;
+        POS = tag;
         errorInfo = "errortype=\"Insertion" + POS + "Error\"";
     }
 
@@ -45,6 +44,7 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
         POS = newPOS;
     }
 
+
     /**
      * Extends the insertError method of the InsertionError class, by
      * choosing the word to insert based on its POS.
@@ -63,8 +63,10 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
             throw new CannotCreateErrorException("Cannot insert an extra word: the sentence itself is empty.");
         }
         Sentence newSentence = new Sentence(sentence.toString(), sentence.areTagsIncluded());
-        Random random = new Random(newSentence.toString().hashCode());
-        //randomly choose the position in the sentence where the extra word should be inserted
+        // Don't make the randomness deterministic.
+        // Random random = new Random(newSentence.toString().hashCode());
+        // Make it random instead; this allows us to have multiple insert file TAG rules.:w
+        Random random = new Random();
         int where = 0;
         if (newSentence.size() > 0) {
             where = random.nextInt(newSentence.size());
@@ -93,6 +95,7 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
             String newToken = tokens.nextToken();
             String newTag = tokens.nextToken();
             newSentence.insertWord(new Word(newToken, newTag), where);
+            setErrorInfo(newToken);
             newSentence.setErrorDescription(errorInfo + " details=\"" + newToken + " from file at " + (where + 1) + "\"");
         } else {
             List<Word> extraPosWordList = new ArrayList<Word>();
@@ -115,55 +118,9 @@ public class InsertionPOSError extends InsertionFromFileOrSentenceError {
             }
             Word extraWord = extraPosWordList.get(random.nextInt(extraPosWordList.size()));
             newSentence.insertWord(extraWord, where);
+            setErrorInfo(extraWord.getToken());
             newSentence.setErrorDescription(errorInfo + "details=\"" + extraWord.getToken() + " from sentence at " + (where + 1) + "\"");
         }
         return newSentence;
     }
-
-//for testing purposes
-/*public static void main(String [] args)
-{
-	try
-	{
-		System.out.println("Testing the version with tags and with extra word coming from extra word list");
-		Sentence testSentence = new Sentence("Is VBZ this DT a DT test NN", true);
-		InsertionPOSError insertionError = new InsertionPOSError(testSentence,"testWordList.txt","NN");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version with tags and with extra word coming from extra word list");
-		testSentence = new Sentence("This DT is VBZ a DT test NN", true);
-		insertionError = new InsertionPOSError(testSentence,"testWordList.txt","VBZ");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version with tags and with extra word coming from sentence");
-		testSentence = new Sentence("This DT is VBZ another DT test NN", true);
-		insertionError = new InsertionPOSError(testSentence,"DT");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version with tags and with extra word coming from sentence");
-		testSentence = new Sentence("This DT is VBZ a DT test NN", true);
-		insertionError = new InsertionPOSError(testSentence,"NN");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version without tags with extra word coming from extra word list");
-		testSentence = new Sentence("This is a test", false);
-		insertionError = new InsertionPOSError(testSentence,"testWordList.txt","NN");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version without tags with extra word coming from sentence");
-		testSentence = new Sentence("This is a test", false);
-		insertionError = new InsertionPOSError(testSentence,"NN");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-	}
-	catch (CannotCreateErrorException e)
-	{
-		System.err.println(e.getMessage());
-	}
-  }*/
 }

@@ -283,8 +283,18 @@ public class GenERRate {
         JsonParser parser = new JsonParser();
         JsonElement jsonElement;
 
+        Map<String, String> env = System.getenv();
+        String home = env.get("GENERRATE_HOME");
+
+        if (home == null) {
+            home = "";
+        } else {
+            // Add a trailing slash, since we don't use one below.
+            home = home + File.separator;
+        }
+
         try {
-            jsonElement = parser.parse(new FileReader("/Users/ndronen/proj/GenERRate.local/etc/dict.json"));
+            jsonElement = parser.parse(new FileReader(home + "etc/dict.json"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

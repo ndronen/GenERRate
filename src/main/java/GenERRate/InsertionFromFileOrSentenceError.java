@@ -82,7 +82,10 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
             //choose the extra word from the extra word list
             String extraWord = extraWordList.get(random.nextInt(extraWordList.size()));
             StringTokenizer tokens = new StringTokenizer(extraWord, " ");
-            newSentence.insertWord(new Word(tokens.nextToken(), tokens.nextToken()), where);
+            String token = tokens.nextToken();
+            String tag = tokens.nextToken();
+            newSentence.insertWord(new Word(token, tag), where);
+            setErrorInfo(token);
             newSentence.setErrorDescription(errorInfo + " details=\"" + extraWord + " from file at " + (where + 1) + "\"");
         } else {
             //randomly choose the extra word from the sentence itself
@@ -92,42 +95,4 @@ public class InsertionFromFileOrSentenceError extends InsertionError {
         }
         return newSentence;
     }
-
-
-//for testing purposes
-/*public static void main(String [] args)
-{
-	try
-	{
-		System.out.println("Testing the version without tags with extra word coming from sentence");
-		Sentence testSentence = new Sentence("This is a test", false);
-		InsertionFromFileOrSentenceError insertionError = new InsertionFromFileOrSentenceError(testSentence);
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version with tags and with extra word coming from sentence");
-		testSentence = new Sentence("This DT is VBZ a DT test NN", true);
-		insertionError = new InsertionFromFileOrSentenceError(testSentence);
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version without tags with extra word coming from extra word list");
-		testSentence = new Sentence("This is a test", false);
-		insertionError = new InsertionFromFileOrSentenceError(testSentence,"testWordList.txt");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-
-		System.out.println("Testing the version with tags and with extra word coming from extra word list");
-		testSentence = new Sentence("This DT is VBZ a DT test NN", true);
-		insertionError = new InsertionFromFileOrSentenceError(testSentence,"testWordList.txt");
-		System.out.println(insertionError.insertError());
-		System.out.println();
-	}
-	catch (CannotCreateErrorException err)
-	{
-		System.err.println(err.getMessage());
-	}
-}*/
-
-
 }

@@ -11,7 +11,7 @@ public class DeletionError extends Error {
 
     public DeletionError(Sentence sentence) {
         super(sentence);
-        errorInfo = "errortype=\"DeletionError\"";
+        super.errorInfo = "errortype=\"DeletionError\"";
     }
 
     /* For testing purposes

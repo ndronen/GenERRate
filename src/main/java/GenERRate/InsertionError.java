@@ -26,6 +26,9 @@ public class InsertionError extends Error {
         errorInfo = "errortype=\"InsertionError\"";
     }
 
+	protected void setErrorInfo(String newToken) {
+		errorInfo = "errortype=\"Insertion" + newToken + "Error\"";
+	}
 
     /**
      * Inserts a word into the sentence at a random position.
@@ -56,11 +59,13 @@ public class InsertionError extends Error {
                 String newToken = tokens.nextToken();
                 String newTag = tokens.nextToken();
                 newSentence.insertWord(new Word(newToken, newTag), where);
-                newSentence.setErrorDescription(errorInfo + " details=\"" + newToken + " from file at " + (where + 1) + "\"");
+				setErrorInfo(newToken);
+				newSentence.setErrorDescription(errorInfo + " details=\"" + newToken + " from file at " + (where + 1) + "\"");
             } else {
                 //randomly choose the extra word from the sentence itself
                 Word extraWord = newSentence.getWord(random.nextInt(newSentence.size()));
-                newSentence.insertWord(extraWord, where);
+				setErrorInfo(extraWord.getToken());
+				newSentence.insertWord(extraWord, where);
                 newSentence.setErrorDescription(errorInfo + " details=\"" + extraWord.getToken() + " from sentence at " + (where + 1) + "\"");
             }
             return newSentence;
